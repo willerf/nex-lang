@@ -1,0 +1,5 @@
+out
+main
+*.d
+.vscode
+
