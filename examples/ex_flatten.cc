@@ -1,41 +1,38 @@
 
-#include "../../src/program_representation/code_structures/block.h"
-#include "../../src/program_representation/code_structures/word.h"
-
-#include "../../src/transformations/flatten.h"
-#include "../../src/transformations/print.h"
-
-using namespace std;
+#include "block.h"
+#include "word.h"
+#include "flatten.h"
+#include "print.h"
 
 int main() {
 
     Flatten flatten;
     Print print_v;
 
-    shared_ptr<Code> code = make_shared<Block>(
-        vector<shared_ptr<Code>>{
-            make_shared<Word>(1),
-            make_shared<Word>(2),
-            make_shared<Block>(
-                vector<shared_ptr<Code>>{
-                    make_shared<Word>(3),
-                    make_shared<Block>(
-                        vector<shared_ptr<Code>>{
-                            make_shared<Word>(4),
-                            make_shared<Word>(5),
-                            make_shared<Word>(6),
+    std::shared_ptr<Code> code = std::make_shared<Block>(
+        std::vector<std::shared_ptr<Code>>{
+            std::make_shared<Word>(1),
+            std::make_shared<Word>(2),
+            std::make_shared<Block>(
+                std::vector<std::shared_ptr<Code>>{
+                    std::make_shared<Word>(3),
+                    std::make_shared<Block>(
+                        std::vector<std::shared_ptr<Code>>{
+                            std::make_shared<Word>(4),
+                            std::make_shared<Word>(5),
+                            std::make_shared<Word>(6),
                         }
                     ),
-                    make_shared<Word>(7)
+                    std::make_shared<Word>(7)
                 }
             ),
-            make_shared<Word>(8),
-            make_shared<Block>(
-                vector<shared_ptr<Code>>{
-                    make_shared<Block>(
-                        vector<shared_ptr<Code>>{}
+            std::make_shared<Word>(8),
+            std::make_shared<Block>(
+                std::vector<std::shared_ptr<Code>>{
+                    std::make_shared<Block>(
+                        std::vector<std::shared_ptr<Code>>{}
                     ),
-                    make_shared<Word>(9)
+                    std::make_shared<Word>(9)
                 }
             )
         }
@@ -43,7 +40,7 @@ int main() {
 
     code->accept(print_v);
     code->accept(flatten);
-    code = make_shared<Block>(flatten.get());
+    code = std::make_shared<Block>(flatten.get());
     code->accept(print_v);
     
     return 0;

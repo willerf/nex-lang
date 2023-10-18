@@ -1,58 +1,46 @@
 
-#include "../../src/program_representation/code_structures/block.h"
-#include "../../src/program_representation/code_structures/word.h"
-#include "../../src/program_representation/code_structures/beq_label.h"
-#include "../../src/program_representation/code_structures/bne_label.h"
-#include "../../src/program_representation/code_structures/define_label.h"
-#include "../../src/program_representation/code_structures/use_label.h"
-#include "../../src/program_representation/label.h"
-#include "../../src/program_representation/assembly.h"
+#include "block.h"
+#include "word.h"
+#include "beq_label.h"
+#include "bne_label.h"
+#include "define_label.h"
+#include "use_label.h"
+#include "label.h"
+#include "assembly.h"
 
-#include "../../src/transformations/print.h"
-#include "../../src/transformations/elim_labels.h"
-#include "../../src/utils/reg.h"
+#include "print.h"
+#include "elim_labels.h"
+#include "reg.h"
 
-using namespace std;
+int main() {
 
-void run() {
-
-    shared_ptr<Label> label = make_shared<Label>("mylabel");
+    std::shared_ptr<Label> label = std::make_shared<Label>("mylabel");
     
-    cout << label.get() << endl;
-    cout << make_shared<DefineLabel>(label)->label.get() << endl;
-    cout << make_shared<UseLabel>(label)->label.get() << endl;
+    std::cout << label.get() << std::endl;
+    std::cout << std::make_shared<DefineLabel>(label)->label.get() << std::endl;
+    std::cout << std::make_shared<UseLabel>(label)->label.get() << std::endl;
 
-    vector<shared_ptr<Code>> program = {
-        make_shared<BeqLabel>(Reg::Result, Reg::Scratch, label),
+    std::vector<std::shared_ptr<Code>> program = {
+        std::make_shared<BeqLabel>(Reg::Result, Reg::Scratch, label),
         make_word(100),
-        make_shared<BneLabel>(Reg::Result, Reg::Scratch, label),
-        make_shared<UseLabel>(label),
+        std::make_shared<BneLabel>(Reg::Result, Reg::Scratch, label),
+        std::make_shared<UseLabel>(label),
         make_word(200),
-        make_shared<DefineLabel>(label),
+        std::make_shared<DefineLabel>(label),
         make_word(300),
         make_word(400),
-        make_shared<BeqLabel>(Reg::Result, Reg::Scratch, label),
-        make_shared<UseLabel>(label),
+        std::make_shared<BeqLabel>(Reg::Result, Reg::Scratch, label),
+        std::make_shared<UseLabel>(label),
         make_word(500),
-        make_shared<BneLabel>(Reg::Result, Reg::Scratch, label)
+        std::make_shared<BneLabel>(Reg::Result, Reg::Scratch, label)
     };
 
     Print print_v;
 
-    make_shared<Block>(program)->accept(print_v);
+    std::make_shared<Block>(program)->accept(print_v);
     std::vector<std::shared_ptr<Code>> program2 = elim_labels(program);
-    make_shared<Block>(program2)->accept(print_v);
-
-}
-
-int main() {
-    try {
-        run();
-    }
-    catch (char const* error_msg) {
-        std::cerr << error_msg << std::endl;
-    }
-
+    std::make_shared<Block>(program2)->accept(print_v);
+    
     return 0;
 }
 
