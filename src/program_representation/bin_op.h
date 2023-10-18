@@ -1,7 +1,8 @@
 
 #include "code.h"
-#include "code_structures/block.h"
+#include "block.h"
 #include "assembly.h"
+
 
 std::shared_ptr<Code> bin_op(std::shared_ptr<Code> e1, std::shared_ptr<Code> op, std::shared_ptr<Code> e2);
 

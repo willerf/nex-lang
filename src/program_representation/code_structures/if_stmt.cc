@@ -1,6 +1,6 @@
 
 #include "if_stmt.h"
-#include "../assembly.h"
+#include "assembly.h"
 #include "beq_label.h"
 #include "bne_label.h"
 #include "block.h"

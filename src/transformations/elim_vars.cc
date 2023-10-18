@@ -1,7 +1,7 @@
 
 #include "elim_vars.h"
-#include "../program_representation/code_structures/block.h"
-#include "../program_representation/code_structures/var_access.h"
+#include "block.h"
+#include "var_access.h"
 
 ElimVars::ElimVars(Chunk frame) : frame{frame} {}
 

@@ -1,10 +1,10 @@
 
 #include "elim_if_stmts.h"
 
-#include "../program_representation/code_builders.h"
-#include "../program_representation/code_structures/if_stmt.h"
-#include "../program_representation/code_structures/beq_label.h"
-#include "../program_representation/code_structures/define_label.h"
+#include "bin_op.h"
+#include "if_stmt.h"
+#include "beq_label.h"
+#include "define_label.h"
 
 std::shared_ptr<Code> ElimIfStmts::visit(std::shared_ptr<Code> code) {
     return code;

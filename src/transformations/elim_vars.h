@@ -2,7 +2,7 @@
 #pragma once
 
 #include "visitor.h"
-#include "../memory_management/chunk.h"
+#include "chunk.h"
 
 class ElimVars : public Visitor<std::shared_ptr<Code>> {
     Chunk frame;

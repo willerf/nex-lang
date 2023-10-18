@@ -1,8 +1,8 @@
 
 #pragma once
 
-#include "../code_visit.h"
-#include "../label.h"
+#include "code_visit.h"
+#include "label.h"
 
 #include <functional>
 

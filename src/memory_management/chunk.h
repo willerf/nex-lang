@@ -1,9 +1,9 @@
 
 #pragma once
 
-#include "../program_representation/variable.h"
-#include "../program_representation/code.h"
-#include "../utils/reg.h"
+#include "variable.h"
+#include "code.h"
+#include "reg.h"
 
 #include <vector>
 
