@@ -1,9 +1,9 @@
 
 #pragma once
 
-#include "../code_visit.h"
-#include "../variable.h"
-#include "../../utils/reg.h"
+#include "code_visit.h"
+#include "variable.h"
+#include "reg.h"
 
 struct Scope : CodeVisit<Scope> {
     std::vector<std::shared_ptr<Variable>> variables;

@@ -1,9 +1,9 @@
 
 #pragma once
 
-#include "../code_visit.h"
-#include "../label.h"
-#include "../../utils/reg.h"
+#include "code_visit.h"
+#include "label.h"
+#include "reg.h"
 
 struct BneLabel : CodeVisit<BneLabel> {
     Reg s;

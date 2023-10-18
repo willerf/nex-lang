@@ -1,11 +1,8 @@
 
 #pragma once
 
-
-#pragma once
-
 #include "chunk.h"
-#include "../program_representation/code.h"
+#include "code.h"
 
 #include <memory>
 

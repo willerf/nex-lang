@@ -1,7 +1,7 @@
 
 #pragma once
 
-#include "../program_representation/code.h"
+#include "code.h"
 
 #include <string>
 #include <vector>

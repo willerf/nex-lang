@@ -1,14 +1,14 @@
 
 #include "print.h"
-#include "../program_representation/code_structures/block.h"
-#include "../program_representation/code_structures/word.h"
-#include "../program_representation/code_structures/beq_label.h"
-#include "../program_representation/code_structures/bne_label.h"
-#include "../program_representation/code_structures/define_label.h"
-#include "../program_representation/code_structures/use_label.h"
-#include "../program_representation/code_structures/var_access.h"
-#include "../program_representation/code_structures/scope.h"
-#include "../program_representation/code_structures/if_stmt.h"
+#include "block.h"
+#include "word.h"
+#include "beq_label.h"
+#include "bne_label.h"
+#include "define_label.h"
+#include "use_label.h"
+#include "var_access.h"
+#include "scope.h"
+#include "if_stmt.h"
 
 #include <iostream>
 #include <bitset>

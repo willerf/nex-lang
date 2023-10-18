@@ -2,8 +2,9 @@
 #include "bin_op.h"
 
 #include "variable.h"
-#include "code_structures/var_access.h"
-#include "code_structures/scope.h"
+#include "block.h"
+#include "var_access.h"
+#include "scope.h"
 
 std::shared_ptr<Code> bin_op(std::shared_ptr<Code> e1, std::shared_ptr<Code> op, std::shared_ptr<Code> e2) {
     std::shared_ptr<Variable> var = std::make_shared<Variable>("bin_op variable");

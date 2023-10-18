@@ -3,10 +3,10 @@
 
 #include "visitor.h"
 
-#include "../memory_management/chunk.h"
-#include "../program_representation/code.h"
-#include "../program_representation/code_structures/block.h"
-#include "../program_representation/code_structures/scope.h"
+#include "chunk.h"
+#include "code.h"
+#include "block.h"
+#include "scope.h"
 
 class ElimScopes : public Visitor<std::shared_ptr<Code>> {
     std::vector<std::shared_ptr<Variable>> variables;

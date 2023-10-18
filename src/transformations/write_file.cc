@@ -1,6 +1,6 @@
 
 #include "write_file.h"
-#include "../program_representation/code_structures/word.h"
+#include "word.h"
 
 #include <fstream>
 #include <iostream>

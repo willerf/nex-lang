@@ -3,7 +3,7 @@
 
 #include "code.h"
 
-#include "../utils/reg.h"
+#include "reg.h"
 
 #include <memory>
 #include <cassert>

@@ -1,8 +1,8 @@
 
 #include "chunk.h"
-#include "../program_representation/assembly.h"
-#include "../program_representation/code_structures/word.h"
-#include "../program_representation/code_structures/block.h"
+#include "assembly.h"
+#include "word.h"
+#include "block.h"
 
 #include <iostream>
 #include <algorithm>

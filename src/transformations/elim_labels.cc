@@ -1,12 +1,12 @@
 
 #include "elim_labels.h"
-#include "../program_representation/assembly.h"
-#include "../program_representation/label.h"
-#include "../program_representation/code_structures/word.h"
-#include "../program_representation/code_structures/beq_label.h"
-#include "../program_representation/code_structures/bne_label.h"
-#include "../program_representation/code_structures/define_label.h"
-#include "../program_representation/code_structures/use_label.h"
+#include "assembly.h"
+#include "label.h"
+#include "word.h"
+#include "beq_label.h"
+#include "bne_label.h"
+#include "define_label.h"
+#include "use_label.h"
 
 #include <map>
 

@@ -1,9 +1,9 @@
 
 #include "stack.h"
-#include "../program_representation/code_structures/block.h"
-#include "../program_representation/code_structures/word.h"
-#include "../program_representation/assembly.h"
-#include "../utils/reg.h"
+#include "block.h"
+#include "word.h"
+#include "assembly.h"
+#include "reg.h"
 
 std::shared_ptr<Code> stack::allocate(Chunk chunk) {
     std::vector<std::shared_ptr<Code>> result = {
