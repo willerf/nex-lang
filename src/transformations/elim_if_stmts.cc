@@ -1,7 +1,7 @@
 
 #include "elim_if_stmts.h"
 
-#include "../program_representation/code_builders.h"
+#include "../program_representation/bin_op.h"
 #include "../program_representation/code_structures/if_stmt.h"
 #include "../program_representation/code_structures/beq_label.h"
 #include "../program_representation/code_structures/define_label.h"
