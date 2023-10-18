@@ -3,8 +3,7 @@ cmake_minimum_required(VERSION 3.21)
 project(cpp-compiler-v2)
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(main
-    src/main.cc
+add_library(compiler_lib STATIC
     src/memory_management/chunk.cc
     src/memory_management/stack.cc
     src/program_representation/assembly.cc
@@ -31,12 +30,18 @@ add_executable(main
     src/utils/reg.cc
 )
 
-target_include_directories(main PRIVATE
-  src
-  src/memory_management
-  src/program_representation
-  src/program_representation/code_structures
-  src/transformations
-  src/utils
+target_include_directories(compiler_lib PUBLIC
+    src
+    src/memory_management
+    src/program_representation
+    src/program_representation/code_structures
+    src/transformations
+    src/utils
 )
+
+add_executable(main src/main.cc)
+target_link_libraries(main compiler_lib)
+
+add_subdirectory(examples)
+add_subdirectory(tests)
 

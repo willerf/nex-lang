@@ -1,32 +1,26 @@
 
-#include "../../src/program_representation/code_structures/block.h"
-#include "../../src/program_representation/code_structures/word.h"
-#include "../../src/program_representation/code_structures/beq_label.h"
-#include "../../src/program_representation/code_structures/bne_label.h"
-#include "../../src/program_representation/code_structures/define_label.h"
-#include "../../src/program_representation/code_structures/use_label.h"
-#include "../../src/program_representation/code_structures/var_access.h"
-
-#include "../../src/program_representation/label.h"
-#include "../../src/program_representation/variable.h"
-#include "../../src/program_representation/assembly.h"
-
-#include "../../src/transformations/print.h"
-#include "../../src/transformations/elim_labels.h"
-#include "../../src/transformations/elim_vars.h"
-#include "../../src/transformations/flatten.h"
-#include "../../src/transformations/write_file.h"
-
-#include "../../src/memory_management/chunk.h"
-#include "../../src/memory_management/stack.h"
-
-#include "../../src/utils/reg.h"
-
-using namespace std;
+#include "block.h"
+#include "word.h"
+#include "beq_label.h"
+#include "bne_label.h"
+#include "define_label.h"
+#include "use_label.h"
+#include "var_access.h"
+#include "label.h"
+#include "variable.h"
+#include "assembly.h"
+#include "print.h"
+#include "elim_labels.h"
+#include "elim_vars.h"
+#include "flatten.h"
+#include "write_file.h"
+#include "chunk.h"
+#include "stack.h"
+#include "reg.h"
 
 const uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
 
-void run() {
+int main() {
 
     std::shared_ptr<Variable> var1 = std::make_shared<Variable>("test variable1");
     std::shared_ptr<Variable> var2 = std::make_shared<Variable>("test variable2");
@@ -49,8 +43,6 @@ void run() {
         }
     );
     
-
-
     Print print_v;
     Flatten flatten;
     ElimVars elim_vars(chunk);
@@ -62,11 +54,7 @@ void run() {
     
     auto program3 = flatten.get();
     write_file("test_write_file.bin", program3);
-}
 
-int main() {
-    run();
     return 0;
 }
-
 

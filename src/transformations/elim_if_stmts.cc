@@ -13,7 +13,7 @@ std::shared_ptr<Code> ElimIfStmts::visit(std::shared_ptr<Code> code) {
 
 
 std::shared_ptr<Code> ElimIfStmts::visit(std::shared_ptr<IfStmt> if_stmt) {
-    std::shared_ptr<Label> end_label = std::make_shared<Label>("ifstmt end label");
+    std::shared_ptr<Label> end_label = std::make_shared<Label>("if stmt end label");
     return make_block({
         bin_op(if_stmt->e1->accept(*this), if_stmt->comp, if_stmt->e2),
         if_stmt->thens,
