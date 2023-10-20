@@ -6,7 +6,7 @@
 #include "word.h"
 #include "block.h"
 
-TEST_CASE( "Flatten simple nested structure", "[flatten]" ) {
+TEST_CASE("Flatten simple nested structure", "[flatten]") {
     
     std::shared_ptr<Word> word1 = std::make_shared<Word>(1);
     std::shared_ptr<Word> word2 = std::make_shared<Word>(2);

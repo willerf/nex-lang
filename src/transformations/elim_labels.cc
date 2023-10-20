@@ -57,7 +57,7 @@ std::vector<std::shared_ptr<Code>> elim_labels(std::vector<std::shared_ptr<Code>
         }
         else if (std::shared_ptr<BeqLabel> beq_label = std::dynamic_pointer_cast<BeqLabel>(code)) {
             if (symbol_table.count(beq_label->label)) {
-                result.push_back(make_beq(beq_label->s, beq_label-> t, signed_sub<16>(symbol_table.at(beq_label->label), location)/4));
+                result.push_back(make_beq(beq_label->s, beq_label-> t, signed_sub<16>(symbol_table.at(beq_label->label)/4, location/4)));
             }
             else {
                 std::cerr << "Undefined label error!" << std::endl;
@@ -66,7 +66,7 @@ std::vector<std::shared_ptr<Code>> elim_labels(std::vector<std::shared_ptr<Code>
         }
         else if (std::shared_ptr<BneLabel> bne_label = std::dynamic_pointer_cast<BneLabel>(code)) {
             if (symbol_table.count(bne_label->label)) {
-                result.push_back(make_bne(bne_label->s, bne_label-> t, signed_sub<16>(symbol_table.at(bne_label->label), location)/4));
+                result.push_back(make_bne(bne_label->s, bne_label-> t, signed_sub<16>(symbol_table.at(bne_label->label)/4, location/4)));
             }
             else {
                 std::cerr << "Undefined label error!" << std::endl;
