@@ -1,11 +1,13 @@
 
 #pragma once
 
-#include "code.h"
-
+#include <memory>
 #include <string>
 #include <vector>
-#include <memory>
 
-void write_file(std::string file_name, std::vector<std::shared_ptr<Code>>& program);
+#include "code.h"
 
+void write_file(
+    std::string file_name,
+    std::vector<std::shared_ptr<Code>>& program
+);

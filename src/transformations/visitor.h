@@ -14,9 +14,9 @@ struct VarAccess;
 struct Scope;
 struct IfStmt;
 
-template <typename T>
+template<typename T>
 class Visitor {
-public:
+  public:
     virtual T visit(std::shared_ptr<Code>) = 0;
     virtual T visit(std::shared_ptr<Block>);
     virtual T visit(std::shared_ptr<Word>);
@@ -30,4 +30,3 @@ public:
 
     virtual ~Visitor() {}
 };
-

@@ -1,5 +1,6 @@
 
 #include "flatten.h"
+
 #include "block.h"
 #include "word.h"
 

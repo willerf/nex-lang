@@ -14,11 +14,14 @@ std::shared_ptr<Code> ElimScopes::visit(std::shared_ptr<Block> block) {
 }
 
 std::shared_ptr<Code> ElimScopes::visit(std::shared_ptr<Scope> scope) {
-    variables.insert(variables.end(), scope->variables.begin(), scope->variables.end());
+    variables.insert(
+        variables.end(),
+        scope->variables.begin(),
+        scope->variables.end()
+    );
     return scope->code->accept(*this);
 }
 
 std::vector<std::shared_ptr<Variable>> ElimScopes::get() {
     return variables;
 }
-

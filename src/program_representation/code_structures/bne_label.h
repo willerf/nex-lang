@@ -5,7 +5,7 @@
 #include "label.h"
 #include "reg.h"
 
-struct BneLabel : CodeVisit<BneLabel> {
+struct BneLabel: CodeVisit<BneLabel> {
     Reg s;
     Reg t;
     std::shared_ptr<Label> label;
@@ -13,4 +13,3 @@ struct BneLabel : CodeVisit<BneLabel> {
 };
 
 std::shared_ptr<BneLabel> make_bne(Reg s, Reg t, std::shared_ptr<Label> label);
-

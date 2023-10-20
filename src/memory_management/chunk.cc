@@ -1,20 +1,24 @@
 
 #include "chunk.h"
-#include "assembly.h"
-#include "word.h"
-#include "block.h"
 
-#include <iostream>
 #include <algorithm>
+#include <iostream>
 
-Chunk::Chunk(std::vector<std::shared_ptr<Variable>> variables) : variables{variables}, words{static_cast<uint32_t>(variables.size() + 2)}, bytes{static_cast<uint32_t>(4 * (variables.size() + 2))} {
-    std::sort(this->variables.begin(), this->variables.end(), 
-        [](const std::shared_ptr<Variable>& v1, const std::shared_ptr<Variable>& v2){
-            return v1->is_pointer;
-        }
+#include "assembly.h"
+#include "block.h"
+#include "word.h"
+
+Chunk::Chunk(std::vector<std::shared_ptr<Variable>> variables) :
+    variables {variables},
+    words {static_cast<uint32_t>(variables.size() + 2)},
+    bytes {static_cast<uint32_t>(4 * (variables.size() + 2))} {
+    std::sort(
+        this->variables.begin(),
+        this->variables.end(),
+        [](const std::shared_ptr<Variable>& v1,
+           const std::shared_ptr<Variable>& v2) { return v1->is_pointer; }
     );
 }
-
 
 uint32_t Chunk::get_offset(std::shared_ptr<Variable>& variable) {
     uint32_t offset = 8;
@@ -28,11 +32,13 @@ uint32_t Chunk::get_offset(std::shared_ptr<Variable>& variable) {
     return -1;
 }
 
-std::shared_ptr<Code> Chunk::load(Reg base, Reg reg, std::shared_ptr<Variable>& variable) {
+std::shared_ptr<Code>
+Chunk::load(Reg base, Reg reg, std::shared_ptr<Variable>& variable) {
     return make_lw(reg, get_offset(variable), base);
 }
 
-std::shared_ptr<Code> Chunk::store(Reg base, std::shared_ptr<Variable>& variable, Reg reg) {
+std::shared_ptr<Code>
+Chunk::store(Reg base, std::shared_ptr<Variable>& variable, Reg reg) {
     return make_sw(reg, get_offset(variable), base);
 }
 
@@ -48,4 +54,3 @@ std::shared_ptr<Code> Chunk::initialize() {
 
     return make_block(result);
 }
-
