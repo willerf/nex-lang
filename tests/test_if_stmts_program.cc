@@ -27,7 +27,7 @@
 
 const uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
 
-TEST_CASE("Test program", "[programs]") {
+TEST_CASE("Test if statements program", "[programs]") {
     std::shared_ptr<Variable> var1 =
         std::make_shared<Variable>("test variable1");
     std::shared_ptr<Variable> var2 =
@@ -90,17 +90,17 @@ TEST_CASE("Test program", "[programs]") {
 
     auto program7 = elim_labels(program6);
 
-    write_file("test_write_file.bin", program7);
+    write_file("test_if_stmts.bin", program7);
 
-    int32_t status = std::system("./emulation test_write_file.bin 5 10");
+    int32_t status = std::system("./emulation test_if_stmts.bin 5 10");
     REQUIRE(WIFEXITED(status));
     REQUIRE(WEXITSTATUS(status) == not_equal_val);
 
-    status = std::system("./emulation test_write_file.bin 14 14");
+    status = std::system("./emulation test_if_stmts.bin 14 14");
     REQUIRE(WIFEXITED(status));
     REQUIRE(WEXITSTATUS(status) == equal_val);
 
-    status = std::system("./emulation test_write_file.bin 17 12");
+    status = std::system("./emulation test_if_stmts.bin 17 12");
     REQUIRE(WIFEXITED(status));
     REQUIRE(WEXITSTATUS(status) == not_equal_val);
 }
