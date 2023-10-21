@@ -45,3 +45,21 @@ target_link_libraries(main compiler_lib)
 add_subdirectory(examples)
 add_subdirectory(tests)
 
+add_custom_command(
+    OUTPUT emulator_executable
+    COMMAND cargo build --release
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}/emulation
+    COMMENT "Building Rust emulator executable"
+)
+
+add_custom_target(RustEmulator
+    DEPENDS emulator_executable
+)
+
+add_custom_target(CopyRustEmulator
+    COMMAND ${CMAKE_COMMAND} -E copy
+    ${CMAKE_SOURCE_DIR}/emulation/target/release/emulation
+    ${CMAKE_BINARY_DIR}/emulation
+    DEPENDS RustEmulator 
+)
+
