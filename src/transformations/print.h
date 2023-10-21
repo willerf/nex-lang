@@ -1,13 +1,14 @@
 
 #pragma once
 
-#include "visitor.h"
-
 #include <vector>
 
-class Print : public Visitor<void> {
+#include "visitor.h"
+
+class Print: public Visitor<void> {
     int depth = 0;
-public:
+
+  public:
     void visit(std::shared_ptr<Code>) override;
     void visit(std::shared_ptr<Block>) override;
     void visit(std::shared_ptr<Word>) override;

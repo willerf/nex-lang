@@ -7,46 +7,46 @@ std::string to_string(Reg reg) {
     switch (reg) {
         case Reg::Zero:
             result = "Zero";
-        break;
+            break;
         case Reg::Input1:
             result = "Input1";
-        break;
+            break;
         case Reg::Input2:
             result = "Input2";
-        break;
+            break;
         case Reg::Result:
             result = "Result";
-        break;
+            break;
         case Reg::Scratch:
             result = "Scratch";
-        break;
+            break;
         case Reg::SavedParamPtr:
             result = "SavedParamPtr";
-        break;
+            break;
         case Reg::CopyChunkScratch:
             result = "CopyChunkScratch";
-        break;
+            break;
         case Reg::TargetPC:
             result = "TargetPC";
-        break;
+            break;
         case Reg::ScratchPtrForGC:
             result = "ScratchPtrForGC";
-        break;
+            break;
         case Reg::FromSpaceEnd:
             result = "FromSpaceEnd";
-        break;
+            break;
         case Reg::HeapPtr:
             result = "HeapPtr";
-        break;
+            break;
         case Reg::FramePtr:
             result = "FramePtr";
-        break;
+            break;
         case Reg::StackPtr:
             result = "StackPtr";
-        break;
+            break;
         case Reg::Link:
             result = "Link";
-        break;
+            break;
     }
 
     return result;
@@ -56,4 +56,3 @@ std::ostream& operator<<(std::ostream& out, const Reg reg) {
     out << to_string(reg);
     return out;
 }
-

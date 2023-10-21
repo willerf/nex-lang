@@ -1,21 +1,23 @@
 
 #include "print.h"
-#include "block.h"
-#include "word.h"
+
+#include <bitset>
+#include <iostream>
+
 #include "beq_label.h"
+#include "block.h"
 #include "bne_label.h"
 #include "define_label.h"
+#include "if_stmt.h"
+#include "scope.h"
 #include "use_label.h"
 #include "var_access.h"
-#include "scope.h"
-#include "if_stmt.h"
-
-#include <iostream>
-#include <bitset>
+#include "word.h"
 
 void Print::visit(std::shared_ptr<Code> code) {
     auto& c = *code.get();
-    std::cout << std::string(depth, ' ') << "Err: " << typeid(c).name() << std::endl;
+    std::cout << std::string(depth, ' ') << "Err: " << typeid(c).name()
+              << std::endl;
 }
 
 void Print::visit(std::shared_ptr<Block> block) {
@@ -25,31 +27,40 @@ void Print::visit(std::shared_ptr<Block> block) {
         code->accept(*this);
     }
     depth -= 4;
-    std::cout <<std::string(depth, ' ') << ")" << std::endl;
+    std::cout << std::string(depth, ' ') << ")" << std::endl;
 }
 
 void Print::visit(std::shared_ptr<Word> word) {
-    std::cout << std::string(depth, ' ') << "Word(" << std::bitset<32>(word->bits) << ")" << std::endl;
+    std::cout << std::string(depth, ' ') << "Word("
+              << std::bitset<32>(word->bits) << ")" << std::endl;
 }
 
 void Print::visit(std::shared_ptr<BeqLabel> beq_label) {
-    std::cout << std::string(depth, ' ') << "BeqLabel(" << beq_label->s << ", " << beq_label->t << ", " << beq_label->label->name << ")" << std::endl;
+    std::cout << std::string(depth, ' ') << "BeqLabel(" << beq_label->s << ", "
+              << beq_label->t << ", " << beq_label->label->name << ")"
+              << std::endl;
 }
 
 void Print::visit(std::shared_ptr<BneLabel> bne_label) {
-    std::cout << std::string(depth, ' ') << "BneLabel(" << bne_label->s << ", " << bne_label->t << ", " << bne_label->label->name << ")" << std::endl;
+    std::cout << std::string(depth, ' ') << "BneLabel(" << bne_label->s << ", "
+              << bne_label->t << ", " << bne_label->label->name << ")"
+              << std::endl;
 }
 
 void Print::visit(std::shared_ptr<DefineLabel> define_label) {
-    std::cout << std::string(depth, ' ') << "DefineLabel(" << define_label->label->name << ")" << std::endl;
+    std::cout << std::string(depth, ' ') << "DefineLabel("
+              << define_label->label->name << ")" << std::endl;
 }
 
 void Print::visit(std::shared_ptr<UseLabel> use_label) {
-    std::cout << std::string(depth, ' ') << "UseLabel(" << use_label->label->name << ")" << std::endl;
+    std::cout << std::string(depth, ' ') << "UseLabel("
+              << use_label->label->name << ")" << std::endl;
 }
 
 void Print::visit(std::shared_ptr<VarAccess> var_access) {
-    std::cout << std::string(depth, ' ') << "VarAccess(" << var_access->reg << ", " << var_access->variable->name << ", " << (var_access->read ? "true" : "false") << ")" << std::endl;
+    std::cout << std::string(depth, ' ') << "VarAccess(" << var_access->reg
+              << ", " << var_access->variable->name << ", "
+              << (var_access->read ? "true" : "false") << ")" << std::endl;
 }
 
 void Print::visit(std::shared_ptr<Scope> scope) {
@@ -68,7 +79,6 @@ void Print::visit(std::shared_ptr<IfStmt> if_stmt) {
     if_stmt->e2->accept(*this);
     if_stmt->thens->accept(*this);
     if_stmt->elses->accept(*this);
-    depth -= 4; 
+    depth -= 4;
     std::cout << std::string(depth, ' ') << ")" << std::endl;
 }
-

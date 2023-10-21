@@ -1,59 +1,59 @@
 
 #include "visitor.h"
 
-#include "block.h"
-#include "word.h"
 #include "beq_label.h"
+#include "block.h"
 #include "bne_label.h"
 #include "define_label.h"
+#include "if_stmt.h"
+#include "scope.h"
 #include "use_label.h"
 #include "var_access.h"
-#include "scope.h"
-#include "if_stmt.h"
+#include "word.h"
 
-template <>
+template<>
 void Visitor<void>::visit(std::shared_ptr<Block> code) {
     for (auto c : code->code) {
         c->accept(*this);
     }
 }
 
-template <>
+template<>
 void Visitor<void>::visit(std::shared_ptr<Word> code) {
     visit(static_pointer_cast<Code>(code));
 }
 
-template <>
+template<>
 void Visitor<void>::visit(std::shared_ptr<BeqLabel> code) {
     visit(static_pointer_cast<Code>(code));
 }
 
-template <>
+template<>
 void Visitor<void>::visit(std::shared_ptr<BneLabel> code) {
     visit(static_pointer_cast<Code>(code));
 }
 
-template <>
+template<>
 void Visitor<void>::visit(std::shared_ptr<DefineLabel> code) {
     visit(static_pointer_cast<Code>(code));
 }
 
-template <>
+template<>
 void Visitor<void>::visit(std::shared_ptr<UseLabel> code) {
     visit(static_pointer_cast<Code>(code));
 }
 
-template <>
+template<>
 void Visitor<void>::visit(std::shared_ptr<VarAccess> code) {
     visit(static_pointer_cast<Code>(code));
 }
 
-template <>
+template<>
 void Visitor<void>::visit(std::shared_ptr<Scope> code) {
     code->code->accept(*this);
 }
 
-template <>
+template<>
 void Visitor<void>::visit(std::shared_ptr<IfStmt> code) {
     code->e1->accept(*this);
     code->comp->accept(*this);
@@ -62,10 +62,9 @@ void Visitor<void>::visit(std::shared_ptr<IfStmt> code) {
     code->elses->accept(*this);
 }
 
-
-
-template <>
-std::shared_ptr<Code> Visitor<std::shared_ptr<Code>>::visit(std::shared_ptr<Block> code) {
+template<>
+std::shared_ptr<Code>
+Visitor<std::shared_ptr<Code>>::visit(std::shared_ptr<Block> code) {
     std::vector<std::shared_ptr<Code>> result;
     for (auto c : code->code) {
         result.push_back(c->accept(*this));
@@ -73,43 +72,51 @@ std::shared_ptr<Code> Visitor<std::shared_ptr<Code>>::visit(std::shared_ptr<Bloc
     return make_block(result);
 }
 
-template <>
-std::shared_ptr<Code> Visitor<std::shared_ptr<Code>>::visit(std::shared_ptr<Word> code) {
+template<>
+std::shared_ptr<Code>
+Visitor<std::shared_ptr<Code>>::visit(std::shared_ptr<Word> code) {
     return visit(static_pointer_cast<Code>(code));
 }
 
-template <>
-std::shared_ptr<Code> Visitor<std::shared_ptr<Code>>::visit(std::shared_ptr<BeqLabel> code) {
+template<>
+std::shared_ptr<Code>
+Visitor<std::shared_ptr<Code>>::visit(std::shared_ptr<BeqLabel> code) {
     return visit(static_pointer_cast<Code>(code));
 }
 
-template <>
-std::shared_ptr<Code> Visitor<std::shared_ptr<Code>>::visit(std::shared_ptr<BneLabel> code) {
+template<>
+std::shared_ptr<Code>
+Visitor<std::shared_ptr<Code>>::visit(std::shared_ptr<BneLabel> code) {
     return visit(static_pointer_cast<Code>(code));
 }
 
-template <>
-std::shared_ptr<Code> Visitor<std::shared_ptr<Code>>::visit(std::shared_ptr<DefineLabel> code) {
+template<>
+std::shared_ptr<Code>
+Visitor<std::shared_ptr<Code>>::visit(std::shared_ptr<DefineLabel> code) {
     return visit(static_pointer_cast<Code>(code));
 }
 
-template <>
-std::shared_ptr<Code> Visitor<std::shared_ptr<Code>>::visit(std::shared_ptr<UseLabel> code) {
+template<>
+std::shared_ptr<Code>
+Visitor<std::shared_ptr<Code>>::visit(std::shared_ptr<UseLabel> code) {
     return visit(static_pointer_cast<Code>(code));
 }
 
-template <>
-std::shared_ptr<Code> Visitor<std::shared_ptr<Code>>::visit(std::shared_ptr<VarAccess> code) {
+template<>
+std::shared_ptr<Code>
+Visitor<std::shared_ptr<Code>>::visit(std::shared_ptr<VarAccess> code) {
     return visit(static_pointer_cast<Code>(code));
 }
 
-template <>
-std::shared_ptr<Code> Visitor<std::shared_ptr<Code>>::visit(std::shared_ptr<Scope> code) {
+template<>
+std::shared_ptr<Code>
+Visitor<std::shared_ptr<Code>>::visit(std::shared_ptr<Scope> code) {
     return make_scope(code->variables, code->code->accept(*this));
 }
 
-template <>
-std::shared_ptr<Code> Visitor<std::shared_ptr<Code>>::visit(std::shared_ptr<IfStmt> code) {
+template<>
+std::shared_ptr<Code>
+Visitor<std::shared_ptr<Code>>::visit(std::shared_ptr<IfStmt> code) {
     return std::make_shared<IfStmt>(
         code->else_label,
         code->e1->accept(*this),
@@ -119,4 +126,3 @@ std::shared_ptr<Code> Visitor<std::shared_ptr<Code>>::visit(std::shared_ptr<IfSt
         code->elses->accept(*this)
     );
 }
-

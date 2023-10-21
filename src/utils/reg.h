@@ -2,8 +2,8 @@
 #ifndef REG_H
 #define REG_H
 
-#include <string>
 #include <iostream>
+#include <string>
 
 enum class Reg {
     Zero = 0,

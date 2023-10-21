@@ -1,12 +1,16 @@
 
 #include "write_file.h"
-#include "word.h"
 
 #include <fstream>
 #include <iostream>
 
-void write_file(std::string file_name, std::vector<std::shared_ptr<Code>>& program) {
-    std::ofstream out{file_name, std::ios::binary};
+#include "word.h"
+
+void write_file(
+    std::string file_name,
+    std::vector<std::shared_ptr<Code>>& program
+) {
+    std::ofstream out {file_name, std::ios::binary};
     if (!out) {
         throw "Error opening file for writing.";
     }
@@ -20,12 +24,11 @@ void write_file(std::string file_name, std::vector<std::shared_ptr<Code>>& progr
             reversed[2] = data[1];
             reversed[3] = data[0];
             out.write(reinterpret_cast<char*>(&reversed), sizeof(word->bits));
-        }
-        else {
+        } else {
             auto& c = *code.get();
-            std::cerr << "Invalid code structure while writing: " << typeid(c).name() << std::endl;
+            std::cerr << "Invalid code structure while writing: "
+                      << typeid(c).name() << std::endl;
         }
     }
     out.close();
 }
-

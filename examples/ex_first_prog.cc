@@ -1,16 +1,16 @@
 
-#include "block.h"
-#include "word.h"
+#include "assembly.h"
 #include "beq_label.h"
+#include "block.h"
 #include "bne_label.h"
 #include "define_label.h"
-#include "use_label.h"
-#include "label.h"
-#include "assembly.h"
-#include "print.h"
 #include "elim_labels.h"
-#include "write_file.h"
+#include "label.h"
+#include "print.h"
 #include "reg.h"
+#include "use_label.h"
+#include "word.h"
+#include "write_file.h"
 
 const uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
 
@@ -29,8 +29,7 @@ int main() {
         make_define(end_label),
         make_lis(Reg::TargetPC),
         make_word(TERMINATION_PC),
-        make_jr(Reg::TargetPC)
-    }; 
+        make_jr(Reg::TargetPC)};
 
     Print print_v;
 
@@ -41,5 +40,3 @@ int main() {
     write_file("test_write_file.bin", program2);
     return 0;
 }
-
-
