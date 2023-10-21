@@ -29,7 +29,7 @@ uint32_t Chunk::get_offset(std::shared_ptr<Variable>& variable) {
         offset += 4;
     }
     std::cerr << "Variable not found in chunk!" << std::endl;
-    return -1;
+    exit(1);
 }
 
 std::shared_ptr<Code>
