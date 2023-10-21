@@ -2,15 +2,15 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_vector.hpp>
 
-#include "elim_vars.h"
-#include "variable.h"
-#include "reg.h"
-#include "word.h"
-#include "chunk.h"
-#include "word_to_uint.h"
-#include "flatten.h"
-#include "var_access.h"
 #include "block.h"
+#include "chunk.h"
+#include "elim_vars.h"
+#include "flatten.h"
+#include "reg.h"
+#include "var_access.h"
+#include "variable.h"
+#include "word.h"
+#include "word_to_uint.h"
 
 TEST_CASE("Simple test read write variable", "[vars]") {
     auto var1 = std::make_shared<Variable>("var1");
@@ -23,8 +23,8 @@ TEST_CASE("Simple test read write variable", "[vars]") {
         make_write(var2, r2),
     });
 
-    Chunk frame{{var1, var2}};
-    ElimVars elim_vars{frame};
+    Chunk frame {{var1, var2}};
+    ElimVars elim_vars {frame};
     auto program2 = program1->accept(elim_vars);
 
     Flatten flatten;
@@ -32,7 +32,7 @@ TEST_CASE("Simple test read write variable", "[vars]") {
     auto program3 = flatten.get();
 
     auto program4 = word_to_uint(program3);
-    
+
     auto instr1 = std::bitset<32>(
         "100011" + std::bitset<5>((uint32_t)Reg::FramePtr).to_string()
         + std::bitset<5>((uint32_t)r1).to_string()
@@ -47,7 +47,8 @@ TEST_CASE("Simple test read write variable", "[vars]") {
 
     REQUIRE_THAT(
         program4,
-        Catch::Matchers::Equals(std::vector<uint32_t> {(uint32_t)instr1.to_ulong(), (uint32_t)instr2.to_ulong()})
+        Catch::Matchers::Equals(std::vector<uint32_t> {
+            (uint32_t)instr1.to_ulong(),
+            (uint32_t)instr2.to_ulong()})
     );
 }
-
