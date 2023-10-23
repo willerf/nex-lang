@@ -31,13 +31,13 @@
 
 static uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
 static std::string emulator_path(EMULATOR_PATH);
-static std::string file_name("test_if_stmts.bin");
+static std::string file_name("test_fibonacci.bin");
 
 // representation of test program
-int calc_fibonacci_cpp(int n) {
-    int result = 0;
-    int v1 = 0;
-    int v2 = 1;
+int32_t sample_fibonacci(int32_t n) {
+    int32_t result = 0;
+    int32_t v1 = 0;
+    int32_t v2 = 1;
     if (n == 0) {
         result = v1;
     }
@@ -47,8 +47,8 @@ int calc_fibonacci_cpp(int n) {
     }
 
     if (n >= 2) {
-        int i = 1;
-        int v3 = 0;
+        int32_t i = 1;
+        int32_t v3 = 0;
         while (i < n) {
             v3 = v1 + v2;
             v1 = v2;
@@ -147,23 +147,9 @@ TEST_CASE("Test fibonacci program", "[programs]") {
 
     std::string emulate = emulator_path + " " + file_name + " ";
 
-    int32_t status = std::system((emulate + "0 0").c_str());
-    REQUIRE(WIFEXITED(status));
-    REQUIRE(WEXITSTATUS(status) == 0);
-
-    status = std::system((emulate + "1 0").c_str());
-    REQUIRE(WIFEXITED(status));
-    REQUIRE(WEXITSTATUS(status) == 1);
-
-    status = std::system((emulate + "2 0").c_str());
-    REQUIRE(WIFEXITED(status));
-    REQUIRE(WEXITSTATUS(status) == 1);
-
-    status = std::system((emulate + "3 0").c_str());
-    REQUIRE(WIFEXITED(status));
-    REQUIRE(WEXITSTATUS(status) == 2);
-
-    status = std::system((emulate + "10 0").c_str());
-    REQUIRE(WIFEXITED(status));
-    REQUIRE(WEXITSTATUS(status) == 55);
+    for (auto input : {0, 1, 2, 3, 5, 10}) {
+        int32_t status = std::system((emulate + std::to_string(input) + " 0").c_str());
+        REQUIRE(WIFEXITED(status));
+        REQUIRE(WEXITSTATUS(status) == sample_fibonacci(input));
+    }
 }
