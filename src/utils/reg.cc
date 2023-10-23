@@ -1,5 +1,6 @@
 
 #include "reg.h"
+#include "assembly.h"
 
 std::string to_string(Reg reg) {
     std::string result;
@@ -56,3 +57,5 @@ std::ostream& operator<<(std::ostream& out, const Reg reg) {
     out << to_string(reg);
     return out;
 }
+
+

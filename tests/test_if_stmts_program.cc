@@ -24,6 +24,7 @@
 #include "variable.h"
 #include "word.h"
 #include "write_file.h"
+#include "comparators.h"
 
 static uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
 static std::string emulator_path(EMULATOR_PATH);

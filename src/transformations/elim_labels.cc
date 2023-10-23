@@ -26,6 +26,7 @@ elim_labels(std::vector<std::shared_ptr<Code>> program) {
                 std::dynamic_pointer_cast<DefineLabel>(code)) {
             if (symbol_table.count(define_label->label)) {
                 std::cerr << "Duplicate label error!" << std::endl;
+                exit(1);
             } else {
                 symbol_table.insert({define_label->label, address});
             }
@@ -33,16 +34,13 @@ elim_labels(std::vector<std::shared_ptr<Code>> program) {
             address += 4;
         }
     }
-
+    
     std::vector<std::shared_ptr<Code>> result;
     uint32_t location = 0;
     for (auto& code : program) {
         if (std::dynamic_pointer_cast<DefineLabel>(code)) {
             continue;
         }
-
-        std::shared_ptr<UseLabel> debuglabel =
-            std::dynamic_pointer_cast<UseLabel>(code);
 
         location += 4;
         if (std::shared_ptr<Word> word =
@@ -52,7 +50,8 @@ elim_labels(std::vector<std::shared_ptr<Code>> program) {
             if (symbol_table.find(use_label->label) != symbol_table.end()) {
                 result.push_back(make_word(symbol_table.at(use_label->label)));
             } else {
-                std::cerr << "Undefined label error!" << std::endl;
+                std::cerr << "Undefined label error for UseLabel!" << std::endl;
+                std::cerr << ((use_label && use_label->label) ? use_label->label->name : "Invalid label!") << std::endl;
                 exit(1);
             }
         } else if (std::shared_ptr<BeqLabel> beq_label = std::dynamic_pointer_cast<BeqLabel>(code)) {
@@ -66,7 +65,8 @@ elim_labels(std::vector<std::shared_ptr<Code>> program) {
                     )
                 ));
             } else {
-                std::cerr << "Undefined label error!" << std::endl;
+                std::cerr << "Undefined label error for BeqLabel!" << std::endl;
+                std::cerr << ((beq_label && beq_label->label) ? beq_label->label->name : "Invalid label!") << std::endl;
                 exit(1);
             }
         } else if (std::shared_ptr<BneLabel> bne_label = std::dynamic_pointer_cast<BneLabel>(code)) {
@@ -80,7 +80,8 @@ elim_labels(std::vector<std::shared_ptr<Code>> program) {
                     )
                 ));
             } else {
-                std::cerr << "Undefined label error!" << std::endl;
+                std::cerr << "Undefined label error for BneLabel!" << std::endl;
+                std::cerr << ((bne_label && bne_label->label) ? bne_label->label->name : "Invalid label!") << std::endl;
                 exit(1);
             }
         } else {

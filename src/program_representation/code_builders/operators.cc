@@ -1,29 +1,9 @@
 
-#include "bin_op.h"
+#include "operators.h"
 
+#include "reg.h"
+#include "assembly.h"
 #include "block.h"
-#include "scope.h"
-#include "var_access.h"
-#include "variable.h"
-
-std::shared_ptr<Code> bin_op(
-    std::shared_ptr<Code> e1,
-    std::shared_ptr<Code> op,
-    std::shared_ptr<Code> e2
-) {
-    std::shared_ptr<Variable> var =
-        std::make_shared<Variable>("bin_op variable");
-    return make_scope(
-        {var},
-        make_block(
-            {e1,
-             make_write(var, Reg::Result),
-             e2,
-             make_read(Reg::Scratch, var),
-             op}
-        )
-    );
-}
 
 std::shared_ptr<Code> op::plus() {
     return make_add(Reg::Result, Reg::Scratch, Reg::Result);

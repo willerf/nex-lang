@@ -19,3 +19,8 @@ std::shared_ptr<Code> make_scope(
     std::vector<std::shared_ptr<Variable>> variables,
     std::shared_ptr<Code> code
 );
+
+std::shared_ptr<Code> make_scope(
+    std::vector<std::shared_ptr<Variable>> variables,
+    std::vector<std::shared_ptr<Code>> code
+);
