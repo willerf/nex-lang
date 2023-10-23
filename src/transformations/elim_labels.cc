@@ -34,7 +34,7 @@ elim_labels(std::vector<std::shared_ptr<Code>> program) {
             address += 4;
         }
     }
-    
+
     std::vector<std::shared_ptr<Code>> result;
     uint32_t location = 0;
     for (auto& code : program) {
@@ -51,7 +51,10 @@ elim_labels(std::vector<std::shared_ptr<Code>> program) {
                 result.push_back(make_word(symbol_table.at(use_label->label)));
             } else {
                 std::cerr << "Undefined label error for UseLabel!" << std::endl;
-                std::cerr << ((use_label && use_label->label) ? use_label->label->name : "Invalid label!") << std::endl;
+                std::cerr
+                    << ((use_label && use_label->label) ? use_label->label->name
+                                                        : "Invalid label!")
+                    << std::endl;
                 exit(1);
             }
         } else if (std::shared_ptr<BeqLabel> beq_label = std::dynamic_pointer_cast<BeqLabel>(code)) {
@@ -66,7 +69,10 @@ elim_labels(std::vector<std::shared_ptr<Code>> program) {
                 ));
             } else {
                 std::cerr << "Undefined label error for BeqLabel!" << std::endl;
-                std::cerr << ((beq_label && beq_label->label) ? beq_label->label->name : "Invalid label!") << std::endl;
+                std::cerr
+                    << ((beq_label && beq_label->label) ? beq_label->label->name
+                                                        : "Invalid label!")
+                    << std::endl;
                 exit(1);
             }
         } else if (std::shared_ptr<BneLabel> bne_label = std::dynamic_pointer_cast<BneLabel>(code)) {
@@ -81,7 +87,10 @@ elim_labels(std::vector<std::shared_ptr<Code>> program) {
                 ));
             } else {
                 std::cerr << "Undefined label error for BneLabel!" << std::endl;
-                std::cerr << ((bne_label && bne_label->label) ? bne_label->label->name : "Invalid label!") << std::endl;
+                std::cerr
+                    << ((bne_label && bne_label->label) ? bne_label->label->name
+                                                        : "Invalid label!")
+                    << std::endl;
                 exit(1);
             }
         } else {

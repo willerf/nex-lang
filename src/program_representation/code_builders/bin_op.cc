@@ -24,5 +24,3 @@ std::shared_ptr<Code> bin_op(
         )
     );
 }
-
-

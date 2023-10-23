@@ -1,10 +1,11 @@
 
 #include "comparators.h"
-#include "reg.h"
+
 #include "assembly.h"
-#include "block.h"
 #include "beq_label.h"
+#include "block.h"
 #include "bne_label.h"
+#include "reg.h"
 
 std::shared_ptr<Code> eq_cmp(std::shared_ptr<Label> label) {
     return make_bne(Reg::Scratch, Reg::Result, label);

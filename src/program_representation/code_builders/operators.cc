@@ -1,9 +1,9 @@
 
 #include "operators.h"
 
-#include "reg.h"
 #include "assembly.h"
 #include "block.h"
+#include "reg.h"
 
 std::shared_ptr<Code> op::plus() {
     return make_add(Reg::Result, Reg::Scratch, Reg::Result);

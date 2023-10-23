@@ -4,6 +4,7 @@
 #include "block.h"
 #include "bne_label.h"
 #include "chunk.h"
+#include "comparators.h"
 #include "define_label.h"
 #include "elim_if_stmts.h"
 #include "elim_labels.h"
@@ -20,7 +21,6 @@
 #include "variable.h"
 #include "word.h"
 #include "write_file.h"
-#include "comparators.h"
 
 const uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
 

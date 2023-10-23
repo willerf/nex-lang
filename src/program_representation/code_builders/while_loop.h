@@ -14,5 +14,3 @@ std::shared_ptr<Code> make_while(
     std::shared_ptr<Code> e2,
     std::shared_ptr<Code> body
 );
-
-

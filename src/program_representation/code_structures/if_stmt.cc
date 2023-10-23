@@ -39,5 +39,3 @@ std::shared_ptr<Code> make_if(
         elses
     );
 }
-
-
