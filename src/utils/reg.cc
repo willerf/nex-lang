@@ -1,6 +1,8 @@
 
 #include "reg.h"
 
+#include "assembly.h"
+
 std::string to_string(Reg reg) {
     std::string result;
 

@@ -7,7 +7,11 @@ add_library(compiler_lib STATIC
     src/memory_management/chunk.cc
     src/memory_management/stack.cc
     src/program_representation/assembly.cc
-    src/program_representation/bin_op.cc
+    src/program_representation/pseudo_assembly.cc
+    src/program_representation/code_builders/bin_op.cc
+    src/program_representation/code_builders/comparators.cc
+    src/program_representation/code_builders/operators.cc
+    src/program_representation/code_builders/while_loop.cc
     src/program_representation/code_structures/block.cc
     src/program_representation/code_structures/beq_label.cc
     src/program_representation/code_structures/bne_label.cc
@@ -35,6 +39,7 @@ target_include_directories(compiler_lib PUBLIC
     src/memory_management
     src/program_representation
     src/program_representation/code_structures
+    src/program_representation/code_builders
     src/transformations
     src/utils
 )

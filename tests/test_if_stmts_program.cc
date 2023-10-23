@@ -1,4 +1,8 @@
 
+
+#include <catch2/catch_test_macros.hpp>
+#include <catch2/matchers/catch_matchers_vector.hpp>
+
 #include "assembly.h"
 #include "beq_label.h"
 #include "block.h"
@@ -22,15 +26,20 @@
 #include "word.h"
 #include "write_file.h"
 
-const uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
+static uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
+static std::string emulator_path(EMULATOR_PATH);
+static std::string file_name("test_if_stmts.bin");
 
-int main() {
+TEST_CASE("Test if statements program", "[programs]") {
     std::shared_ptr<Variable> var1 =
         std::make_shared<Variable>("test variable1");
     std::shared_ptr<Variable> var2 =
         std::make_shared<Variable>("test variable2");
     std::shared_ptr<Variable> var3 =
         std::make_shared<Variable>("test variable3");
+
+    const uint32_t equal_val = 17;
+    const uint32_t not_equal_val = 23;
 
     auto program = make_scope(
         {var1, var2, var3},
@@ -43,12 +52,12 @@ int main() {
                  make_read(Reg::Result, var2),
                  make_block(
                      {make_lis(Reg::Scratch),
-                      make_word(83),
+                      make_word(equal_val),
                       make_write(var3, Reg::Scratch)}
                  ),
                  make_block(
                      {make_lis(Reg::Scratch),
-                      make_word(87),
+                      make_word(not_equal_val),
                       make_write(var3, Reg::Scratch)}
                  )
              ),
@@ -56,11 +65,8 @@ int main() {
         )
     );
 
-    Print p;
-    program->accept(p);
     ElimIfStmts elim_if_stmts;
     auto program2 = program->accept(elim_if_stmts);
-    program2->accept(p);
 
     ElimScopes elim_scopes;
     auto program3 = program2->accept(elim_scopes);
@@ -87,7 +93,19 @@ int main() {
 
     auto program7 = elim_labels(program6);
 
-    write_file("test_write_file.bin", program7);
+    write_file(file_name, program7);
 
-    return 0;
+    std::string emulate = emulator_path + " " + file_name + " ";
+
+    int32_t status = std::system((emulate + "5 10").c_str());
+    REQUIRE(WIFEXITED(status));
+    REQUIRE(WEXITSTATUS(status) == not_equal_val);
+
+    status = std::system((emulate + "14 14").c_str());
+    REQUIRE(WIFEXITED(status));
+    REQUIRE(WEXITSTATUS(status) == equal_val);
+
+    status = std::system((emulate + "17 12").c_str());
+    REQUIRE(WIFEXITED(status));
+    REQUIRE(WEXITSTATUS(status) == not_equal_val);
 }

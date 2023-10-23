@@ -1,13 +1,7 @@
 
-#include "assembly.h"
-#include "block.h"
-#include "code.h"
+#pragma once
 
-std::shared_ptr<Code> bin_op(
-    std::shared_ptr<Code> e1,
-    std::shared_ptr<Code> op,
-    std::shared_ptr<Code> e2
-);
+#include "code.h"
 
 namespace op {
 std::shared_ptr<Code> plus();

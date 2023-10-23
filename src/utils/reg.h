@@ -1,9 +1,11 @@
 
-#ifndef REG_H
-#define REG_H
+#pragma once
 
 #include <iostream>
+#include <memory>
 #include <string>
+
+#include "code.h"
 
 enum class Reg {
     Zero = 0,
@@ -24,5 +26,3 @@ enum class Reg {
 
 std::string to_string(Reg);
 std::ostream& operator<<(std::ostream&, const Reg);
-
-#endif
