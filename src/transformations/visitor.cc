@@ -10,6 +10,7 @@
 #include "use_label.h"
 #include "var_access.h"
 #include "word.h"
+#include "call.h"
 
 template<>
 void Visitor<void>::visit(std::shared_ptr<Block> code) {
@@ -61,6 +62,15 @@ void Visitor<void>::visit(std::shared_ptr<IfStmt> code) {
     code->thens->accept(*this);
     code->elses->accept(*this);
 }
+
+template<>
+void Visitor<void>::visit(std::shared_ptr<Call> code) {
+    for (auto arg : code->arguments) {
+        arg->accept(*this);
+    }
+}
+
+
 
 template<>
 std::shared_ptr<Code>
@@ -124,5 +134,18 @@ Visitor<std::shared_ptr<Code>>::visit(std::shared_ptr<IfStmt> code) {
         code->e2->accept(*this),
         code->thens->accept(*this),
         code->elses->accept(*this)
+    );
+}
+
+template<>
+std::shared_ptr<Code>
+Visitor<std::shared_ptr<Code>>::visit(std::shared_ptr<Call> code) {
+    std::vector<std::shared_ptr<Code>> arguments;
+    for (auto arg : code->arguments) {
+        arguments.push_back(arg->accept(*this));
+    }
+    return std::make_shared<Call>(
+        code->procedure,
+        arguments
     );
 }

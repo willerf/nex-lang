@@ -13,6 +13,7 @@ struct UseLabel;
 struct VarAccess;
 struct Scope;
 struct IfStmt;
+struct Call;
 
 template<typename T>
 class Visitor {
@@ -27,6 +28,7 @@ class Visitor {
     virtual T visit(std::shared_ptr<VarAccess>);
     virtual T visit(std::shared_ptr<Scope>);
     virtual T visit(std::shared_ptr<IfStmt>);
+    virtual T visit(std::shared_ptr<Call>);
 
     virtual ~Visitor() {}
 };

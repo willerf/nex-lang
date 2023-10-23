@@ -18,15 +18,18 @@ add_library(compiler_lib STATIC
     src/program_representation/code_structures/define_label.cc
     src/program_representation/code_structures/if_stmt.cc
     src/program_representation/code_structures/scope.cc
+    src/program_representation/code_structures/call.cc
     src/program_representation/code_structures/use_label.cc
     src/program_representation/code_structures/var_access.cc
     src/program_representation/code_structures/word.cc
     src/program_representation/label.cc
     src/program_representation/variable.cc
+    src/program_representation/procedure.cc
     src/transformations/elim_if_stmts.cc
     src/transformations/elim_labels.cc
     src/transformations/elim_scopes.cc
     src/transformations/elim_vars.cc
+    src/transformations/elim_calls.cc
     src/transformations/flatten.cc
     src/transformations/print.cc
     src/transformations/visitor.cc

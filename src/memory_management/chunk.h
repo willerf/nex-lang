@@ -8,10 +8,10 @@
 #include "variable.h"
 
 class Chunk {
-    std::vector<std::shared_ptr<Variable>> variables;
     uint32_t get_offset(std::shared_ptr<Variable>& variable);
 
   public:
+    std::vector<std::shared_ptr<Variable>> variables;
     const uint32_t words;
     const uint32_t bytes;
     explicit Chunk(std::vector<std::shared_ptr<Variable>> variables);

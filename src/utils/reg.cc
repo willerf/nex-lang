@@ -25,6 +25,9 @@ std::string to_string(Reg reg) {
         case Reg::SavedParamPtr:
             result = "SavedParamPtr";
             break;
+         case Reg::Scratch2:
+            result = "Scratch2";
+            break;
         case Reg::CopyChunkScratch:
             result = "CopyChunkScratch";
             break;

@@ -14,6 +14,7 @@ enum class Reg {
     Result = 3,
     Scratch = 4,
     SavedParamPtr = 5,
+    Scratch2 = 6,
     CopyChunkScratch = 7,
     TargetPC = 8,
     ScratchPtrForGC = 9,
