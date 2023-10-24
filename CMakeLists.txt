@@ -29,11 +29,13 @@ add_library(compiler_lib STATIC
     src/transformations/elim_labels.cc
     src/transformations/elim_scopes.cc
     src/transformations/elim_vars.cc
+    src/transformations/elim_vars_proc.cc
     src/transformations/elim_calls.cc
     src/transformations/flatten.cc
     src/transformations/print.cc
     src/transformations/visitor.cc
     src/transformations/write_file.cc
+    src/transformations/entry_exit.cc
     src/utils/reg.cc
 )
 

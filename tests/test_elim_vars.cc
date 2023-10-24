@@ -10,7 +10,7 @@
 #include "var_access.h"
 #include "variable.h"
 #include "word.h"
-#include "word_to_uint.h"
+#include "utils.h"
 
 TEST_CASE("Simple test read write variable", "[vars]") {
     auto var1 = std::make_shared<Variable>("var1");
@@ -23,7 +23,8 @@ TEST_CASE("Simple test read write variable", "[vars]") {
         make_write(var2, r2),
     });
 
-    Chunk frame {{var1, var2}};
+    std::vector<std::shared_ptr<Variable>> all_vars = {var1, var2};
+    std::shared_ptr<Chunk> frame = std::make_shared<Chunk>(all_vars);
     ElimVars elim_vars {frame};
     auto program2 = program1->accept(elim_vars);
 

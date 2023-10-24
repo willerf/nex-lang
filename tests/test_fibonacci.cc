@@ -120,7 +120,7 @@ TEST_CASE("Test fibonacci program", "[programs]") {
 
     ElimScopes elim_scopes;
     auto program3 = program2->accept(elim_scopes);
-    auto chunk = Chunk {elim_scopes.get()};
+    auto chunk = std::make_shared<Chunk>(elim_scopes.get());
     ElimVars elim_vars(chunk);
 
     std::shared_ptr<Code> program4 = program3->accept(elim_vars);

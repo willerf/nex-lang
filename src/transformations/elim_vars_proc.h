@@ -4,11 +4,12 @@
 #include "chunk.h"
 #include "visitor.h"
 
-class ElimVars: public Visitor<std::shared_ptr<Code>> {
+class ElimVarsProc: public Visitor<std::shared_ptr<Code>> {
     std::shared_ptr<Chunk> frame;
-
+    std::shared_ptr<Chunk> param_chunk;
+    std::shared_ptr<Variable> param_ptr;
   public:
-    ElimVars(std::shared_ptr<Chunk> frame);
+    ElimVarsProc(std::shared_ptr<Chunk> frame, std::shared_ptr<Chunk> param_chunk, std::shared_ptr<Variable> param_ptr);
     std::shared_ptr<Code> visit(std::shared_ptr<Code>) override;
     std::shared_ptr<Code> visit(std::shared_ptr<Block>) override;
     std::shared_ptr<Code> visit(std::shared_ptr<VarAccess>) override;

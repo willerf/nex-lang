@@ -11,7 +11,7 @@
 #include "reg.h"
 #include "use_label.h"
 #include "word.h"
-#include "word_to_uint.h"
+#include "utils.h"
 
 TEST_CASE("Simple test use label", "[labels]") {
     auto label = std::make_shared<Label>("label1");

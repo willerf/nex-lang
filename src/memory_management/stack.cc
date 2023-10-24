@@ -6,13 +6,13 @@
 #include "reg.h"
 #include "word.h"
 
-std::shared_ptr<Code> stack::allocate(Chunk chunk) {
+std::shared_ptr<Code> stack::allocate(std::shared_ptr<Chunk> chunk) {
     std::vector<std::shared_ptr<Code>> result = {
         make_lis(Reg::Scratch),
-        make_word(chunk.bytes),
+        make_word(chunk->bytes),
         make_sub(Reg::StackPtr, Reg::StackPtr, Reg::Scratch),
         make_add(Reg::Result, Reg::StackPtr, Reg::Zero),
-        chunk.initialize()};
+        chunk->initialize()};
     return make_block(result);
 }
 

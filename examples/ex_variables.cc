@@ -26,7 +26,7 @@ int main() {
     std::shared_ptr<Variable> var2 =
         std::make_shared<Variable>("test variable2");
 
-    Chunk chunk(std::vector<std::shared_ptr<Variable>> {var1, var2});
+    std::shared_ptr<Chunk> chunk = std::make_shared<Chunk>(std::vector<std::shared_ptr<Variable>> {var1, var2});
 
     std::shared_ptr<Code> program =
         make_block(std::vector<std::shared_ptr<Code>> {

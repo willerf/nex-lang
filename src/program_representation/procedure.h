@@ -16,6 +16,6 @@ struct Procedure {
     std::shared_ptr<Variable> saved_pc;
     std::shared_ptr<Label> label;
     std::shared_ptr<Code> code;
-    explicit Procedure(std::string name, std::vector<std::shared_ptr<Variable>> parameters);
+    Procedure(std::string name, std::vector<std::shared_ptr<Variable>> parameters);
 };
 
