@@ -25,9 +25,9 @@
 #include "variable.h"
 #include "word.h"
 #include "write_file.h"
+#include "utils.h"
 
 static uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
-static std::string emulator_path(EMULATOR_PATH);
 static std::string file_name("test_if_stmts.bin");
 
 TEST_CASE("Test if statements program", "[programs]") {
@@ -93,19 +93,7 @@ TEST_CASE("Test if statements program", "[programs]") {
 
     auto program7 = elim_labels(program6);
 
-    write_file(file_name, program7);
-
-    std::string emulate = emulator_path + " " + file_name + " ";
-
-    int32_t status = std::system((emulate + "5 10").c_str());
-    REQUIRE(WIFEXITED(status));
-    REQUIRE(WEXITSTATUS(status) == not_equal_val);
-
-    status = std::system((emulate + "14 14").c_str());
-    REQUIRE(WIFEXITED(status));
-    REQUIRE(WEXITSTATUS(status) == equal_val);
-
-    status = std::system((emulate + "17 12").c_str());
-    REQUIRE(WIFEXITED(status));
-    REQUIRE(WEXITSTATUS(status) == not_equal_val);
+    REQUIRE(stoi(emulate(file_name, 5, 10)) == not_equal_val);
+    REQUIRE(stoi(emulate(file_name, 12, 12)) == equal_val);
+    REQUIRE(stoi(emulate(file_name, 17, 12)) == not_equal_val);
 }

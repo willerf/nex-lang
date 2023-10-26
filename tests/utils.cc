@@ -20,7 +20,7 @@ std::string emulate(std::string file_name, int32_t input1, int32_t input2) {
     const std::string emulator_path(EMULATOR_PATH);
     const std::string output_file("test_output.txt");
 
-    std::system((emulator_path + " " + file_name + std::to_string(input1) + " " + std::to_string(input2) + " > " + output_file).c_str());
+    std::system((emulator_path + " " + file_name + " " + std::to_string(input1) + " " + std::to_string(input2) + " > " + output_file).c_str());
     
     std::ifstream file(output_file);
     if (!file) {

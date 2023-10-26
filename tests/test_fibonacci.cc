@@ -28,9 +28,9 @@
 #include "while_loop.h"
 #include "word.h"
 #include "write_file.h"
+#include "utils.h"
 
 static uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
-static std::string emulator_path(EMULATOR_PATH);
 static std::string file_name("test_fibonacci.bin");
 
 // representation of test program
@@ -142,14 +142,10 @@ TEST_CASE("Test fibonacci program", "[programs]") {
     program6.push_back(make_jr(Reg::TargetPC));
 
     auto program7 = elim_labels(program6);
-
-    write_file(file_name, program7);
-
-    std::string emulate = emulator_path + " " + file_name + " ";
+    
+    write_file(file_name, program7); 
 
     for (auto input : {0, 1, 2, 3, 5, 10}) {
-        int32_t status = std::system((emulate + std::to_string(input) + " 0").c_str());
-        REQUIRE(WIFEXITED(status));
-        REQUIRE(WEXITSTATUS(status) == sample_fibonacci(input));
+        REQUIRE(stoi(emulate(file_name, input, 0)) == sample_fibonacci(input));
     }
 }
