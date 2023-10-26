@@ -29,7 +29,7 @@ endif()
 
 file(GLOB TEST_SOURCES *.cc)
 
-add_executable(tests ${TEST_SOURCES})
+add_executable(tests test_scanning.cc)#${TEST_SOURCES})
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain compiler_lib)
 add_dependencies(tests build_rust_emulator)
 

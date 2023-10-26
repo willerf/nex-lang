@@ -36,6 +36,7 @@ add_library(compiler_lib STATIC
     src/transformations/visitor.cc
     src/transformations/write_file.cc
     src/transformations/entry_exit.cc
+    src/lex_parse/scanning.cc
     src/utils/reg.cc
 )
 
@@ -46,6 +47,7 @@ target_include_directories(compiler_lib PUBLIC
     src/program_representation/code_structures
     src/program_representation/code_builders
     src/transformations
+    src/lex_parse
     src/utils
 )
 
