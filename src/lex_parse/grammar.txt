@@ -1,0 +1,46 @@
+S BOF fns EOF
+fns fn fns
+fns fn
+fn FN ID LPAREN optparams RPAREN ARROW type LBRACE stmts RBRACE
+optparams params
+optparams
+params vardef COMMA params
+params vardef
+vardef ID COLON type
+type I32
+stmts stmt stmts
+stmts
+stmt LET ID ASSIGN expr SEMI
+stmt IF LPAREN expr RPAREN LBRACE stmts RBRACE ELSE LBRACE stmts RBRACE
+stmt RETURN expr SEMI
+expr exprp1
+exprp1 exprp2
+exprp1 exprp1 OR exprp2
+exprp2 exprp3
+exprp2 exprp2 AND exprp3
+exprp3 exprp4
+exprp3 exprp3 EQ exprp4
+exprp3 exprp3 NE exprp4
+exprp4 exprp5
+exprp4 exprp4 LT exprp5
+exprp4 exprp4 GT exprp5
+exprp4 exprp4 LE exprp5
+exprp4 exprp4 GE exprp5
+exprp5 exprp6
+exprp5 exprp5 PLUS exprp6
+exprp5 exprp5 MINUS exprp6
+exprp6 exprp7
+exprp6 exprp6 TIMES exprp7
+exprp6 exprp6 SLASH exprp7
+exprp6 exprp6 PCT exprp7
+exprp7 exprp8
+exprp7 NOT exprp8
+exprp8 ID
+exprp8 NUM
+exprp8 LPAREN expr RPAREN
+exprp8 exprp8 LPAREN optargs RPAREN
+optargs args
+optargs
+args expr COMMA args
+args expr
+

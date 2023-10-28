@@ -37,13 +37,13 @@ TEST_CASE("Test simple scanning", "[scanning]") {
         .transition = transition_func};
     std::vector<Token> tokens;
 
-    tokens = scan("cab", dfa);
+    tokens = maximal_munch_scan("cab", dfa);
     REQUIRE_THAT(
         tokens,
         Catch::Matchers::Equals(std::vector<Token> {Token {"CAB", "cab"}})
     );
 
-    tokens = scan("cabcab", dfa);
+    tokens = maximal_munch_scan("cabcab", dfa);
     REQUIRE_THAT(
         tokens,
         Catch::Matchers::Equals(
@@ -51,7 +51,7 @@ TEST_CASE("Test simple scanning", "[scanning]") {
         )
     );
 
-    tokens = scan("cabbad", dfa);
+    tokens = maximal_munch_scan("cabbad", dfa);
     REQUIRE_THAT(
         tokens,
         Catch::Matchers::Equals(
@@ -59,10 +59,10 @@ TEST_CASE("Test simple scanning", "[scanning]") {
         )
     );
 
-    tokens = scan("", dfa);
+    tokens = maximal_munch_scan("", dfa);
     REQUIRE_THAT(tokens, Catch::Matchers::Equals(std::vector<Token> {}));
 
-    tokens = scan("cacacabbadbadca", dfa);
+    tokens = maximal_munch_scan("cacacabbadbadca", dfa);
     REQUIRE_THAT(
         tokens,
         Catch::Matchers::Equals(std::vector<Token> {

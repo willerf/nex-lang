@@ -1,23 +1,10 @@
-
 #include "lang.h"
 
-static std::set<std::string> to_id_states = {
-    "L",
-    "LE",
-    "LET",
-    "F",
-    "FN",
-    "I",
-    "IF",
-    "E",
-    "EL",
-    "ELS",
-    "ELSE",
-    "I3",
-    "I32",
-    "ID"};
+#include <iostream>
 
-static std::map<char, std::string> symbols = {
+#include "scanning.h"
+
+static std::map<char, State> one_char_symbols = {
     {' ', "WHITESPACE"},  {'\t', "WHITESPACE"}, {'\n', "WHITESPACE"},
     {'\r', "WHITESPACE"}, {'0', "ZERO"},        {'<', "LT"},
     {'>', "GT"},          {'!', "NOT"},         {'=', "ASSIGN"},
@@ -25,74 +12,33 @@ static std::map<char, std::string> symbols = {
     {'/', "SLASH"},       {'%', "PCT"},         {'(', "LPAREN"},
     {')', "RPAREN"},      {'{', "LBRACE"},      {'}', "RBRACE"},
     {',', "COMMA"},       {';', "SEMI"},        {':', "COLON"},
+    {'|', "PIPE"},        {'&', "AMPERSAND"},
 };
 
-static std::map<std::string, std::string> two_char_symbols = {
+static std::map<std::string, State> two_char_symbols = {
     {"==", "EQ"},
     {"!=", "NE"},
     {"<=", "LE"},
     {">=", "GE"},
+    {"||", "OR"},
+    {"&&", "AND"},
     {"->", "ARROW"},
     {"//", "COMMENT"},
 };
 
 static std::optional<State> transition_func(State curr_state, char c) {
     if (curr_state == "start") {
-        if (symbols.count(c)) {
-            return symbols[c];
-        }
-
-        switch (c) {
-            case 'l':
-                return "L";
-            case 'f':
-                return "F";
-            case 'i':
-                return "I";
-            case 'e':
-                return "E";
+        if (one_char_symbols.count(c)) {
+            return one_char_symbols[c];
         }
 
         if (isalpha(c)) {
             return "ID";
         }
-    }
 
-    if (curr_state == "L" && c == 'e') {
-        return "LE";
-    }
-
-    if (curr_state == "LE" && c == 't') {
-        return "LET";
-    }
-
-    if (curr_state == "F" && c == 'n') {
-        return "FN";
-    }
-
-    if (curr_state == "I") {
-        switch (c) {
-            case 'f':
-                return "IF";
-            case '3':
-                return "I3";
+        if (isdigit(c)) {
+            return "NUM";
         }
-    }
-
-    if (curr_state == "E" && c == 'l') {
-        return "EL";
-    }
-
-    if (curr_state == "EL" && c == 's') {
-        return "ELS";
-    }
-
-    if (curr_state == "ELS" && c == 'e') {
-        return "ELSE";
-    }
-
-    if (curr_state == "I3" && c == '2') {
-        return "I32";
     }
 
     if (curr_state == "ASSIGN" && c == '=') {
@@ -111,6 +57,14 @@ static std::optional<State> transition_func(State curr_state, char c) {
         return "GE";
     }
 
+    if (curr_state == "PIPE" && c == '|') {
+        return "OR";
+    }
+
+    if (curr_state == "AMPERSAND" && c == '&') {
+        return "AND";
+    }
+
     if (curr_state == "MINUS" && c == '>') {
         return "ARROW";
     }
@@ -119,8 +73,15 @@ static std::optional<State> transition_func(State curr_state, char c) {
         return "COMMENT";
     }
 
-    // if all keywords fail
-    if (to_id_states.count(curr_state) && std::isalnum(c)) {
+    if (curr_state == "COMMENT" && (c != '\n' || c != '\r')) {
+        return "COMMENT";
+    }
+
+    if (curr_state == "NUM" && isdigit(c)) {
+        return "NUM";
+    }
+
+    if (curr_state == "ID" && std::isalnum(c)) {
         return "ID";
     }
 
@@ -131,27 +92,25 @@ DFA make_dfa() {
     std::string alphabet_str =
         "<>=+-*/%(){},;:! \t\n\rabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     std::set<char> alphabet(alphabet_str.begin(), alphabet_str.end());
-    std::string init_state = "start";
-    std::set<std::string> valid_states = {
+    State init_state = "start";
+    std::set<State> valid_states = {
         "start",
     };
 
-    std::set<std::string> accepting = {
-        "LET",
-        "FN",
-        "IF",
-        "ELSE",
-        "I32",
+    std::set<State> accepting = {
         "ID",
-        "ARROW",
+        "NUM",
     };
 
-    for (const auto& [key, value] : symbols) {
+    for (const auto& [key, value] : one_char_symbols) {
+        accepting.insert(value);
+    }
+
+    for (const auto& [key, value] : two_char_symbols) {
         accepting.insert(value);
     }
 
     valid_states.insert(accepting.begin(), accepting.end());
-    valid_states.insert(to_id_states.begin(), to_id_states.end());
 
     return DFA {
         .alphabet = alphabet,
@@ -161,3 +120,64 @@ DFA make_dfa() {
         .transition = transition_func,
     };
 }
+
+static std::map<std::string, State> keywords = {
+    {"fn", "FN"},
+    {"let", "LET"},
+    {"if", "IF"},
+    {"else", "ELSE"},
+    {"return", "RET"},
+    {"i32", "I32"},
+};
+
+std::vector<Token> scan(std::string_view input) {
+    DFA dfa = make_dfa();
+
+    std::vector<Token> tokens = maximal_munch_scan(input, dfa);
+    for (Token& token : tokens) {
+        if (keywords.count(token.lexeme)) {
+            token.kind = keywords[token.lexeme];
+        } else if (token.kind == "ZERO") {
+            token.kind = "NUM";
+        }
+    }
+
+    std::set<State> sep_set1 = {"FN", "LET", "IF", "ELSE", "I32", "ID", "NUM"};
+    std::set<State> sep_set2 =
+        {"EQ", "NE", "LT", "LE", "GT", "GE", "OR", "AND", "ASSIGN", "ARROW"};
+    bool prev_set1 = false;
+    bool prev_set2 = false;
+
+    std::vector<Token> result;
+    for (Token& token : tokens) {
+        if (sep_set1.count(token.kind)) {
+            if (prev_set1) {
+                std::cerr << "Invalid consecutive keywords!";
+                exit(1);
+            }
+            prev_set1 = true;
+        } else {
+            prev_set1 = false;
+        }
+
+        if (sep_set2.count(token.kind)) {
+            if (prev_set2) {
+                std::cerr << "Invalid consecutive symbols!";
+                exit(1);
+            }
+            prev_set2 = true;
+        } else {
+            prev_set2 = false;
+        }
+
+        if (token.kind != "WHITESPACE" && token.kind != "COMMENT") {
+            result.push_back(token);
+        }
+    }
+
+    result.insert(result.begin(), Token {"BOF", ""});
+    result.push_back(Token {"EOF", ""});
+
+    return result;
+}
+

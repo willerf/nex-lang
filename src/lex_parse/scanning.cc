@@ -43,7 +43,7 @@ Token scan_one(std::string_view input, DFA& dfa) {
     }
 }
 
-std::vector<Token> scan(std::string_view input, DFA& dfa) {
+std::vector<Token> maximal_munch_scan(std::string_view input, DFA& dfa) {
     std::vector<Token> tokens;
     std::string_view rem = input;
     while (rem.length() > 0) {
