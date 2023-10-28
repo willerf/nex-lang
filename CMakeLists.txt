@@ -37,6 +37,8 @@ add_library(compiler_lib STATIC
     src/transformations/write_file.cc
     src/transformations/entry_exit.cc
     src/lex_parse/scanning.cc
+    src/lex_parse/token.cc
+    src/lex_parse/lang.cc
     src/utils/reg.cc
 )
 

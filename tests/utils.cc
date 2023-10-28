@@ -1,10 +1,10 @@
 
 #include "utils.h"
 
-#include <string>
-#include <sstream>
 #include <fstream>
 #include <iostream>
+#include <sstream>
+#include <string>
 
 std::vector<uint32_t> word_to_uint(std::vector<std::shared_ptr<Code>> program) {
     std::vector<uint32_t> result;
@@ -20,8 +20,10 @@ std::string emulate(std::string file_name, int32_t input1, int32_t input2) {
     const std::string emulator_path(EMULATOR_PATH);
     const std::string output_file("test_output.txt");
 
-    std::system((emulator_path + " " + file_name + " " + std::to_string(input1) + " " + std::to_string(input2) + " > " + output_file).c_str());
-    
+    std::system((emulator_path + " " + file_name + " " + std::to_string(input1)
+                 + " " + std::to_string(input2) + " > " + output_file)
+                    .c_str());
+
     std::ifstream file(output_file);
     if (!file) {
         std::cerr << "Output file not found!" << std::endl;
@@ -31,4 +33,3 @@ std::string emulate(std::string file_name, int32_t input1, int32_t input2) {
     ss << file.rdbuf();
     return ss.str();
 }
-

@@ -7,10 +7,10 @@
 #include "elim_vars.h"
 #include "flatten.h"
 #include "reg.h"
+#include "utils.h"
 #include "var_access.h"
 #include "variable.h"
 #include "word.h"
-#include "utils.h"
 
 TEST_CASE("Simple test read write variable", "[vars]") {
     auto var1 = std::make_shared<Variable>("var1");

@@ -5,12 +5,11 @@
 
 Token scan_one(std::string_view input, DFA& dfa) {
     State curr_state = dfa.init_state;
-    std::optional<std::pair<State, std::string_view>> last_accepting = std::nullopt;
+    std::optional<std::pair<State, std::string_view>> last_accepting =
+        std::nullopt;
 
     for (size_t i = 0; i < input.length(); i++) {
-        std::cout << "debug: " << i << std::endl;
         char c = input.at(i);
-        std::cout << "debug: " << c << std::endl;
         std::optional<State> next_state = std::nullopt;
         if (dfa.alphabet.count(c)) {
             next_state = dfa.transition(curr_state, c);
@@ -19,18 +18,16 @@ Token scan_one(std::string_view input, DFA& dfa) {
         if (next_state) {
             curr_state = next_state.value();
             if (dfa.accepting.count(curr_state)) {
-                last_accepting = {curr_state, input.substr(0, i+1)};
+                last_accepting = {curr_state, input.substr(0, i + 1)};
             }
-        }
-        else {
+        } else {
             if (last_accepting) {
                 return Token {
                     last_accepting.value().first,
-                    std::string(last_accepting.value().second)
-                };
-            }
-            else {
-                std::cerr << "Failed to scan!" << std::endl;
+                    std::string(last_accepting.value().second)};
+            } else {
+                std::cerr << "Failed to scan, no token found!" << std::endl;
+                std::cerr << input << std::endl;
                 exit(1);
             }
         }
@@ -38,11 +35,10 @@ Token scan_one(std::string_view input, DFA& dfa) {
     if (last_accepting) {
         return Token {
             last_accepting.value().first,
-            std::string(last_accepting.value().second)
-        };
-    }
-    else {
-        std::cerr << "Failed to scan!" << std::endl;
+            std::string(last_accepting.value().second)};
+    } else {
+        std::cerr << "Failed to scan, no token found!" << std::endl;
+        std::cerr << input << std::endl;
         exit(1);
     }
 }
@@ -57,4 +53,3 @@ std::vector<Token> scan(std::string_view input, DFA& dfa) {
     }
     return tokens;
 }
-

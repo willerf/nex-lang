@@ -1,10 +1,10 @@
 
 #pragma once
 
-#include <set>
-#include <map>
 #include <functional>
+#include <map>
 #include <optional>
+#include <set>
 #include <string>
 
 typedef std::string State;
@@ -16,4 +16,3 @@ struct DFA {
     std::set<State> accepting;
     std::function<std::optional<State>(State, char)> transition;
 };
-

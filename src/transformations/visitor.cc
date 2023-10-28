@@ -4,13 +4,13 @@
 #include "beq_label.h"
 #include "block.h"
 #include "bne_label.h"
+#include "call.h"
 #include "define_label.h"
 #include "if_stmt.h"
 #include "scope.h"
 #include "use_label.h"
 #include "var_access.h"
 #include "word.h"
-#include "call.h"
 
 template<>
 void Visitor<void>::visit(std::shared_ptr<Block> code) {
@@ -69,8 +69,6 @@ void Visitor<void>::visit(std::shared_ptr<Call> code) {
         arg->accept(*this);
     }
 }
-
-
 
 template<>
 std::shared_ptr<Code>
@@ -144,8 +142,5 @@ Visitor<std::shared_ptr<Code>>::visit(std::shared_ptr<Call> code) {
     for (auto arg : code->arguments) {
         arguments.push_back(arg->accept(*this));
     }
-    return std::make_shared<Call>(
-        code->procedure,
-        arguments
-    );
+    return std::make_shared<Call>(code->procedure, arguments);
 }

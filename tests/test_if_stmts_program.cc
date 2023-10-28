@@ -21,11 +21,11 @@
 #include "reg.h"
 #include "stack.h"
 #include "use_label.h"
+#include "utils.h"
 #include "var_access.h"
 #include "variable.h"
 #include "word.h"
 #include "write_file.h"
-#include "utils.h"
 
 static uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
 static std::string file_name("test_if_stmts.bin");
@@ -92,6 +92,8 @@ TEST_CASE("Test if statements program", "[programs]") {
     program6.push_back(make_jr(Reg::TargetPC));
 
     auto program7 = elim_labels(program6);
+
+    write_file(file_name, program7);
 
     REQUIRE(stoi(emulate(file_name, 5, 10)) == not_equal_val);
     REQUIRE(stoi(emulate(file_name, 12, 12)) == equal_val);

@@ -23,12 +23,12 @@
 #include "reg.h"
 #include "stack.h"
 #include "use_label.h"
+#include "utils.h"
 #include "var_access.h"
 #include "variable.h"
 #include "while_loop.h"
 #include "word.h"
 #include "write_file.h"
-#include "utils.h"
 
 static uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
 static std::string file_name("test_fibonacci.bin");
@@ -142,8 +142,8 @@ TEST_CASE("Test fibonacci program", "[programs]") {
     program6.push_back(make_jr(Reg::TargetPC));
 
     auto program7 = elim_labels(program6);
-    
-    write_file(file_name, program7); 
+
+    write_file(file_name, program7);
 
     for (auto input : {0, 1, 2, 3, 5, 10}) {
         REQUIRE(stoi(emulate(file_name, input, 0)) == sample_fibonacci(input));

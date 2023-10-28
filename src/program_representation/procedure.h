@@ -1,14 +1,14 @@
 
 #pragma once
 
-#include <vector>
 #include <memory>
+#include <vector>
 
-#include "variable.h"
-#include "label.h"
 #include "code.h"
+#include "label.h"
+#include "variable.h"
 
-struct Procedure { 
+struct Procedure {
     std::string name;
     std::vector<std::shared_ptr<Variable>> parameters;
     std::shared_ptr<Variable> param_ptr;
@@ -16,6 +16,8 @@ struct Procedure {
     std::shared_ptr<Variable> saved_pc;
     std::shared_ptr<Label> label;
     std::shared_ptr<Code> code;
-    Procedure(std::string name, std::vector<std::shared_ptr<Variable>> parameters);
+    Procedure(
+        std::string name,
+        std::vector<std::shared_ptr<Variable>> parameters
+    );
 };
-
