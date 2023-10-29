@@ -10,7 +10,7 @@ vardef ID COLON type
 type I32
 stmts stmt stmts
 stmts stmt
-stmt LET ID ASSIGN expr SEMI
+stmt LET vardef ASSIGN expr SEMI
 stmt ID ASSIGN expr SEMI
 stmt IF LPAREN expr RPAREN LBRACE stmts RBRACE ELSE LBRACE stmts RBRACE
 stmt RET expr SEMI

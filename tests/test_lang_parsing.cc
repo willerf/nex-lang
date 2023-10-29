@@ -12,7 +12,7 @@ TEST_CASE("Test parsing lang", "[parser]") {
 
     std::string input =
         "fn max(x: i32, y: i32) -> i32 {"
-        "   let result = 0;"
+        "   let result: i32 = 0;"
         "   if (x > y) {"
         "       result = x;"
         "   } else {"
@@ -22,7 +22,7 @@ TEST_CASE("Test parsing lang", "[parser]") {
         "}"
         ""
         "fn main() -> i32 {"
-        "   let z = max(5, 12);"
+        "   let z: i32 = max(5, 12);"
         "}";
     auto tokens = scan(input);
     auto ast_node = parse_cyk(tokens, grammar);

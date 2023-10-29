@@ -42,8 +42,6 @@ struct MemoHash {
 typedef std::optional<std::vector<ASTNode>> MemoValue;
 typedef std::unordered_map<MemoKey, MemoValue, MemoHash> MemoMap;
 
-uint64_t counter = 0;
-
 static std::optional<std::vector<ASTNode>> recur(
     std::span<State> lhs,
     int64_t from,
@@ -52,7 +50,6 @@ static std::optional<std::vector<ASTNode>> recur(
     Grammar& grammar,
     MemoMap& memo_map
 ) {
-    counter += 1;
     if (memo_map.count(MemoKey {lhs, from, length})) {
         return memo_map[MemoKey {lhs, from, length}];
     }
