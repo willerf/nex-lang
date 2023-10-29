@@ -7,6 +7,7 @@
 #include "call.h"
 #include "define_label.h"
 #include "if_stmt.h"
+#include "ret_stmt.h"
 #include "scope.h"
 #include "use_label.h"
 #include "var_access.h"
@@ -61,6 +62,11 @@ void Visitor<void>::visit(std::shared_ptr<IfStmt> code) {
     code->e2->accept(*this);
     code->thens->accept(*this);
     code->elses->accept(*this);
+}
+
+template<>
+void Visitor<void>::visit(std::shared_ptr<RetStmt> code) {
+    code->code->accept(*this);
 }
 
 template<>
@@ -133,6 +139,12 @@ Visitor<std::shared_ptr<Code>>::visit(std::shared_ptr<IfStmt> code) {
         code->thens->accept(*this),
         code->elses->accept(*this)
     );
+}
+
+template<>
+std::shared_ptr<Code>
+Visitor<std::shared_ptr<Code>>::visit(std::shared_ptr<RetStmt> code) {
+    return std::make_shared<RetStmt>(code->code->accept(*this));
 }
 
 template<>
