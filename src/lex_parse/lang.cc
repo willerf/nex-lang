@@ -1,10 +1,13 @@
 #include "lang.h"
 
-#include <fstream>
 #include <iostream>
 #include <sstream>
 
 #include "scanning.h"
+
+const char* grammar_file =
+#include "lang_grammar.txt"
+    ;
 
 static std::map<char, State> one_char_symbols = {
     {' ', "WHITESPACE"},  {'\t', "WHITESPACE"}, {'\n', "WHITESPACE"},
@@ -184,11 +187,8 @@ std::vector<Token> scan(std::string_view input) {
 }
 
 Grammar make_grammar() {
-    std::ifstream file_stream {"lang_grammar.txt"};
-    if (!file_stream.is_open()) {
-        std::cerr << "Failed to open grammar file!" << std::endl;
-        exit(1);
-    }
+    std::string file_string {grammar_file};
+    std::stringstream file_stream {file_string};
 
     std::vector<std::vector<std::string>> file;
     std::string raw_line;

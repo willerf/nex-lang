@@ -1,4 +1,4 @@
-s BOF fns EOF
+R"(s BOF fns EOF
 fns fn fns
 fns fn
 fn FN ID LPAREN optparams RPAREN ARROW type LBRACE stmts RBRACE
@@ -9,10 +9,11 @@ params vardef
 vardef ID COLON type
 type I32
 stmts stmt stmts
-stmts
+stmts stmt
 stmt LET ID ASSIGN expr SEMI
+stmt ID ASSIGN expr SEMI
 stmt IF LPAREN expr RPAREN LBRACE stmts RBRACE ELSE LBRACE stmts RBRACE
-stmt RETURN expr SEMI
+stmt RET expr SEMI
 expr exprp1
 exprp1 exprp2
 exprp1 exprp1 OR exprp2
@@ -42,5 +43,4 @@ exprp8 exprp8 LPAREN optargs RPAREN
 optargs args
 optargs
 args expr COMMA args
-args expr
-
+args expr)"

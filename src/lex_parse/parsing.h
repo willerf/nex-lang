@@ -8,4 +8,4 @@
 #include "grammar.h"
 #include "token.h"
 
-std::optional<ASTNode> parse_cyk(std::span<Token>& input, Grammar& grammar);
+std::optional<ASTNode> parse_cyk(std::span<Token> input, Grammar& grammar);

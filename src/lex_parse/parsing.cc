@@ -1,6 +1,7 @@
 
 #include "parsing.h"
 
+#include <iostream>
 #include <unordered_map>
 
 #include "span_hash.h"
@@ -8,8 +9,8 @@
 
 struct MemoKey {
     std::span<State> lhs;
-    size_t from;
-    size_t length;
+    int64_t from;
+    int64_t length;
 
     bool operator==(const MemoKey& other) const {
         return std::equal(
@@ -23,15 +24,15 @@ struct MemoKey {
 };
 
 struct MemoHash {
-    size_t operator()(const MemoKey& memo_key) const {
+    int64_t operator()(const MemoKey& memo_key) const {
         SpanHash<State> span_hasher;
-        std::hash<size_t> num_hasher;
+        std::hash<int64_t> num_hasher;
 
-        size_t h1 = span_hasher(memo_key.lhs);
-        size_t h2 = num_hasher(memo_key.from);
-        size_t h3 = num_hasher(memo_key.length);
+        int64_t h1 = span_hasher(memo_key.lhs);
+        int64_t h2 = num_hasher(memo_key.from);
+        int64_t h3 = num_hasher(memo_key.length);
 
-        size_t seed = h1;
+        int64_t seed = h1;
         seed ^= h2 + 0x9e3779b9 + (seed << 6) + (seed >> 2);
         seed ^= h3 + 0x9e3779b9 + (seed << 6) + (seed >> 2);
         return seed;
@@ -41,14 +42,17 @@ struct MemoHash {
 typedef std::optional<std::vector<ASTNode>> MemoValue;
 typedef std::unordered_map<MemoKey, MemoValue, MemoHash> MemoMap;
 
+uint64_t counter = 0;
+
 static std::optional<std::vector<ASTNode>> recur(
     std::span<State> lhs,
-    size_t from,
-    size_t length,
+    int64_t from,
+    int64_t length,
     std::span<Token>& input,
     Grammar& grammar,
     MemoMap& memo_map
 ) {
+    counter += 1;
     if (memo_map.count(MemoKey {lhs, from, length})) {
         return memo_map[MemoKey {lhs, from, length}];
     }
@@ -74,6 +78,7 @@ static std::optional<std::vector<ASTNode>> recur(
             if (sub_tree) {
                 std::vector<ASTNode> result = {ASTNode {input[from]}};
                 result.insert(result.end(), sub_tree->begin(), sub_tree->end());
+                return result;
             }
         }
     } else if (lhs.size() == 1 && grammar.non_terminals.count(lhs.front())) {
@@ -87,7 +92,7 @@ static std::optional<std::vector<ASTNode>> recur(
             }
         }
     } else {
-        for (size_t i = 0; i < length; i++) {
+        for (int64_t i = 0; i < length; i++) {
             auto sub_tree1 =
                 recur(lhs.subspan(0, 1), from, i, input, grammar, memo_map);
             memo_map[MemoKey {lhs.subspan(0, 1), from, i}] = sub_tree1;
@@ -117,7 +122,7 @@ static std::optional<std::vector<ASTNode>> recur(
     return std::nullopt;
 }
 
-std::optional<ASTNode> parse_cyk(std::span<Token>& input, Grammar& grammar) {
+std::optional<ASTNode> parse_cyk(std::span<Token> input, Grammar& grammar) {
     MemoMap memo_map;
     std::vector<State> lhs = {grammar.start};
     std::optional<std::vector<ASTNode>> result =
