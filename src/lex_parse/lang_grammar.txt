@@ -1,4 +1,4 @@
-S BOF fns EOF
+s BOF fns EOF
 fns fn fns
 fns fn
 fn FN ID LPAREN optparams RPAREN ARROW type LBRACE stmts RBRACE

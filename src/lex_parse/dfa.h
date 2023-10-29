@@ -7,7 +7,7 @@
 #include <set>
 #include <string>
 
-typedef std::string State;
+#include "state.h"
 
 struct DFA {
     std::set<char> alphabet;

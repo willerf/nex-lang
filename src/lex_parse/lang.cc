@@ -1,6 +1,8 @@
 #include "lang.h"
 
+#include <fstream>
 #include <iostream>
+#include <sstream>
 
 #include "scanning.h"
 
@@ -134,7 +136,7 @@ std::vector<Token> scan(std::string_view input) {
     DFA dfa = make_dfa();
 
     std::vector<Token> tokens = maximal_munch_scan(input, dfa);
-    for (Token& token : tokens) {
+    for (auto& token : tokens) {
         if (keywords.count(token.lexeme)) {
             token.kind = keywords[token.lexeme];
         } else if (token.kind == "ZERO") {
@@ -149,7 +151,7 @@ std::vector<Token> scan(std::string_view input) {
     bool prev_set2 = false;
 
     std::vector<Token> result;
-    for (Token& token : tokens) {
+    for (const auto& token : tokens) {
         if (sep_set1.count(token.kind)) {
             if (prev_set1) {
                 std::cerr << "Invalid consecutive keywords!";
@@ -181,3 +183,60 @@ std::vector<Token> scan(std::string_view input) {
     return result;
 }
 
+Grammar make_grammar() {
+    std::ifstream file_stream {"lang_grammar.txt"};
+    if (!file_stream.is_open()) {
+        std::cerr << "Failed to open grammar file!" << std::endl;
+        exit(1);
+    }
+
+    std::vector<std::vector<std::string>> file;
+    std::string raw_line;
+    while (getline(file_stream, raw_line)) {
+        std::stringstream ss {raw_line};
+        std::string word;
+        std::vector<std::string> words;
+        while (getline(ss, word, ' ')) {
+            if (word.length()) {
+                words.push_back(word);
+            }
+        }
+        if (words.size()) {
+            file.push_back(words);
+        }
+    }
+
+    std::map<State, std::vector<Production>> productions;
+    for (const auto& line : file) {
+        State lhs = line.at(0);
+        std::vector<State> rhs(line.begin() + 1, line.end());
+        if (!productions.count(lhs)) {
+            productions[lhs] = {};
+        }
+
+        productions[lhs].push_back(Production {lhs, rhs});
+    }
+
+    std::set<State> non_terminals;
+    std::set<State> terminals;
+    for (const auto& line : file) {
+        for (const auto& word : line) {
+            if (isupper(word.at(0))) {
+                terminals.insert(word);
+            } else if (islower(word.at(0))) {
+                non_terminals.insert(word);
+            } else {
+                std::cerr << "Grammar elements must start with letters!"
+                          << std::endl;
+                exit(1);
+            }
+        }
+    }
+
+    return Grammar {
+        .non_terminals = non_terminals,
+        .terminals = terminals,
+        .start = "s",
+        .productions = productions,
+    };
+}
