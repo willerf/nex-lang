@@ -9,7 +9,6 @@ add_library(compiler_lib STATIC
     src/program_representation/assembly.cc
     src/program_representation/pseudo_assembly.cc
     src/program_representation/code_builders/bin_op.cc
-    src/program_representation/code_builders/comparators.cc
     src/program_representation/code_builders/operators.cc
     src/program_representation/code_builders/while_loop.cc
     src/program_representation/code_structures/block.cc

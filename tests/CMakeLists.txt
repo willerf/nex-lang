@@ -27,7 +27,7 @@ if(NOT rust_emulator_POPULATED)
 endif()
 
 
-file(GLOB TEST_SOURCES test_generate_code.cc utils.cc)#*.cc)
+file(GLOB TEST_SOURCES *.cc)
 
 add_executable(tests ${TEST_SOURCES})
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain compiler_lib)

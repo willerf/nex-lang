@@ -8,7 +8,6 @@
 #include "block.h"
 #include "bne_label.h"
 #include "chunk.h"
-#include "comparators.h"
 #include "define_label.h"
 #include "elim_if_stmts.h"
 #include "elim_labels.h"
@@ -26,6 +25,7 @@
 #include "variable.h"
 #include "word.h"
 #include "write_file.h"
+#include "operators.h"
 
 static uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
 static std::string file_name("test_if_stmts.bin");
@@ -48,7 +48,7 @@ TEST_CASE("Test if statements program", "[programs]") {
              make_write(var2, Reg::Input2),
              make_if(
                  make_read(Reg::Result, var1),
-                 eq_cmp,
+                 op::eq_cmp(),
                  make_read(Reg::Result, var2),
                  make_block(
                      {make_lis(Reg::Scratch),

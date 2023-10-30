@@ -8,7 +8,6 @@
 #include "block.h"
 #include "bne_label.h"
 #include "chunk.h"
-#include "comparators.h"
 #include "define_label.h"
 #include "elim_if_stmts.h"
 #include "elim_labels.h"
@@ -29,6 +28,7 @@
 #include "while_loop.h"
 #include "word.h"
 #include "write_file.h"
+#include "operators.h"
 
 static uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
 static std::string file_name("test_fibonacci.bin");
@@ -75,26 +75,26 @@ TEST_CASE("Test fibonacci program", "[programs]") {
          assign(v2, int_literal(1)),
          make_if(
              to_expr(Reg::Input1),
-             eq_cmp,
+             op::eq_cmp(),
              int_literal(0),
              assign(result, v1->to_expr())
          ),
          make_if(
              to_expr(Reg::Input1),
-             eq_cmp,
+             op::eq_cmp(),
              int_literal(1),
              assign(result, v2->to_expr())
          ),
          make_if(
              to_expr(Reg::Input1),
-             ge_cmp,
+             op::ge_cmp(),
              int_literal(2),
              make_scope(
                  {i, v3},
                  {assign(i, int_literal(1)),
                   make_while(
                       i->to_expr(),
-                      lt_cmp,
+                      op::lt_cmp(),
                       to_expr(Reg::Input1),
                       make_block(
                           {assign(

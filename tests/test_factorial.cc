@@ -9,7 +9,6 @@
 #include "block.h"
 #include "bne_label.h"
 #include "chunk.h"
-#include "comparators.h"
 #include "define_label.h"
 #include "elim_calls.h"
 #include "elim_if_stmts.h"
@@ -33,6 +32,7 @@
 #include "while_loop.h"
 #include "word.h"
 #include "write_file.h"
+#include "operators.h"
 
 static uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
 static std::string file_name("test_factorial.bin");
@@ -72,7 +72,7 @@ TEST_CASE("Test factorial program", "[programs]") {
         {assign(result, int_literal(0)),
          make_if(
              n->to_expr(),
-             eq_cmp,
+             op::eq_cmp(),
              int_literal(0),
              assign(result, int_literal(1)),
              assign(

@@ -17,7 +17,6 @@
 #include "block.h"
 #include "bne_label.h"
 #include "chunk.h"
-#include "comparators.h"
 #include "define_label.h"
 #include "elim_calls.h"
 #include "elim_if_stmts.h"

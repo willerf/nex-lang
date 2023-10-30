@@ -37,6 +37,9 @@ std::string to_string(Reg reg) {
         case Reg::ScratchPtrForGC:
             result = "ScratchPtrForGC";
             break;
+        case Reg::Scratch3:
+            result = "Scratch3";
+            break;
         case Reg::FromSpaceEnd:
             result = "FromSpaceEnd";
             break;
