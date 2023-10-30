@@ -52,6 +52,11 @@ std::vector<std::shared_ptr<Code>> compile(std::string input) {
     Grammar grammar = make_grammar();
     auto tokens = scan(input);
     auto ast_node = parse_cyk(tokens, grammar);
+    
+    if (!ast_node) {
+        std::cerr << "Failed to parse!" << std::endl;
+        exit(1);
+    }
 
     // std::cout << ast_node->to_string(0) << std::endl;
 
@@ -132,21 +137,6 @@ std::vector<std::shared_ptr<Code>> compile(std::string input) {
 
 TEST_CASE("Test code gen", "[codegen]") {
 
-    /*
-    std::string input =
-        "fn max(x: i32, y: i32) -> i32 {"
-        "   let result: i32 = 0;"
-        "   if (x > y) {"
-        "       result = x;"
-        "   } else {"
-        "       result = y;"
-        "   }"
-        "   return result;"
-        "}"
-        ""
-        "fn main() -> i32 {"
-        "   let z: i32 = max(5, 12);"
-        "}";*/
     std::string input = 
         "fn main(x: i32, y: i32) -> i32 {"
         "   let result: i32 = x + y;"
@@ -173,4 +163,30 @@ TEST_CASE("Test two functions", "[codegen]") {
     write_file(file_name, program);
 
     REQUIRE(stoi(emulate(file_name, 5, 7)) == 12);
+}
+
+
+TEST_CASE("Test max func", "[codegen]") {
+
+    
+    std::string input =
+        "fn max(x: i32, y: i32) -> i32 {"
+        "   let result: i32 = 0;"
+        "   if (x > y) {"
+        "       result = x;"
+        "   } else {"
+        "       result = y;"
+        "   }"
+        "   return result;"
+        "}"
+        ""
+        "fn main(x: i32, y: i32) -> i32 {"
+        "   let z: i32 = max(x, y);"
+        "   return z;"
+        "}";
+    
+    auto program = compile(input);
+    write_file(file_name, program);
+
+    REQUIRE(stoi(emulate(file_name, 5, 7)) == 7);
 }

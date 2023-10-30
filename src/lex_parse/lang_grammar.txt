@@ -31,7 +31,7 @@ exprp5 exprp6
 exprp5 exprp5 PLUS exprp6
 exprp5 exprp5 MINUS exprp6
 exprp6 exprp7
-exprp6 exprp6 TIMES exprp7
+exprp6 exprp6 STAR exprp7
 exprp6 exprp6 SLASH exprp7
 exprp6 exprp6 PCT exprp7
 exprp7 exprp8

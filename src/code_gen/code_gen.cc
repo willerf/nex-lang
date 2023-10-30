@@ -9,6 +9,7 @@
 #include "operators.h"
 #include "ret_stmt.h"
 #include "call.h"
+#include "if_stmt.h"
 
 #include <cassert>
 #include <iostream>
@@ -18,6 +19,7 @@ typedef std::map<std::string, std::shared_ptr<Variable>> VariableMap;
 typedef std::map<std::string, std::shared_ptr<Procedure>> ProcedureMap;
 
 std::vector<std::shared_ptr<Code>> visit_optargs(ASTNode root, VariableMap& var_map, ProcedureMap& proc_map);
+std::shared_ptr<Code> visit_stmts(ASTNode root, VariableMap& var_map, ProcedureMap& proc_map);
 
 std::shared_ptr<Code> visit_expr(ASTNode root, VariableMap& var_map, ProcedureMap& proc_map) {
     size_t num_children = root.children.size();
@@ -53,11 +55,37 @@ std::shared_ptr<Code> visit_expr(ASTNode root, VariableMap& var_map, ProcedureMa
         auto lhs_code = visit_expr(lhs, var_map, proc_map);
         auto rhs_code = visit_expr(rhs, var_map, proc_map);
         if (mid.token.kind == "PLUS") {
-            return make_block({
-                make_add(Reg::Zero, Reg::Zero, Reg::Zero),
-                bin_op(lhs_code, op::plus(), rhs_code),
-                make_add(Reg::Zero, Reg::Zero, Reg::Zero)
-            });
+            return bin_op(lhs_code, op::plus(), rhs_code);
+        }
+        else if (mid.token.kind == "MINUS") {
+            return bin_op(lhs_code, op::minus(), rhs_code);
+        }
+        else if (mid.token.kind == "STAR") {
+            return bin_op(lhs_code, op::times(), rhs_code);
+        }
+        else if (mid.token.kind == "SLASH") {
+            return bin_op(lhs_code, op::divide(), rhs_code);
+        }
+        else if (mid.token.kind == "PCT") {
+            return bin_op(lhs_code, op::remainder(), rhs_code);
+        }
+        else if (mid.token.kind == "EQ") {
+            return bin_op(lhs_code, op::eq_cmp(), rhs_code);
+        }
+        else if (mid.token.kind == "NE") {
+            return bin_op(lhs_code, op::ne_cmp(), rhs_code);
+        }
+        else if (mid.token.kind == "LT") {
+            return bin_op(lhs_code, op::lt_cmp(), rhs_code);
+        }
+        else if (mid.token.kind == "GT") {
+            return bin_op(lhs_code, op::gt_cmp(), rhs_code);
+        }
+        else if (mid.token.kind == "LE") {
+            return bin_op(lhs_code, op::le_cmp(), rhs_code);
+        }
+        else if (mid.token.kind == "GE") {
+            return bin_op(lhs_code, op::ge_cmp(), rhs_code);
         }
         else {
             std::cerr << "Unimplemented!" << std::endl;
@@ -152,7 +180,21 @@ std::shared_ptr<Code> visit_stmt(ASTNode root, VariableMap& var_map, ProcedureMa
         }
     }
     else if (prod == "stmt IF LPAREN expr RPAREN LBRACE stmts RBRACE ELSE LBRACE stmts RBRACE") {
-        
+        ASTNode expr = root.children.at(2);
+        ASTNode thens_stmts = root.children.at(5);
+        ASTNode elses_stmts = root.children.at(9);
+
+        auto comp = visit_expr(expr, var_map, proc_map);
+        auto thens = visit_stmts(thens_stmts, var_map, proc_map);
+        auto elses = visit_stmts(elses_stmts, var_map, proc_map);
+
+        return make_if(
+            comp,
+            op::ne_cmp(),
+            make_add(Reg::Result, Reg::Zero, Reg::Zero),
+            thens,
+            elses
+        );
     }
     else if (prod == "stmt RET expr SEMI") {
         ASTNode expr = root.children.at(1);
