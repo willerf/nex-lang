@@ -30,5 +30,5 @@ std::shared_ptr<Code> make_if(
     std::function<std::shared_ptr<Code>(std::shared_ptr<Label>)> comp,
     std::shared_ptr<Code> e2,
     std::shared_ptr<Code> thens,
-    std::shared_ptr<Code> elses = make_add(Reg::Zero, Reg::Zero, Reg::Zero)
+    std::shared_ptr<Code> elses = make_block({})
 );

@@ -28,6 +28,6 @@ add_entry_exit(std::shared_ptr<Procedure> proc, std::shared_ptr<Chunk> frame) {
     );
 
     return make_block(
-        {make_define(proc->label), proc_start, proc->code, proc_end}
+        {make_define(proc->start_label), proc_start, proc->code, make_define(proc->end_label), proc_end}
     );
 }

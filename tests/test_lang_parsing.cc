@@ -27,5 +27,5 @@ TEST_CASE("Test parsing lang", "[parser]") {
     auto tokens = scan(input);
     auto ast_node = parse_cyk(tokens, grammar);
 
-    std::cout << ast_node->to_string(0) << std::endl;
+    // std::cout << ast_node->to_string(0) << std::endl;
 }

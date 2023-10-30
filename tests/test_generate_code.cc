@@ -21,6 +21,7 @@
 #include "define_label.h"
 #include "elim_calls.h"
 #include "elim_if_stmts.h"
+#include "elim_ret_stmts.h"
 #include "elim_labels.h"
 #include "elim_scopes.h"
 #include "elim_vars_proc.h"
@@ -47,33 +48,13 @@
 static uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
 static std::string file_name("test_max.bin");
 
-TEST_CASE("Test code gen", "[codegen]") {
-    Grammar grammar = make_grammar();
 
-    /*
-    std::string input =
-        "fn max(x: i32, y: i32) -> i32 {"
-        "   let result: i32 = 0;"
-        "   if (x > y) {"
-        "       result = x;"
-        "   } else {"
-        "       result = y;"
-        "   }"
-        "   return result;"
-        "}"
-        ""
-        "fn main() -> i32 {"
-        "   let z: i32 = max(5, 12);"
-        "}";*/
-    std::string input = 
-        "fn main(x: i32, y: i32) -> i32 {"
-        "   let result: i32 = 0;"
-        "   result = x + y;"
-        "}";
+std::vector<std::shared_ptr<Code>> compile(std::string input) {
+    Grammar grammar = make_grammar();
     auto tokens = scan(input);
     auto ast_node = parse_cyk(tokens, grammar);
 
-    std::cout << ast_node->to_string(0) << std::endl;
+    // std::cout << ast_node->to_string(0) << std::endl;
 
     auto procedures = generate(ast_node.value());
     
@@ -107,6 +88,9 @@ TEST_CASE("Test code gen", "[codegen]") {
 
         ElimIfStmts elim_if_stmts;
         proc->code = proc->code->accept(elim_if_stmts);
+
+        ElimRetStmts elim_ret_stmts{proc->end_label};
+        proc->code = proc->code->accept(elim_ret_stmts);
 
         ElimScopes elim_scopes;
         proc->code = proc->code->accept(elim_scopes);
@@ -144,12 +128,50 @@ TEST_CASE("Test code gen", "[codegen]") {
     auto program2 = flatten.get();
 
     auto program3 = elim_labels(program2);
+    return program3;
+}
 
-    write_file(file_name, program3);
+TEST_CASE("Test code gen", "[codegen]") {
 
-    //for (auto input : {0, 1, 2, 3, 5, 6, 7, 8, 9}) {
-    //    REQUIRE(stoi(emulate(file_name, input, 0)) == sample_main(input, 0));
-    //}
+    /*
+    std::string input =
+        "fn max(x: i32, y: i32) -> i32 {"
+        "   let result: i32 = 0;"
+        "   if (x > y) {"
+        "       result = x;"
+        "   } else {"
+        "       result = y;"
+        "   }"
+        "   return result;"
+        "}"
+        ""
+        "fn main() -> i32 {"
+        "   let z: i32 = max(5, 12);"
+        "}";*/
+    std::string input = 
+        "fn main(x: i32, y: i32) -> i32 {"
+        "   let result: i32 = x + y;"
+        "   return result;"
+        "}";
+    
+    auto program = compile(input);
+    write_file(file_name, program);
 
+    REQUIRE(stoi(emulate(file_name, 5, 7)) == 12);
+}
 
+TEST_CASE("Test two functions", "[codegen]") {
+
+    std::string input = 
+        "fn add(x: i32, y: i32) -> i32 {"
+        "   return x + y;"
+        "}"
+        "fn main(x: i32, y: i32) -> i32 {"
+        "   return add(x, y);"
+        "}";
+    
+    auto program = compile(input);
+    write_file(file_name, program);
+
+    REQUIRE(stoi(emulate(file_name, 5, 7)) == 12);
 }

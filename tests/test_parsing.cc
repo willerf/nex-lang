@@ -49,5 +49,5 @@ TEST_CASE("Test parsing with simple arithmetic grammar", "[parser]") {
     auto ast_node = parse_cyk(tokens, grammar);
 
     REQUIRE(ast_node->token.kind == "E");
-    std::cout << ast_node->to_string(0) << std::endl;
+    // std::cout << ast_node->to_string(0) << std::endl;
 }
