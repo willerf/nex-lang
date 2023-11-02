@@ -10,7 +10,6 @@
 #include "block.h"
 #include "bne_label.h"
 #include "chunk.h"
-#include "post_processing.h"
 #include "define_label.h"
 #include "elim_calls.h"
 #include "elim_if_stmts.h"
@@ -25,6 +24,7 @@
 #include "nex_lang.h"
 #include "operators.h"
 #include "parsing.h"
+#include "post_processing.h"
 #include "print.h"
 #include "procedure.h"
 #include "pseudo_assembly.h"
@@ -41,7 +41,7 @@
 static uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
 static std::string file_name("test_max.bin");
 
-std::vector<std::shared_ptr<Code>> compile(std::string input) {
+std::vector<std::shared_ptr<Code>> compile_test(std::string input) {
     Grammar grammar = make_grammar();
     auto tokens = scan(input);
     auto ast_node = parse_cyk(tokens, grammar);
@@ -135,7 +135,7 @@ TEST_CASE("Test code gen", "[codegen]") {
         "   return result;"
         "}";
 
-    auto program = compile(input);
+    auto program = compile_test(input);
     write_file(file_name, program);
 
     REQUIRE(stoi(emulate(file_name, 5, 7)) == 12);
@@ -150,7 +150,7 @@ TEST_CASE("Test two functions", "[codegen]") {
         "   return add(x, y);"
         "}";
 
-    auto program = compile(input);
+    auto program = compile_test(input);
     write_file(file_name, program);
 
     REQUIRE(stoi(emulate(file_name, 5, 7)) == 12);
@@ -173,7 +173,7 @@ TEST_CASE("Test max func", "[codegen]") {
         "   return z;"
         "}";
 
-    auto program = compile(input);
+    auto program = compile_test(input);
     write_file(file_name, program);
 
     REQUIRE(stoi(emulate(file_name, 5, 7)) == 7);

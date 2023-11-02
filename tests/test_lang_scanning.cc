@@ -12,8 +12,7 @@ TEST_CASE("Test scanning keywords", "[lang]") {
     REQUIRE_THAT(
         tokens,
         Catch::Matchers::Equals(std::vector<Token> {
-            Token {Terminal::BOFS,
-                   ""},
+            Token {Terminal::BOFS, ""},
             Token {Terminal::FN, "fn"},
             Token {Terminal::EOFS, ""},
         })
@@ -23,8 +22,7 @@ TEST_CASE("Test scanning keywords", "[lang]") {
     REQUIRE_THAT(
         tokens,
         Catch::Matchers::Equals(std::vector<Token> {
-            Token {Terminal::BOFS,
-                   ""},
+            Token {Terminal::BOFS, ""},
             Token {Terminal::LET, "let"},
             Token {Terminal::EOFS, ""},
         })
@@ -34,8 +32,7 @@ TEST_CASE("Test scanning keywords", "[lang]") {
     REQUIRE_THAT(
         tokens,
         Catch::Matchers::Equals(std::vector<Token> {
-            Token {Terminal::BOFS,
-                   ""},
+            Token {Terminal::BOFS, ""},
             Token {Terminal::IF, "if"},
             Token {Terminal::EOFS, ""},
         })
@@ -45,8 +42,7 @@ TEST_CASE("Test scanning keywords", "[lang]") {
     REQUIRE_THAT(
         tokens,
         Catch::Matchers::Equals(std::vector<Token> {
-            Token {Terminal::BOFS,
-                   ""},
+            Token {Terminal::BOFS, ""},
             Token {Terminal::ELSE, "else"},
             Token {Terminal::EOFS, ""},
         })
@@ -56,8 +52,7 @@ TEST_CASE("Test scanning keywords", "[lang]") {
     REQUIRE_THAT(
         tokens,
         Catch::Matchers::Equals(std::vector<Token> {
-            Token {Terminal::BOFS,
-                   ""},
+            Token {Terminal::BOFS, ""},
             Token {Terminal::I32, "i32"},
             Token {Terminal::EOFS, ""},
         })
@@ -72,12 +67,15 @@ TEST_CASE("Test scanning simple program", "[lang]") {
     REQUIRE_THAT(
         tokens,
         Catch::Matchers::Equals(std::vector<Token> {
-            Token {Terminal::BOFS, ""},     Token {Terminal::FN, "fn"},   Token {Terminal::ID, "add"},
-            Token {Terminal::LPAREN, "("}, Token {Terminal::ID, "x"},    Token {Terminal::COLON, ":"},
-            Token {Terminal::I32, "i32"},  Token {Terminal::COMMA, ","}, Token {Terminal::ID, "y"},
-            Token {Terminal::COLON, ":"},  Token {Terminal::I32, "i32"}, Token {Terminal::RPAREN, ")"},
-            Token {Terminal::ARROW, "->"}, Token {Terminal::I32, "i32"}, Token {Terminal::LBRACE, "{"},
-            Token {Terminal::ID, "x"},     Token {Terminal::PLUS, "+"},  Token {Terminal::ID, "y"},
+            Token {Terminal::BOFS, ""},    Token {Terminal::FN, "fn"},
+            Token {Terminal::ID, "add"},   Token {Terminal::LPAREN, "("},
+            Token {Terminal::ID, "x"},     Token {Terminal::COLON, ":"},
+            Token {Terminal::I32, "i32"},  Token {Terminal::COMMA, ","},
+            Token {Terminal::ID, "y"},     Token {Terminal::COLON, ":"},
+            Token {Terminal::I32, "i32"},  Token {Terminal::RPAREN, ")"},
+            Token {Terminal::ARROW, "->"}, Token {Terminal::I32, "i32"},
+            Token {Terminal::LBRACE, "{"}, Token {Terminal::ID, "x"},
+            Token {Terminal::PLUS, "+"},   Token {Terminal::ID, "y"},
             Token {Terminal::RBRACE, "}"}, Token {Terminal::EOFS, ""},
         })
     );
@@ -98,7 +96,7 @@ TEST_CASE("Test scanning bigger program", "[scanning]") {
     REQUIRE_THAT(
         tokens,
         Catch::Matchers::Equals(std::vector<Token> {
-            Token {Terminal::BOFS, ""},       Token {Terminal::FN, "fn"},
+            Token {Terminal::BOFS, ""},      Token {Terminal::FN, "fn"},
             Token {Terminal::ID, "max"},     Token {Terminal::LPAREN, "("},
             Token {Terminal::ID, "x"},       Token {Terminal::COLON, ":"},
             Token {Terminal::I32, "i32"},    Token {Terminal::COMMA, ","},

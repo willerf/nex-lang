@@ -7,7 +7,6 @@
 #include "block.h"
 #include "bne_label.h"
 #include "chunk.h"
-#include "post_processing.h"
 #include "define_label.h"
 #include "elim_calls.h"
 #include "elim_if_stmts.h"
@@ -22,6 +21,7 @@
 #include "nex_lang.h"
 #include "operators.h"
 #include "parsing.h"
+#include "post_processing.h"
 #include "print.h"
 #include "procedure.h"
 #include "pseudo_assembly.h"
@@ -119,4 +119,3 @@ std::vector<std::shared_ptr<Code>> compile(std::string input) {
     auto program3 = elim_labels(program2);
     return program3;
 }
-
