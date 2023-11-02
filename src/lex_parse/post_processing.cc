@@ -86,6 +86,12 @@ visit_expr(ASTNode root, VariableMap& var_map, ProcedureMap& proc_map) {
         Terminal mid_op = std::get<Terminal>(mid.state);
         std::shared_ptr<Code> rhs_code = visit_expr(rhs, var_map, proc_map);
         switch (mid_op) {
+            case Terminal::OR:
+                result = bin_op(lhs_code, op::or_bool(), rhs_code);
+                break;
+            case Terminal::AND:
+                result = bin_op(lhs_code, op::and_bool(), rhs_code);
+                break;
             case Terminal::PLUS:
                 result = bin_op(lhs_code, op::plus(), rhs_code);
                 break;

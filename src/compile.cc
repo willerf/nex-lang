@@ -1,8 +1,5 @@
 
-
-#include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_vector.hpp>
-#include <iostream>
+#include "compile.h"
 
 #include "assembly.h"
 #include "beq_label.h"
@@ -31,15 +28,12 @@
 #include "reg.h"
 #include "stack.h"
 #include "use_label.h"
-#include "utils.h"
 #include "var_access.h"
 #include "variable.h"
 #include "while_loop.h"
 #include "word.h"
-#include "write_file.h"
 
 static uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
-static std::string file_name("test_max.bin");
 
 std::vector<std::shared_ptr<Code>> compile(std::string input) {
     Grammar grammar = make_grammar();
@@ -50,8 +44,6 @@ std::vector<std::shared_ptr<Code>> compile(std::string input) {
         std::cerr << "Failed to parse!" << std::endl;
         exit(1);
     }
-
-    // std::cout << ast_node->to_string(0) << std::endl;
 
     auto procedures = generate(ast_node.value());
 
@@ -128,53 +120,3 @@ std::vector<std::shared_ptr<Code>> compile(std::string input) {
     return program3;
 }
 
-TEST_CASE("Test code gen", "[codegen]") {
-    std::string input =
-        "fn main(x: i32, y: i32) -> i32 {"
-        "   let result: i32 = x + y;"
-        "   return result;"
-        "}";
-
-    auto program = compile(input);
-    write_file(file_name, program);
-
-    REQUIRE(stoi(emulate(file_name, 5, 7)) == 12);
-}
-
-TEST_CASE("Test two functions", "[codegen]") {
-    std::string input =
-        "fn add(x: i32, y: i32) -> i32 {"
-        "   return x + y;"
-        "}"
-        "fn main(x: i32, y: i32) -> i32 {"
-        "   return add(x, y);"
-        "}";
-
-    auto program = compile(input);
-    write_file(file_name, program);
-
-    REQUIRE(stoi(emulate(file_name, 5, 7)) == 12);
-}
-
-TEST_CASE("Test max func", "[codegen]") {
-    std::string input =
-        "fn max(x: i32, y: i32) -> i32 {"
-        "   let result: i32 = 0;"
-        "   if (x > y) {"
-        "       result = x;"
-        "   } else {"
-        "       result = y;"
-        "   }"
-        "   return result;"
-        "}"
-        ""
-        "fn main(x: i32, y: i32) -> i32 {"
-        "   let z: i32 = max(x, y);"
-        "   return z;"
-        "}";
-
-    auto program = compile(input);
-    write_file(file_name, program);
-
-    REQUIRE(stoi(emulate(file_name, 5, 7)) == 7);
-}

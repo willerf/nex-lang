@@ -1,4 +1,4 @@
-#include "lang.h"
+#include "nex_lang.h"
 
 #include <iostream>
 #include <sstream>
@@ -95,7 +95,7 @@ static std::optional<Terminal> transition_func(Terminal curr_state, char c) {
 
 DFA make_dfa() {
     std::string alphabet_str =
-        "<>=+-*/%(){},;:! \t\n\rabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        "<>=+-_*/%(){},;:!&| \t\n\rabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     std::set<char> alphabet(alphabet_str.begin(), alphabet_str.end());
     Terminal init_state = Terminal::START;
 

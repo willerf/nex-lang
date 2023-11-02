@@ -4,7 +4,7 @@
 #include <catch2/matchers/catch_matchers_vector.hpp>
 #include <iostream>
 
-#include "lang.h"
+#include "nex_lang.h"
 #include "parsing.h"
 
 TEST_CASE("Test parsing lang", "[parser]") {
