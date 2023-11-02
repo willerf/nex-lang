@@ -11,8 +11,8 @@
 
 struct DFA {
     std::set<char> alphabet;
-    State init_state;
-    std::set<State> valid_states;
-    std::set<State> accepting;
-    std::function<std::optional<State>(State, char)> transition;
+    Terminal init_state;
+    std::set<Terminal> valid_states;
+    std::set<Terminal> accepting;
+    std::function<std::optional<Terminal>(Terminal, char)> transition;
 };

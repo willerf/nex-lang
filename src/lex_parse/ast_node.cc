@@ -1,9 +1,9 @@
 #include "ast_node.h"
 
-std::string ASTNode::get_production() {
-    std::string result = token.kind;
+std::vector<State> ASTNode::get_production() {
+    std::vector<State> result = {state};
     for (auto& child : children) {
-        result += " " + child.token.kind;
+        result.push_back(child.state);
     }
     return result;
 }
@@ -12,7 +12,7 @@ std::string ASTNode::to_string(int depth) {
     std::string indent = std::string(depth, ' ');
     std::string result;
 
-    result = indent + token.kind + " " + token.lexeme + "\n";
+    result = indent + state::to_string(state) + " " + lexeme + "\n";
     for (auto& child : children) {
         result += child.to_string(depth + 2);
     }

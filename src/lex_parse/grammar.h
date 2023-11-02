@@ -7,13 +7,13 @@
 #include "state.h"
 
 struct Production {
-    State lhs;
+    NonTerminal lhs;
     std::vector<State> rhs;
 };
 
 struct Grammar {
-    std::set<State> non_terminals;
-    std::set<State> terminals;
-    State start;
-    std::map<State, std::vector<Production>> productions;
+    std::set<NonTerminal> non_terminals;
+    std::set<Terminal> terminals;
+    NonTerminal start;  
+    std::map<NonTerminal, std::vector<Production>> productions;
 };

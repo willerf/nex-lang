@@ -1,11 +1,13 @@
 
 #pragma once
 
-#include "token.h"
+#include "state.h"
+#include <string>
 
 struct ASTNode {
-    Token token;
+    State state;
+    std::string lexeme;
     std::vector<ASTNode> children;
-    std::string get_production();
+    std::vector<State> get_production();
     std::string to_string(int depth);
 };
