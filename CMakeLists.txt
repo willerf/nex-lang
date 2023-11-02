@@ -43,7 +43,7 @@ add_library(compiler_lib STATIC
     src/lex_parse/parsing.cc
     src/lex_parse/ast_node.cc
     src/lex_parse/state.cc
-    src/code_gen/code_gen.cc
+    src/lex_parse/post_processing.cc
     src/utils/reg.cc
 )
 
@@ -55,7 +55,6 @@ target_include_directories(compiler_lib PUBLIC
     src/program_representation/code_builders
     src/transformations
     src/lex_parse
-    src/code_gen
     src/utils
 )
 
