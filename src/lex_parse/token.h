@@ -5,7 +5,7 @@
 
 #include "dfa.h"
 
- struct Token {
+struct Token {
     Terminal kind;
     std::string lexeme;
 

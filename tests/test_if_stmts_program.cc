@@ -16,6 +16,7 @@
 #include "flatten.h"
 #include "if_stmt.h"
 #include "label.h"
+#include "operators.h"
 #include "print.h"
 #include "reg.h"
 #include "stack.h"
@@ -25,7 +26,6 @@
 #include "variable.h"
 #include "word.h"
 #include "write_file.h"
-#include "operators.h"
 
 static uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
 static std::string file_name("test_if_stmts.bin");

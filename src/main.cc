@@ -1,13 +1,8 @@
 
 
-
+#include <fstream>
 #include <iostream>
-
-#include "code_gen.h"
-
-#include "lang.h"
-#include "parsing.h"
-
+#include <sstream>
 
 #include "assembly.h"
 #include "beq_label.h"
@@ -15,18 +10,21 @@
 #include "block.h"
 #include "bne_label.h"
 #include "chunk.h"
+#include "code_gen.h"
 #include "define_label.h"
 #include "elim_calls.h"
 #include "elim_if_stmts.h"
-#include "elim_ret_stmts.h"
 #include "elim_labels.h"
+#include "elim_ret_stmts.h"
 #include "elim_scopes.h"
 #include "elim_vars_proc.h"
 #include "entry_exit.h"
 #include "flatten.h"
 #include "if_stmt.h"
 #include "label.h"
+#include "lang.h"
 #include "operators.h"
+#include "parsing.h"
 #include "print.h"
 #include "procedure.h"
 #include "pseudo_assembly.h"
@@ -39,18 +37,14 @@
 #include "word.h"
 #include "write_file.h"
 
-#include <sstream>
-#include <fstream>
-
 static uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
 static std::string file_name("test_max.bin");
-
 
 std::vector<std::shared_ptr<Code>> compile_test(std::string input) {
     Grammar grammar = make_grammar();
     auto tokens = scan(input);
     auto ast_node = parse_cyk(tokens, grammar);
-    
+
     if (!ast_node) {
         std::cerr << "Failed to parse!" << std::endl;
         exit(1);
@@ -59,14 +53,14 @@ std::vector<std::shared_ptr<Code>> compile_test(std::string input) {
     // std::cout << ast_node->to_string(0) << std::endl;
 
     auto procedures = generate(ast_node.value());
-    
+
     std::shared_ptr<Procedure> main_proc;
     for (auto proc : procedures) {
         if (proc->name == "main") {
             main_proc = proc;
         }
     }
-    
+
     std::map<std::shared_ptr<Procedure>, std::shared_ptr<Chunk>> param_chunks;
     for (auto proc : procedures) {
         param_chunks[proc] = std::make_shared<Chunk>(proc->parameters);
@@ -91,7 +85,7 @@ std::vector<std::shared_ptr<Code>> compile_test(std::string input) {
         ElimIfStmts elim_if_stmts;
         proc->code = proc->code->accept(elim_if_stmts);
 
-        ElimRetStmts elim_ret_stmts{proc->end_label};
+        ElimRetStmts elim_ret_stmts {proc->end_label};
         proc->code = proc->code->accept(elim_ret_stmts);
 
         ElimScopes elim_scopes;
@@ -134,13 +128,11 @@ std::vector<std::shared_ptr<Code>> compile_test(std::string input) {
 }
 
 int main() {
-    std::ifstream file{"test_file.rs"};
+    std::ifstream file {"test_file.rs"};
     std::stringstream buffer;
     buffer << file.rdbuf();
     std::string input = buffer.str();
 
     auto program = compile_test(input);
     write_file("test_file.out", program);
-
 }
-

@@ -26,11 +26,5 @@ std::shared_ptr<Code> make_if(
     std::shared_ptr<Code> thens,
     std::shared_ptr<Code> elses
 ) {
-    return std::make_shared<IfStmt>(
-        e1,
-        comp,
-        e2,
-        thens,
-        elses
-    );
+    return std::make_shared<IfStmt>(e1, comp, e2, thens, elses);
 }

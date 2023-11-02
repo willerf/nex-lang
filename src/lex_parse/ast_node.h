@@ -1,8 +1,9 @@
 
 #pragma once
 
-#include "state.h"
 #include <string>
+
+#include "state.h"
 
 struct ASTNode {
     State state;

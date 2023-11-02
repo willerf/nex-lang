@@ -11,7 +11,8 @@ std::shared_ptr<Code> ElimIfStmts::visit(std::shared_ptr<Code> code) {
 }
 
 std::shared_ptr<Code> ElimIfStmts::visit(std::shared_ptr<IfStmt> if_stmt) {
-    std::shared_ptr<Label> else_label = std::make_shared<Label>("if stmt else label");
+    std::shared_ptr<Label> else_label =
+        std::make_shared<Label>("if stmt else label");
     std::shared_ptr<Label> end_label =
         std::make_shared<Label>("if stmt end label");
     return make_block(

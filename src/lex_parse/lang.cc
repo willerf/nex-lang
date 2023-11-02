@@ -30,6 +30,7 @@ static std::map<std::string, Terminal> two_char_symbols = {
     {"->", Terminal::ARROW},
     {"//", Terminal::COMMENT},
 };
+
 static std::optional<Terminal> transition_func(Terminal curr_state, char c) {
     if (curr_state == Terminal::START) {
         if (one_char_symbols.count(c)) {
@@ -97,7 +98,7 @@ DFA make_dfa() {
         "<>=+-*/%(){},;:! \t\n\rabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     std::set<char> alphabet(alphabet_str.begin(), alphabet_str.end());
     Terminal init_state = Terminal::START;
-    
+
     std::set<Terminal> valid_states = {
         Terminal::START,
     };
@@ -148,9 +149,26 @@ std::vector<Token> scan(std::string_view input) {
     }
 
     // Define sets for separators using Terminal enum
-    std::set<Terminal> sep_set1 = {Terminal::FN, Terminal::LET, Terminal::IF, Terminal::ELSE, Terminal::I32, Terminal::ID, Terminal::NUM};
-    std::set<Terminal> sep_set2 = {Terminal::EQ, Terminal::NE, Terminal::LT, Terminal::LE, Terminal::GT, Terminal::GE, Terminal::OR, Terminal::AND, Terminal::ASSIGN, Terminal::ARROW};
-    
+    std::set<Terminal> sep_set1 = {
+        Terminal::FN,
+        Terminal::LET,
+        Terminal::IF,
+        Terminal::ELSE,
+        Terminal::I32,
+        Terminal::ID,
+        Terminal::NUM};
+    std::set<Terminal> sep_set2 = {
+        Terminal::EQ,
+        Terminal::NE,
+        Terminal::LT,
+        Terminal::LE,
+        Terminal::GT,
+        Terminal::GE,
+        Terminal::OR,
+        Terminal::AND,
+        Terminal::ASSIGN,
+        Terminal::ARROW};
+
     bool prev_set1 = false;
     bool prev_set2 = false;
 
@@ -176,7 +194,8 @@ std::vector<Token> scan(std::string_view input) {
             prev_set2 = false;
         }
 
-        if (token.kind != Terminal::WHITESPACE && token.kind != Terminal::COMMENT) {
+        if (token.kind != Terminal::WHITESPACE
+            && token.kind != Terminal::COMMENT) {
             result.push_back(token);
         }
     }
@@ -187,158 +206,140 @@ std::vector<Token> scan(std::string_view input) {
     return result;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
 std::map<NonTerminal, std::vector<Production>> productions = {
-    {NonTerminal::s, {{NonTerminal::s, {Terminal::BOFS, NonTerminal::fns, Terminal::EOFS}}}},
-    {NonTerminal::fns, {
-        {NonTerminal::fns, {NonTerminal::fn, NonTerminal::fns}},
-        {NonTerminal::fns, {NonTerminal::fn}}
-    }},
-    {NonTerminal::fn, {
-        {NonTerminal::fn, {Terminal::FN, Terminal::ID, Terminal::LPAREN, NonTerminal::optparams, Terminal::RPAREN, Terminal::ARROW, NonTerminal::type, Terminal::LBRACE, NonTerminal::stmts, Terminal::RBRACE}}
-    }},
-    {NonTerminal::optparams, {
-        {NonTerminal::optparams, {NonTerminal::params}},
-        {NonTerminal::optparams, {}}
-    }},
-    {NonTerminal::params, {
-        {NonTerminal::params, {NonTerminal::vardef, Terminal::COMMA, NonTerminal::params}},
-        {NonTerminal::params, {NonTerminal::vardef}}
-    }},
-    {NonTerminal::vardef, {{NonTerminal::vardef, {Terminal::ID, Terminal::COLON, NonTerminal::type}}}},
+    {NonTerminal::s,
+     {{NonTerminal::s, {Terminal::BOFS, NonTerminal::fns, Terminal::EOFS}}}},
+    {NonTerminal::fns,
+     {{NonTerminal::fns, {NonTerminal::fn, NonTerminal::fns}},
+      {NonTerminal::fns, {NonTerminal::fn}}}},
+    {NonTerminal::fn,
+     {{NonTerminal::fn,
+       {Terminal::FN,
+        Terminal::ID,
+        Terminal::LPAREN,
+        NonTerminal::optparams,
+        Terminal::RPAREN,
+        Terminal::ARROW,
+        NonTerminal::type,
+        Terminal::LBRACE,
+        NonTerminal::stmts,
+        Terminal::RBRACE}}}},
+    {NonTerminal::optparams,
+     {{NonTerminal::optparams, {NonTerminal::params}},
+      {NonTerminal::optparams, {}}}},
+    {NonTerminal::params,
+     {{NonTerminal::params,
+       {NonTerminal::vardef, Terminal::COMMA, NonTerminal::params}},
+      {NonTerminal::params, {NonTerminal::vardef}}}},
+    {NonTerminal::vardef,
+     {{NonTerminal::vardef,
+       {Terminal::ID, Terminal::COLON, NonTerminal::type}}}},
     {NonTerminal::type, {{NonTerminal::type, {Terminal::I32}}}},
-    {NonTerminal::stmts, {
-        {NonTerminal::stmts, {NonTerminal::stmt, NonTerminal::stmts}},
-        {NonTerminal::stmts, {NonTerminal::stmt}}
-    }},
-    {NonTerminal::stmt, {
-        {NonTerminal::stmt, {Terminal::LET, NonTerminal::vardef, Terminal::ASSIGN, NonTerminal::expr, Terminal::SEMI}},
-        {NonTerminal::stmt, {Terminal::ID, Terminal::ASSIGN, NonTerminal::expr, Terminal::SEMI}},
-        {NonTerminal::stmt, {Terminal::IF, Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN, Terminal::LBRACE, NonTerminal::stmts, Terminal::RBRACE, Terminal::ELSE, Terminal::LBRACE, NonTerminal::stmts, Terminal::RBRACE}},
-        {NonTerminal::stmt, {Terminal::RET, NonTerminal::expr, Terminal::SEMI}}
-    }},
+    {NonTerminal::stmts,
+     {{NonTerminal::stmts, {NonTerminal::stmt, NonTerminal::stmts}},
+      {NonTerminal::stmts, {NonTerminal::stmt}}}},
+    {NonTerminal::stmt,
+     {{NonTerminal::stmt,
+       {Terminal::LET,
+        NonTerminal::vardef,
+        Terminal::ASSIGN,
+        NonTerminal::expr,
+        Terminal::SEMI}},
+      {NonTerminal::stmt,
+       {Terminal::ID, Terminal::ASSIGN, NonTerminal::expr, Terminal::SEMI}},
+      {NonTerminal::stmt,
+       {Terminal::IF,
+        Terminal::LPAREN,
+        NonTerminal::expr,
+        Terminal::RPAREN,
+        Terminal::LBRACE,
+        NonTerminal::stmts,
+        Terminal::RBRACE,
+        Terminal::ELSE,
+        Terminal::LBRACE,
+        NonTerminal::stmts,
+        Terminal::RBRACE}},
+      {NonTerminal::stmt, {Terminal::RET, NonTerminal::expr, Terminal::SEMI}}}},
     {NonTerminal::expr, {{NonTerminal::expr, {NonTerminal::exprp1}}}},
-    {NonTerminal::exprp1, {
-        {NonTerminal::exprp1, {NonTerminal::exprp2}},
-        {NonTerminal::exprp1, {NonTerminal::exprp1, Terminal::OR, NonTerminal::exprp2}}
-    }},
-    {NonTerminal::exprp2, {
-        {NonTerminal::exprp2, {NonTerminal::exprp3}},
-        {NonTerminal::exprp2, {NonTerminal::exprp2, Terminal::AND, NonTerminal::exprp3}}
-    }},
-    {NonTerminal::exprp3, {
-        {NonTerminal::exprp3, {NonTerminal::exprp4}},
-        {NonTerminal::exprp3, {NonTerminal::exprp3, Terminal::EQ, NonTerminal::exprp4}},
-        {NonTerminal::exprp3, {NonTerminal::exprp3, Terminal::NE, NonTerminal::exprp4}}
-    }},
-    {NonTerminal::exprp4, {
-        {NonTerminal::exprp4, {NonTerminal::exprp5}},
-        {NonTerminal::exprp4, {NonTerminal::exprp4, Terminal::LT, NonTerminal::exprp5}},
-        {NonTerminal::exprp4, {NonTerminal::exprp4, Terminal::GT, NonTerminal::exprp5}},
-        {NonTerminal::exprp4, {NonTerminal::exprp4, Terminal::LE, NonTerminal::exprp5}},
-        {NonTerminal::exprp4, {NonTerminal::exprp4, Terminal::GE, NonTerminal::exprp5}}
-    }},
-    {NonTerminal::exprp5, {
-        {NonTerminal::exprp5, {NonTerminal::exprp6}},
-        {NonTerminal::exprp5, {NonTerminal::exprp5, Terminal::PLUS, NonTerminal::exprp6}},
-        {NonTerminal::exprp5, {NonTerminal::exprp5, Terminal::MINUS, NonTerminal::exprp6}}
-    }},
-    {NonTerminal::exprp6, {
-        {NonTerminal::exprp6, {NonTerminal::exprp7}},
-        {NonTerminal::exprp6, {NonTerminal::exprp6, Terminal::STAR, NonTerminal::exprp7}},
-        {NonTerminal::exprp6, {NonTerminal::exprp6, Terminal::SLASH, NonTerminal::exprp7}},
-        {NonTerminal::exprp6, {NonTerminal::exprp6, Terminal::PCT, NonTerminal::exprp7}}
-    }},
-    {NonTerminal::exprp7, {
-        {NonTerminal::exprp7, {NonTerminal::exprp8}},
-        {NonTerminal::exprp7, {Terminal::NOT, NonTerminal::exprp8}}
-    }},
-    {NonTerminal::exprp8, {
-        {NonTerminal::exprp8, {Terminal::ID}},
-        {NonTerminal::exprp8, {Terminal::NUM}},
-        {NonTerminal::exprp8, {Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN}},
-        {NonTerminal::exprp8, {Terminal::ID, Terminal::LPAREN, NonTerminal::optargs, Terminal::RPAREN}}
-    }},
-    {NonTerminal::optargs, {
-        {NonTerminal::optargs, {NonTerminal::args}},
-        {NonTerminal::optargs, {}}
-    }},
-    {NonTerminal::args, {
-        {NonTerminal::args, {NonTerminal::expr, Terminal::COMMA, NonTerminal::args}},
-        {NonTerminal::args, {NonTerminal::expr}}
-    }}
-};
+    {NonTerminal::exprp1,
+     {{NonTerminal::exprp1, {NonTerminal::exprp2}},
+      {NonTerminal::exprp1,
+       {NonTerminal::exprp1, Terminal::OR, NonTerminal::exprp2}}}},
+    {NonTerminal::exprp2,
+     {{NonTerminal::exprp2, {NonTerminal::exprp3}},
+      {NonTerminal::exprp2,
+       {NonTerminal::exprp2, Terminal::AND, NonTerminal::exprp3}}}},
+    {NonTerminal::exprp3,
+     {{NonTerminal::exprp3, {NonTerminal::exprp4}},
+      {NonTerminal::exprp3,
+       {NonTerminal::exprp3, Terminal::EQ, NonTerminal::exprp4}},
+      {NonTerminal::exprp3,
+       {NonTerminal::exprp3, Terminal::NE, NonTerminal::exprp4}}}},
+    {NonTerminal::exprp4,
+     {{NonTerminal::exprp4, {NonTerminal::exprp5}},
+      {NonTerminal::exprp4,
+       {NonTerminal::exprp4, Terminal::LT, NonTerminal::exprp5}},
+      {NonTerminal::exprp4,
+       {NonTerminal::exprp4, Terminal::GT, NonTerminal::exprp5}},
+      {NonTerminal::exprp4,
+       {NonTerminal::exprp4, Terminal::LE, NonTerminal::exprp5}},
+      {NonTerminal::exprp4,
+       {NonTerminal::exprp4, Terminal::GE, NonTerminal::exprp5}}}},
+    {NonTerminal::exprp5,
+     {{NonTerminal::exprp5, {NonTerminal::exprp6}},
+      {NonTerminal::exprp5,
+       {NonTerminal::exprp5, Terminal::PLUS, NonTerminal::exprp6}},
+      {NonTerminal::exprp5,
+       {NonTerminal::exprp5, Terminal::MINUS, NonTerminal::exprp6}}}},
+    {NonTerminal::exprp6,
+     {{NonTerminal::exprp6, {NonTerminal::exprp7}},
+      {NonTerminal::exprp6,
+       {NonTerminal::exprp6, Terminal::STAR, NonTerminal::exprp7}},
+      {NonTerminal::exprp6,
+       {NonTerminal::exprp6, Terminal::SLASH, NonTerminal::exprp7}},
+      {NonTerminal::exprp6,
+       {NonTerminal::exprp6, Terminal::PCT, NonTerminal::exprp7}}}},
+    {NonTerminal::exprp7,
+     {{NonTerminal::exprp7, {NonTerminal::exprp8}},
+      {NonTerminal::exprp7, {Terminal::NOT, NonTerminal::exprp8}}}},
+    {NonTerminal::exprp8,
+     {{NonTerminal::exprp8, {Terminal::ID}},
+      {NonTerminal::exprp8, {Terminal::NUM}},
+      {NonTerminal::exprp8,
+       {Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN}},
+      {NonTerminal::exprp8,
+       {Terminal::ID,
+        Terminal::LPAREN,
+        NonTerminal::optargs,
+        Terminal::RPAREN}}}},
+    {NonTerminal::optargs,
+     {{NonTerminal::optargs, {NonTerminal::args}}, {NonTerminal::optargs, {}}}},
+    {NonTerminal::args,
+     {{NonTerminal::args,
+       {NonTerminal::expr, Terminal::COMMA, NonTerminal::args}},
+      {NonTerminal::args, {NonTerminal::expr}}}}};
 
 std::set<Terminal> terminals = {
-    Terminal::BOFS,
-    Terminal::EOFS,
-    Terminal::FN,
-    Terminal::ID,
-    Terminal::LPAREN,
-    Terminal::RPAREN,
-    Terminal::ARROW,
-    Terminal::LBRACE,
-    Terminal::RBRACE,
-    Terminal::COMMA,
-    Terminal::COLON,
-    Terminal::I32,
-    Terminal::LET,
-    Terminal::ASSIGN,
-    Terminal::SEMI,
-    Terminal::IF,
-    Terminal::ELSE,
-    Terminal::RET,
-    Terminal::OR,
-    Terminal::AND,
-    Terminal::EQ,
-    Terminal::NE,
-    Terminal::LT,
-    Terminal::GT,
-    Terminal::LE,
-    Terminal::GE,
-    Terminal::PLUS,
-    Terminal::MINUS,
-    Terminal::STAR,
-    Terminal::SLASH,
-    Terminal::PCT,
-    Terminal::NOT,
+    Terminal::BOFS,   Terminal::EOFS,   Terminal::FN,    Terminal::ID,
+    Terminal::LPAREN, Terminal::RPAREN, Terminal::ARROW, Terminal::LBRACE,
+    Terminal::RBRACE, Terminal::COMMA,  Terminal::COLON, Terminal::I32,
+    Terminal::LET,    Terminal::ASSIGN, Terminal::SEMI,  Terminal::IF,
+    Terminal::ELSE,   Terminal::RET,    Terminal::OR,    Terminal::AND,
+    Terminal::EQ,     Terminal::NE,     Terminal::LT,    Terminal::GT,
+    Terminal::LE,     Terminal::GE,     Terminal::PLUS,  Terminal::MINUS,
+    Terminal::STAR,   Terminal::SLASH,  Terminal::PCT,   Terminal::NOT,
     Terminal::NUM,
 };
 
 std::set<NonTerminal> non_terminals = {
-    NonTerminal::s,
-    NonTerminal::fns,
-    NonTerminal::fn,
-    NonTerminal::optparams,
-    NonTerminal::params,
-    NonTerminal::vardef,
-    NonTerminal::type,
-    NonTerminal::stmts,
-    NonTerminal::stmt,
-    NonTerminal::expr,
-    NonTerminal::exprp1,
-    NonTerminal::exprp2,
-    NonTerminal::exprp3,
-    NonTerminal::exprp4,
-    NonTerminal::exprp5,
-    NonTerminal::exprp6,
-    NonTerminal::exprp7,
-    NonTerminal::exprp8,
-    NonTerminal::optargs,
-    NonTerminal::args,
+    NonTerminal::s,         NonTerminal::fns,    NonTerminal::fn,
+    NonTerminal::optparams, NonTerminal::params, NonTerminal::vardef,
+    NonTerminal::type,      NonTerminal::stmts,  NonTerminal::stmt,
+    NonTerminal::expr,      NonTerminal::exprp1, NonTerminal::exprp2,
+    NonTerminal::exprp3,    NonTerminal::exprp4, NonTerminal::exprp5,
+    NonTerminal::exprp6,    NonTerminal::exprp7, NonTerminal::exprp8,
+    NonTerminal::optargs,   NonTerminal::args,
 };
-
 
 Grammar make_grammar() {
     return Grammar {

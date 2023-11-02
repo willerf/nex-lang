@@ -28,7 +28,6 @@
 #include "while_loop.h"
 #include "word.h"
 #include "write_file.h"
-#include "operators.h"
 
 static uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
 static std::string file_name("test_fibonacci.bin");

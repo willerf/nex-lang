@@ -1,15 +1,8 @@
 
 
-
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_vector.hpp>
 #include <iostream>
-
-#include "code_gen.h"
-
-#include "lang.h"
-#include "parsing.h"
-
 
 #include "assembly.h"
 #include "beq_label.h"
@@ -17,18 +10,21 @@
 #include "block.h"
 #include "bne_label.h"
 #include "chunk.h"
+#include "code_gen.h"
 #include "define_label.h"
 #include "elim_calls.h"
 #include "elim_if_stmts.h"
-#include "elim_ret_stmts.h"
 #include "elim_labels.h"
+#include "elim_ret_stmts.h"
 #include "elim_scopes.h"
 #include "elim_vars_proc.h"
 #include "entry_exit.h"
 #include "flatten.h"
 #include "if_stmt.h"
 #include "label.h"
+#include "lang.h"
 #include "operators.h"
+#include "parsing.h"
 #include "print.h"
 #include "procedure.h"
 #include "pseudo_assembly.h"
@@ -42,17 +38,14 @@
 #include "word.h"
 #include "write_file.h"
 
-
-
 static uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
 static std::string file_name("test_max.bin");
-
 
 std::vector<std::shared_ptr<Code>> compile(std::string input) {
     Grammar grammar = make_grammar();
     auto tokens = scan(input);
     auto ast_node = parse_cyk(tokens, grammar);
-    
+
     if (!ast_node) {
         std::cerr << "Failed to parse!" << std::endl;
         exit(1);
@@ -61,14 +54,14 @@ std::vector<std::shared_ptr<Code>> compile(std::string input) {
     // std::cout << ast_node->to_string(0) << std::endl;
 
     auto procedures = generate(ast_node.value());
-    
+
     std::shared_ptr<Procedure> main_proc;
     for (auto proc : procedures) {
         if (proc->name == "main") {
             main_proc = proc;
         }
     }
-    
+
     std::map<std::shared_ptr<Procedure>, std::shared_ptr<Chunk>> param_chunks;
     for (auto proc : procedures) {
         param_chunks[proc] = std::make_shared<Chunk>(proc->parameters);
@@ -93,7 +86,7 @@ std::vector<std::shared_ptr<Code>> compile(std::string input) {
         ElimIfStmts elim_if_stmts;
         proc->code = proc->code->accept(elim_if_stmts);
 
-        ElimRetStmts elim_ret_stmts{proc->end_label};
+        ElimRetStmts elim_ret_stmts {proc->end_label};
         proc->code = proc->code->accept(elim_ret_stmts);
 
         ElimScopes elim_scopes;
@@ -136,13 +129,12 @@ std::vector<std::shared_ptr<Code>> compile(std::string input) {
 }
 
 TEST_CASE("Test code gen", "[codegen]") {
-
-    std::string input = 
+    std::string input =
         "fn main(x: i32, y: i32) -> i32 {"
         "   let result: i32 = x + y;"
         "   return result;"
         "}";
-    
+
     auto program = compile(input);
     write_file(file_name, program);
 
@@ -150,25 +142,21 @@ TEST_CASE("Test code gen", "[codegen]") {
 }
 
 TEST_CASE("Test two functions", "[codegen]") {
-
-    std::string input = 
+    std::string input =
         "fn add(x: i32, y: i32) -> i32 {"
         "   return x + y;"
         "}"
         "fn main(x: i32, y: i32) -> i32 {"
         "   return add(x, y);"
         "}";
-    
+
     auto program = compile(input);
     write_file(file_name, program);
 
     REQUIRE(stoi(emulate(file_name, 5, 7)) == 12);
 }
 
-
 TEST_CASE("Test max func", "[codegen]") {
-
-    
     std::string input =
         "fn max(x: i32, y: i32) -> i32 {"
         "   let result: i32 = 0;"
@@ -184,7 +172,7 @@ TEST_CASE("Test max func", "[codegen]") {
         "   let z: i32 = max(x, y);"
         "   return z;"
         "}";
-    
+
     auto program = compile(input);
     write_file(file_name, program);
 

@@ -44,8 +44,6 @@ enum class Terminal {
     START
 };
 
-
-
 enum class NonTerminal {
     s,
     fns,
@@ -75,5 +73,4 @@ namespace state {
 std::string to_string(Terminal terminal);
 std::string to_string(NonTerminal non_terminal);
 std::string to_string(State state);
-}
-
+}  // namespace state

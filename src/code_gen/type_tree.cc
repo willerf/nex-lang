@@ -1,10 +1,11 @@
 /*
 #include "type_tree.h"
 
-#include "state.h"
+#include <iostream>
+
 #include "ast_node.h"
 #include "lang_type.h"
-#include <iostream>
+#include "state.h"
 
 std::vector<ASTNode> collect(ASTNode ast_node, lhs_kind: State) {
     if (ast_node.lhs.kind == lhs_kind) {
@@ -34,7 +35,3 @@ LangType parse_type(ASTNode ast_node) {
 
 typedef std::map<std::string, std::shared_ptr<std:shared_ptr<LangSymbol>>> SymbolTable;
 */
-
-
-
-

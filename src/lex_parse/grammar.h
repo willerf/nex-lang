@@ -14,6 +14,6 @@ struct Production {
 struct Grammar {
     std::set<NonTerminal> non_terminals;
     std::set<Terminal> terminals;
-    NonTerminal start;  
+    NonTerminal start;
     std::map<NonTerminal, std::vector<Production>> productions;
 };
