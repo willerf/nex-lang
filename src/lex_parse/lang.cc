@@ -148,7 +148,6 @@ std::vector<Token> scan(std::string_view input) {
         }
     }
 
-    // Define sets for separators using Terminal enum
     std::set<Terminal> sep_set1 = {
         Terminal::FN,
         Terminal::LET,
