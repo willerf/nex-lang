@@ -4,12 +4,12 @@ project(cpp-compiler-v2)
 set(CMAKE_CXX_STANDARD 20)
 
 add_library(compiler_lib STATIC
+    src/compile.cc
     src/memory_management/chunk.cc
     src/memory_management/stack.cc
     src/program_representation/assembly.cc
     src/program_representation/pseudo_assembly.cc
     src/program_representation/code_builders/bin_op.cc
-    src/program_representation/code_builders/comparators.cc
     src/program_representation/code_builders/operators.cc
     src/program_representation/code_builders/while_loop.cc
     src/program_representation/code_structures/block.cc
@@ -40,9 +40,11 @@ add_library(compiler_lib STATIC
     src/transformations/entry_exit.cc
     src/lex_parse/scanning.cc
     src/lex_parse/token.cc
-    src/lex_parse/lang.cc
+    src/lex_parse/nex_lang.cc
     src/lex_parse/parsing.cc
     src/lex_parse/ast_node.cc
+    src/lex_parse/state.cc
+    src/lex_parse/post_processing.cc
     src/utils/reg.cc
 )
 

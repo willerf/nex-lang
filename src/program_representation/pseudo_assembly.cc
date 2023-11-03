@@ -18,3 +18,7 @@ std::shared_ptr<Code>
 assign(std::shared_ptr<Variable> var, std::shared_ptr<Code> expr) {
     return make_block({expr, make_write(var, Reg::Result)});
 }
+
+std::shared_ptr<Code> deref(std::shared_ptr<Code> expr, uint32_t offset) {
+    return make_block({expr, make_lw(Reg::Result, offset, Reg::Result)});
+}

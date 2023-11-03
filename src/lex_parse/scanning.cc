@@ -4,13 +4,13 @@
 #include <iostream>
 
 Token scan_one(std::string_view input, DFA& dfa) {
-    State curr_state = dfa.init_state;
-    std::optional<std::pair<State, std::string_view>> last_accepting =
+    Terminal curr_state = dfa.init_state;
+    std::optional<std::pair<Terminal, std::string_view>> last_accepting =
         std::nullopt;
 
     for (size_t i = 0; i < input.length(); i++) {
         char c = input.at(i);
-        std::optional<State> next_state = std::nullopt;
+        std::optional<Terminal> next_state = std::nullopt;
         if (dfa.alphabet.count(c)) {
             next_state = dfa.transition(curr_state, c);
         }

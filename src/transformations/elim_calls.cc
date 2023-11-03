@@ -36,8 +36,7 @@ std::shared_ptr<Code> ElimCalls::visit(std::shared_ptr<Call> call) {
     std::vector<std::shared_ptr<Variable>> tmp_vars;
     for (auto var : callee->parameters) {
         tmp_vars.push_back(std::make_shared<Variable>(
-            "tmp for " + current_procedure->name + "." + var->name,
-            var->is_pointer
+            "tmp for " + current_procedure->name + "." + var->name
         ));
     }
 
@@ -68,15 +67,11 @@ std::shared_ptr<Code> ElimCalls::visit(std::shared_ptr<Call> call) {
 
     return make_scope(
         tmp_vars,
-        {make_add(Reg::Zero, Reg::Zero, Reg::Zero),
-         make_block(assign_to_tmps),
-         make_add(Reg::Zero, Reg::Zero, Reg::Zero),
+        {make_block(assign_to_tmps),
          stack::allocate(param_chunk),
-         make_add(Reg::Zero, Reg::Zero, Reg::Zero),
          make_block(tmps_to_chunk),
-         make_add(Reg::Zero, Reg::Zero, Reg::Zero),
          make_lis(Reg::TargetPC),
-         make_use(callee->label),
+         make_use(callee->start_label),
          make_jalr(Reg::TargetPC)}
     );
 }

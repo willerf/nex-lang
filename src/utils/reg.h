@@ -18,6 +18,7 @@ enum class Reg {
     CopyChunkScratch = 7,
     TargetPC = 8,
     ScratchPtrForGC = 9,
+    Scratch3 = 10,
     FromSpaceEnd = 27,
     HeapPtr = 28,
     FramePtr = 29,

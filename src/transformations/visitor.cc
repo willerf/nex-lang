@@ -132,7 +132,6 @@ template<>
 std::shared_ptr<Code>
 Visitor<std::shared_ptr<Code>>::visit(std::shared_ptr<IfStmt> code) {
     return std::make_shared<IfStmt>(
-        code->else_label,
         code->e1->accept(*this),
         code->comp->accept(*this),
         code->e2->accept(*this),

@@ -6,7 +6,7 @@
 #include "dfa.h"
 
 struct Token {
-    State kind;
+    Terminal kind;
     std::string lexeme;
 
     bool operator==(const Token&) const = default;

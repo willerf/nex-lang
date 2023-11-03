@@ -1,7 +1,8 @@
 
+
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_vector.hpp>
-#include <map>
+#include <iostream>
 
 #include "assembly.h"
 #include "beq_label.h"
@@ -13,13 +14,17 @@
 #include "elim_calls.h"
 #include "elim_if_stmts.h"
 #include "elim_labels.h"
+#include "elim_ret_stmts.h"
 #include "elim_scopes.h"
 #include "elim_vars_proc.h"
 #include "entry_exit.h"
 #include "flatten.h"
 #include "if_stmt.h"
 #include "label.h"
+#include "nex_lang.h"
 #include "operators.h"
+#include "parsing.h"
+#include "post_processing.h"
 #include "print.h"
 #include "procedure.h"
 #include "pseudo_assembly.h"
@@ -34,72 +39,31 @@
 #include "write_file.h"
 
 static uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
-static std::string file_name("test_factorial.bin");
+static std::string file_name("test_max.bin");
 
-// representation of test program
-uint32_t sample_factorial(uint32_t n) {
-    uint32_t result = 0;
-    if (n == 0) {
-        result = 1;
-    } else {
-        result = n * sample_factorial(n - 1);
+std::vector<std::shared_ptr<Code>> compile_test(std::string input) {
+    Grammar grammar = make_grammar();
+    auto tokens = scan(input);
+    auto ast_node = parse_cyk(tokens, grammar);
+
+    if (!ast_node) {
+        std::cerr << "Failed to parse!" << std::endl;
+        exit(1);
     }
-    return result;
-}
 
-uint32_t sample_main(uint32_t input1, uint32_t input2) {
-    return sample_factorial(input1);
-}
+    auto procedures = generate(ast_node.value());
 
-TEST_CASE("Test factorial program", "[programs]") {
-    auto n = std::make_shared<Variable>("n");
-    auto input1 = std::make_shared<Variable>("input1");
-    auto input2 = std::make_shared<Variable>("input2");
-
-    auto factorial_proc = std::make_shared<Procedure>(
-        "factorial_proc",
-        std::vector<std::shared_ptr<Variable>> {n}
-    );
-    auto main_proc = std::make_shared<Procedure>(
-        "main_proc",
-        std::vector<std::shared_ptr<Variable>> {input1, input2}
-    );
-
-    auto result = std::make_shared<Variable>("result");
-    factorial_proc->code = make_scope(
-        {result},
-        {assign(result, int_literal(0)),
-         make_if(
-             n->to_expr(),
-             op::eq_cmp(),
-             int_literal(0),
-             assign(result, int_literal(1)),
-             assign(
-                 result,
-                 bin_op(
-                     n->to_expr(),
-                     op::times(),
-                     make_call(
-                         factorial_proc,
-                         {bin_op(n->to_expr(), op::minus(), int_literal(1))}
-                     )
-                 )
-             )
-         ),
-         result->to_expr()}
-    );
-
-    main_proc->code =
-        make_block({make_call(factorial_proc, {input1->to_expr()})});
+    std::shared_ptr<Procedure> main_proc;
+    for (auto proc : procedures) {
+        if (proc->name == "main") {
+            main_proc = proc;
+        }
+    }
 
     std::map<std::shared_ptr<Procedure>, std::shared_ptr<Chunk>> param_chunks;
-    for (auto proc : {main_proc, factorial_proc}) {
+    for (auto proc : procedures) {
         param_chunks[proc] = std::make_shared<Chunk>(proc->parameters);
     }
-
-    std::vector<std::shared_ptr<Procedure>> procedures = {
-        main_proc,
-        factorial_proc};
 
     auto start_proc = std::make_shared<Procedure>(
         "start_proc",
@@ -119,6 +83,9 @@ TEST_CASE("Test factorial program", "[programs]") {
 
         ElimIfStmts elim_if_stmts;
         proc->code = proc->code->accept(elim_if_stmts);
+
+        ElimRetStmts elim_ret_stmts {proc->end_label};
+        proc->code = proc->code->accept(elim_ret_stmts);
 
         ElimScopes elim_scopes;
         proc->code = proc->code->accept(elim_scopes);
@@ -156,10 +123,56 @@ TEST_CASE("Test factorial program", "[programs]") {
     auto program2 = flatten.get();
 
     auto program3 = elim_labels(program2);
+    return program3;
+}
 
-    write_file(file_name, program3);
+TEST_CASE("Test code gen", "[post_processing]") {
+    std::string input =
+        "fn main(x: i32, y: i32) -> i32 {"
+        "   let result: i32 = x + y;"
+        "   return result;"
+        "}";
 
-    for (auto input : {0, 1, 2, 3, 5, 6, 7, 8, 9}) {
-        REQUIRE(stoi(emulate(file_name, input, 0)) == sample_main(input, 0));
-    }
+    auto program = compile_test(input);
+    write_file(file_name, program);
+
+    REQUIRE(stoi(emulate(file_name, 5, 7)) == 12);
+}
+
+TEST_CASE("Test two functions", "[post_processing]") {
+    std::string input =
+        "fn add(x: i32, y: i32) -> i32 {"
+        "   return x + y;"
+        "}"
+        "fn main(x: i32, y: i32) -> i32 {"
+        "   return add(x, y);"
+        "}";
+
+    auto program = compile_test(input);
+    write_file(file_name, program);
+
+    REQUIRE(stoi(emulate(file_name, 5, 7)) == 12);
+}
+
+TEST_CASE("Test max func", "[post_processing]") {
+    std::string input =
+        "fn max(x: i32, y: i32) -> i32 {"
+        "   let result: i32 = 0;"
+        "   if (x > y) {"
+        "       result = x;"
+        "   } else {"
+        "       result = y;"
+        "   }"
+        "   return result;"
+        "}"
+        ""
+        "fn main(x: i32, y: i32) -> i32 {"
+        "   let z: i32 = max(x, y);"
+        "   return z;"
+        "}";
+
+    auto program = compile_test(input);
+    write_file(file_name, program);
+
+    REQUIRE(stoi(emulate(file_name, 5, 7)) == 7);
 }

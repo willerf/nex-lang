@@ -19,11 +19,14 @@ std::shared_ptr<Code> ElimVars::visit(std::shared_ptr<Block> block) {
 }
 
 std::shared_ptr<Code> ElimVars::visit(std::shared_ptr<VarAccess> var_access) {
-    if (var_access->read) {
+    if (var_access->var_access_type == VarAccessType::Read) {
         return frame
             ->load(Reg::FramePtr, var_access->reg, var_access->variable);
-    } else {
+    } else if (var_access->var_access_type == VarAccessType::Write) {
         return frame
             ->store(Reg::FramePtr, var_access->variable, var_access->reg);
+    } else {
+        std::cerr << "Unsupported access type." << std::endl;
+        exit(1);
     }
 }

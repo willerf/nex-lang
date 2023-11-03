@@ -33,17 +33,26 @@ std::shared_ptr<Code> ElimVarsProc::visit(std::shared_ptr<VarAccess> var_access
             var_access->variable
         )
         != frame->variables.end()) {
-        if (var_access->read) {
+        if (var_access->var_access_type == VarAccessType::Read) {
             return frame
                 ->load(Reg::FramePtr, var_access->reg, var_access->variable);
-        } else {
+        } else if (var_access->var_access_type == VarAccessType::Write) {
             return frame
                 ->store(Reg::FramePtr, var_access->variable, var_access->reg);
+        } else if (var_access->var_access_type == VarAccessType::Address) {
+            return frame->load_address(
+                Reg::FramePtr,
+                var_access->reg,
+                var_access->variable
+            );
+        } else {
+            std::cerr << "Unsupported access type." << std::endl;
+            exit(1);
         }
     } else {
         std::shared_ptr<Code> load_param_ptr =
             frame->load(Reg::FramePtr, Reg::Scratch, param_ptr);
-        if (var_access->read) {
+        if (var_access->var_access_type == VarAccessType::Read) {
             return make_block(
                 {load_param_ptr,
                  param_chunk->load(
@@ -52,7 +61,7 @@ std::shared_ptr<Code> ElimVarsProc::visit(std::shared_ptr<VarAccess> var_access
                      var_access->variable
                  )}
             );
-        } else {
+        } else if (var_access->var_access_type == VarAccessType::Write) {
             return make_block(
                 {load_param_ptr,
                  param_chunk->store(
@@ -61,6 +70,18 @@ std::shared_ptr<Code> ElimVarsProc::visit(std::shared_ptr<VarAccess> var_access
                      var_access->reg
                  )}
             );
+        } else if (var_access->var_access_type == VarAccessType::Address) {
+            return make_block(
+                {load_param_ptr,
+                 param_chunk->load_address(
+                     Reg::Scratch,
+                     var_access->reg,
+                     var_access->variable
+                 )}
+            );
+        } else {
+            std::cerr << "Unsupported access type." << std::endl;
+            exit(1);
         }
     }
 }

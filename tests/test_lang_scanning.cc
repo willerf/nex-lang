@@ -3,7 +3,7 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_vector.hpp>
 
-#include "lang.h"
+#include "nex_lang.h"
 
 TEST_CASE("Test scanning keywords", "[lang]") {
     std::vector<Token> tokens;
@@ -12,10 +12,9 @@ TEST_CASE("Test scanning keywords", "[lang]") {
     REQUIRE_THAT(
         tokens,
         Catch::Matchers::Equals(std::vector<Token> {
-            Token {"BOF"
-                   ""},
-            Token {"FN", "fn"},
-            Token {"EOF", ""},
+            Token {Terminal::BOFS, ""},
+            Token {Terminal::FN, "fn"},
+            Token {Terminal::EOFS, ""},
         })
     );
 
@@ -23,10 +22,9 @@ TEST_CASE("Test scanning keywords", "[lang]") {
     REQUIRE_THAT(
         tokens,
         Catch::Matchers::Equals(std::vector<Token> {
-            Token {"BOF"
-                   ""},
-            Token {"LET", "let"},
-            Token {"EOF", ""},
+            Token {Terminal::BOFS, ""},
+            Token {Terminal::LET, "let"},
+            Token {Terminal::EOFS, ""},
         })
     );
 
@@ -34,10 +32,9 @@ TEST_CASE("Test scanning keywords", "[lang]") {
     REQUIRE_THAT(
         tokens,
         Catch::Matchers::Equals(std::vector<Token> {
-            Token {"BOF"
-                   ""},
-            Token {"IF", "if"},
-            Token {"EOF", ""},
+            Token {Terminal::BOFS, ""},
+            Token {Terminal::IF, "if"},
+            Token {Terminal::EOFS, ""},
         })
     );
 
@@ -45,10 +42,9 @@ TEST_CASE("Test scanning keywords", "[lang]") {
     REQUIRE_THAT(
         tokens,
         Catch::Matchers::Equals(std::vector<Token> {
-            Token {"BOF"
-                   ""},
-            Token {"ELSE", "else"},
-            Token {"EOF", ""},
+            Token {Terminal::BOFS, ""},
+            Token {Terminal::ELSE, "else"},
+            Token {Terminal::EOFS, ""},
         })
     );
 
@@ -56,10 +52,9 @@ TEST_CASE("Test scanning keywords", "[lang]") {
     REQUIRE_THAT(
         tokens,
         Catch::Matchers::Equals(std::vector<Token> {
-            Token {"BOF"
-                   ""},
-            Token {"I32", "i32"},
-            Token {"EOF", ""},
+            Token {Terminal::BOFS, ""},
+            Token {Terminal::I32, "i32"},
+            Token {Terminal::EOFS, ""},
         })
     );
 }
@@ -72,13 +67,16 @@ TEST_CASE("Test scanning simple program", "[lang]") {
     REQUIRE_THAT(
         tokens,
         Catch::Matchers::Equals(std::vector<Token> {
-            Token {"BOF", ""},     Token {"FN", "fn"},   Token {"ID", "add"},
-            Token {"LPAREN", "("}, Token {"ID", "x"},    Token {"COLON", ":"},
-            Token {"I32", "i32"},  Token {"COMMA", ","}, Token {"ID", "y"},
-            Token {"COLON", ":"},  Token {"I32", "i32"}, Token {"RPAREN", ")"},
-            Token {"ARROW", "->"}, Token {"I32", "i32"}, Token {"LBRACE", "{"},
-            Token {"ID", "x"},     Token {"PLUS", "+"},  Token {"ID", "y"},
-            Token {"RBRACE", "}"}, Token {"EOF", ""},
+            Token {Terminal::BOFS, ""},    Token {Terminal::FN, "fn"},
+            Token {Terminal::ID, "add"},   Token {Terminal::LPAREN, "("},
+            Token {Terminal::ID, "x"},     Token {Terminal::COLON, ":"},
+            Token {Terminal::I32, "i32"},  Token {Terminal::COMMA, ","},
+            Token {Terminal::ID, "y"},     Token {Terminal::COLON, ":"},
+            Token {Terminal::I32, "i32"},  Token {Terminal::RPAREN, ")"},
+            Token {Terminal::ARROW, "->"}, Token {Terminal::I32, "i32"},
+            Token {Terminal::LBRACE, "{"}, Token {Terminal::ID, "x"},
+            Token {Terminal::PLUS, "+"},   Token {Terminal::ID, "y"},
+            Token {Terminal::RBRACE, "}"}, Token {Terminal::EOFS, ""},
         })
     );
 }
@@ -98,23 +96,23 @@ TEST_CASE("Test scanning bigger program", "[scanning]") {
     REQUIRE_THAT(
         tokens,
         Catch::Matchers::Equals(std::vector<Token> {
-            Token {"BOF", ""},       Token {"FN", "fn"},
-            Token {"ID", "max"},     Token {"LPAREN", "("},
-            Token {"ID", "x"},       Token {"COLON", ":"},
-            Token {"I32", "i32"},    Token {"COMMA", ","},
-            Token {"ID", "y"},       Token {"COLON", ":"},
-            Token {"I32", "i32"},    Token {"RPAREN", ")"},
-            Token {"ARROW", "->"},   Token {"I32", "i32"},
-            Token {"LBRACE", "{"},   Token {"IF", "if"},
-            Token {"LPAREN", "("},   Token {"ID", "x"},
-            Token {"GT", ">"},       Token {"ID", "y"},
-            Token {"RPAREN", ")"},   Token {"LBRACE", "{"},
-            Token {"RET", "return"}, Token {"ID", "x"},
-            Token {"SEMI", ";"},     Token {"ELSE", "else"},
-            Token {"LBRACE", "{"},   Token {"RET", "return"},
-            Token {"ID", "y"},       Token {"SEMI", ";"},
-            Token {"RBRACE", "}"},   Token {"RBRACE", "}"},
-            Token {"EOF", ""},
+            Token {Terminal::BOFS, ""},      Token {Terminal::FN, "fn"},
+            Token {Terminal::ID, "max"},     Token {Terminal::LPAREN, "("},
+            Token {Terminal::ID, "x"},       Token {Terminal::COLON, ":"},
+            Token {Terminal::I32, "i32"},    Token {Terminal::COMMA, ","},
+            Token {Terminal::ID, "y"},       Token {Terminal::COLON, ":"},
+            Token {Terminal::I32, "i32"},    Token {Terminal::RPAREN, ")"},
+            Token {Terminal::ARROW, "->"},   Token {Terminal::I32, "i32"},
+            Token {Terminal::LBRACE, "{"},   Token {Terminal::IF, "if"},
+            Token {Terminal::LPAREN, "("},   Token {Terminal::ID, "x"},
+            Token {Terminal::GT, ">"},       Token {Terminal::ID, "y"},
+            Token {Terminal::RPAREN, ")"},   Token {Terminal::LBRACE, "{"},
+            Token {Terminal::RET, "return"}, Token {Terminal::ID, "x"},
+            Token {Terminal::SEMI, ";"},     Token {Terminal::ELSE, "else"},
+            Token {Terminal::LBRACE, "{"},   Token {Terminal::RET, "return"},
+            Token {Terminal::ID, "y"},       Token {Terminal::SEMI, ";"},
+            Token {Terminal::RBRACE, "}"},   Token {Terminal::RBRACE, "}"},
+            Token {Terminal::EOFS, ""},
         })
     );
 }

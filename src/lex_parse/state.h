@@ -1,4 +1,76 @@
 
 #pragma once
+#include <variant>
 
-typedef std::string State;
+enum class Terminal {
+    BOFS,
+    EOFS,
+    FN,
+    ID,
+    LPAREN,
+    RPAREN,
+    ARROW,
+    LBRACE,
+    RBRACE,
+    COMMA,
+    COLON,
+    I32,
+    LET,
+    ASSIGN,
+    SEMI,
+    IF,
+    ELSE,
+    RET,
+    OR,
+    AND,
+    EQ,
+    NE,
+    LT,
+    GT,
+    LE,
+    GE,
+    PLUS,
+    MINUS,
+    STAR,
+    SLASH,
+    AMPERSAND,
+    PIPE,
+    PCT,
+    NOT,
+    NUM,
+    ZERO,
+    WHITESPACE,
+    COMMENT,
+    START
+};
+
+enum class NonTerminal {
+    s,
+    fns,
+    fn,
+    optparams,
+    params,
+    vardef,
+    type,
+    stmts,
+    stmt,
+    expr,
+    exprp1,
+    exprp2,
+    exprp3,
+    exprp4,
+    exprp5,
+    exprp6,
+    exprp7,
+    exprp8,
+    optargs,
+    args
+};
+
+using State = std::variant<Terminal, NonTerminal>;
+
+namespace state {
+std::string to_string(Terminal terminal);
+std::string to_string(NonTerminal non_terminal);
+std::string to_string(State state);
+}  // namespace state
