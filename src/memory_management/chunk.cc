@@ -34,9 +34,9 @@ Chunk::load(Reg base, Reg reg, std::shared_ptr<Variable>& variable) {
 std::shared_ptr<Code>
 Chunk::load_address(Reg base, Reg reg, std::shared_ptr<Variable>& variable) {
     return make_block(
-        {make_lis(Reg::Scratch),
+        {make_lis(Reg::Scratch3),
          make_word(get_offset(variable)),
-         make_add(reg, base, Reg::Scratch)}
+         make_add(reg, base, Reg::Scratch3)}
     );
 }
 

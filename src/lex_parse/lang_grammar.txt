@@ -36,6 +36,7 @@ exprp6 exprp6 SLASH exprp7
 exprp6 exprp6 PCT exprp7
 exprp7 exprp8
 exprp7 NOT exprp8
+exprp7 STAR exprp8
 exprp8 ID
 exprp8 NUM
 exprp8 AMPERSAND ID

@@ -94,6 +94,9 @@ visit_expr(ASTNode root, VariableMap& var_map, ProcedureMap& proc_map) {
             case Terminal::NOT:
                 result = make_block({expr_code, op::not_bool()});
                 break;
+            case Terminal::STAR:
+                result = deref(expr_code);
+                break;
             default:
                 std::cerr
                     << "Unimplemented unary operator found while processing expr."

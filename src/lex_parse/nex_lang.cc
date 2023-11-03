@@ -300,7 +300,8 @@ static std::map<NonTerminal, std::vector<Production>> productions = {
        {NonTerminal::exprp6, Terminal::PCT, NonTerminal::exprp7}}}},
     {NonTerminal::exprp7,
      {{NonTerminal::exprp7, {NonTerminal::exprp8}},
-      {NonTerminal::exprp7, {Terminal::NOT, NonTerminal::exprp8}}}},
+      {NonTerminal::exprp7, {Terminal::NOT, NonTerminal::exprp8}},
+      {NonTerminal::exprp7, {Terminal::STAR, NonTerminal::exprp8}}}},
     {NonTerminal::exprp8,
      {{NonTerminal::exprp8, {Terminal::ID}},
       {NonTerminal::exprp8, {Terminal::NUM}},
@@ -320,14 +321,14 @@ static std::map<NonTerminal, std::vector<Production>> productions = {
       {NonTerminal::args, {NonTerminal::expr}}}}};
 
 static std::set<Terminal> terminals = {
-    Terminal::BOFS,   Terminal::EOFS,   Terminal::FN,    Terminal::ID,
-    Terminal::LPAREN, Terminal::RPAREN, Terminal::ARROW, Terminal::LBRACE,
-    Terminal::RBRACE, Terminal::COMMA,  Terminal::COLON, Terminal::I32,
-    Terminal::LET,    Terminal::ASSIGN, Terminal::SEMI,  Terminal::IF,
-    Terminal::ELSE,   Terminal::RET,    Terminal::OR,    Terminal::AND,
-    Terminal::EQ,     Terminal::NE,     Terminal::LT,    Terminal::GT,
-    Terminal::LE,     Terminal::GE,     Terminal::PLUS,  Terminal::MINUS,
-    Terminal::STAR,   Terminal::SLASH,  Terminal::PCT,   Terminal::NOT,
+    Terminal::BOFS,   Terminal::EOFS,      Terminal::FN,    Terminal::ID,
+    Terminal::LPAREN, Terminal::RPAREN,    Terminal::ARROW, Terminal::LBRACE,
+    Terminal::RBRACE, Terminal::COMMA,     Terminal::COLON, Terminal::I32,
+    Terminal::LET,    Terminal::ASSIGN,    Terminal::SEMI,  Terminal::IF,
+    Terminal::ELSE,   Terminal::RET,       Terminal::OR,    Terminal::AND,
+    Terminal::EQ,     Terminal::NE,        Terminal::LT,    Terminal::GT,
+    Terminal::LE,     Terminal::GE,        Terminal::PLUS,  Terminal::MINUS,
+    Terminal::STAR,   Terminal::SLASH,     Terminal::PCT,   Terminal::NOT,
     Terminal::NUM,    Terminal::AMPERSAND,
 };
 
