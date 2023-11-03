@@ -36,8 +36,7 @@ std::shared_ptr<Code> ElimCalls::visit(std::shared_ptr<Call> call) {
     std::vector<std::shared_ptr<Variable>> tmp_vars;
     for (auto var : callee->parameters) {
         tmp_vars.push_back(std::make_shared<Variable>(
-            "tmp for " + current_procedure->name + "." + var->name,
-            var->is_pointer
+            "tmp for " + current_procedure->name + "." + var->name
         ));
     }
 

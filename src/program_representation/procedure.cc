@@ -7,9 +7,9 @@ Procedure::Procedure(
 ) :
     name {name},
     parameters {parameters} {
-    param_ptr = std::make_shared<Variable>("param ptr for " + name, true);
-    dynamic_link = std::make_shared<Variable>("dynamic link for " + name, true);
-    saved_pc = std::make_shared<Variable>("saved pc for " + name, true);
+    param_ptr = std::make_shared<Variable>("param ptr for " + name);
+    dynamic_link = std::make_shared<Variable>("dynamic link for " + name);
+    saved_pc = std::make_shared<Variable>("saved pc for " + name);
     start_label = std::make_shared<Label>("procedure " + name);
     end_label = std::make_shared<Label>("procedure " + name + " end");
 }

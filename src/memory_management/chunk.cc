@@ -11,14 +11,7 @@
 Chunk::Chunk(std::vector<std::shared_ptr<Variable>> variables) :
     variables {variables},
     words {static_cast<uint32_t>(variables.size() + 2)},
-    bytes {static_cast<uint32_t>(4 * (variables.size() + 2))} {
-    std::sort(
-        this->variables.begin(),
-        this->variables.end(),
-        [](const std::shared_ptr<Variable>& v1,
-           const std::shared_ptr<Variable>& v2) { return v1->is_pointer; }
-    );
-}
+    bytes {static_cast<uint32_t>(4 * (variables.size() + 2))} {}
 
 uint32_t Chunk::get_offset(std::shared_ptr<Variable>& variable) {
     uint32_t offset = 8;

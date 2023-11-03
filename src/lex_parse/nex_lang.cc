@@ -205,7 +205,7 @@ std::vector<Token> scan(std::string_view input) {
     return result;
 }
 
-std::map<NonTerminal, std::vector<Production>> productions = {
+static std::map<NonTerminal, std::vector<Production>> productions = {
     {NonTerminal::s,
      {{NonTerminal::s, {Terminal::BOFS, NonTerminal::fns, Terminal::EOFS}}}},
     {NonTerminal::fns,
@@ -318,7 +318,7 @@ std::map<NonTerminal, std::vector<Production>> productions = {
        {NonTerminal::expr, Terminal::COMMA, NonTerminal::args}},
       {NonTerminal::args, {NonTerminal::expr}}}}};
 
-std::set<Terminal> terminals = {
+static std::set<Terminal> terminals = {
     Terminal::BOFS,   Terminal::EOFS,   Terminal::FN,    Terminal::ID,
     Terminal::LPAREN, Terminal::RPAREN, Terminal::ARROW, Terminal::LBRACE,
     Terminal::RBRACE, Terminal::COMMA,  Terminal::COLON, Terminal::I32,
@@ -330,7 +330,7 @@ std::set<Terminal> terminals = {
     Terminal::NUM,
 };
 
-std::set<NonTerminal> non_terminals = {
+static std::set<NonTerminal> non_terminals = {
     NonTerminal::s,         NonTerminal::fns,    NonTerminal::fn,
     NonTerminal::optparams, NonTerminal::params, NonTerminal::vardef,
     NonTerminal::type,      NonTerminal::stmts,  NonTerminal::stmt,
