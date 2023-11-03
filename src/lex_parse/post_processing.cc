@@ -35,7 +35,7 @@ visit_expr(ASTNode root, VariableMap& var_map, ProcedureMap& proc_map) {
         std::holds_alternative<NonTerminal>(root.state)
         && expr_non_terminals.count(std::get<NonTerminal>(root.state))
     );
-    std::shared_ptr<Code> result;
+    std::shared_ptr<Code> result = nullptr;
 
     std::vector<State> prod = root.get_production();
     if (prod == std::vector<State> {NonTerminal::exprp8, Terminal::ID}) {
@@ -73,8 +73,23 @@ visit_expr(ASTNode root, VariableMap& var_map, ProcedureMap& proc_map) {
         ASTNode expr = root.children.at(0);
         result = visit_expr(expr, var_map, proc_map);
     }
-    else if (root.children.size() == 2 && std::holds_alternative<NonTerminal>(root.children.at(1).state) && expr_non_terminals.count(std::get<NonTerminal>(root.children.at(1).state))) {
+    else if (root.children.size() == 2 && std::holds_alternative<Terminal>(root.children.at(0).state) && std::holds_alternative<NonTerminal>(root.children.at(1).state) && expr_non_terminals.count(std::get<NonTerminal>(root.children.at(1).state))) {
         // extract unary operator
+        ASTNode lhs_op = root.children.at(0);
+        ASTNode expr = root.children.at(1);
+
+        Terminal unary_op = std::get<Terminal>(lhs_op.state);
+        std::shared_ptr<Code> expr_code = visit_expr(expr, var_map, proc_map);
+        switch (unary_op) {
+            case Terminal::NOT:
+                result = make_block({expr_code, op::not_bool()});
+                break;
+            default:
+                std::cerr
+                    << "Unimplemented unary operator found while processing expr."
+                    << std::endl;
+                exit(1);
+        }
     }
     else if (root.children.size() == 3 && std::holds_alternative<NonTerminal>(root.children.at(0).state) && expr_non_terminals.count(std::get<NonTerminal>(root.children.at(0).state)) && std::holds_alternative<Terminal>(root.children.at(1).state) && std::holds_alternative<NonTerminal>(root.children.at(2).state) && expr_non_terminals.count(std::get<NonTerminal>(root.children.at(2).state))) {
         // extract binary operator
@@ -127,13 +142,18 @@ visit_expr(ASTNode root, VariableMap& var_map, ProcedureMap& proc_map) {
                 break;
             default:
                 std::cerr
-                    << "Unimplemented operator found while processing expr."
+                    << "Unimplemented binary operator found while processing expr."
                     << std::endl;
                 exit(1);
         }
     } else {
         std::cerr << "Invalid production found while processing expr."
                   << std::endl;
+        exit(1);
+    }
+
+    if (!result) {
+        std::cerr << "Invalid expression." << std::endl;
         exit(1);
     }
 

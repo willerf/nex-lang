@@ -4,6 +4,7 @@
 #include "code.h"
 
 namespace op {
+// binary operators
 std::shared_ptr<Code> plus();
 std::shared_ptr<Code> minus();
 std::shared_ptr<Code> times();
@@ -21,4 +22,7 @@ std::shared_ptr<Code> lt_cmp();
 std::shared_ptr<Code> gt_cmp();
 std::shared_ptr<Code> le_cmp();
 std::shared_ptr<Code> ge_cmp();
+
+// unary operators
+std::shared_ptr<Code> not_bool();
 }  // namespace op

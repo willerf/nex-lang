@@ -128,7 +128,7 @@ std::vector<std::shared_ptr<Code>> compile_test(std::string input) {
     return program3;
 }
 
-TEST_CASE("Test code gen", "[codegen]") {
+TEST_CASE("Test code gen", "[post_processing]") {
     std::string input =
         "fn main(x: i32, y: i32) -> i32 {"
         "   let result: i32 = x + y;"
@@ -141,7 +141,7 @@ TEST_CASE("Test code gen", "[codegen]") {
     REQUIRE(stoi(emulate(file_name, 5, 7)) == 12);
 }
 
-TEST_CASE("Test two functions", "[codegen]") {
+TEST_CASE("Test two functions", "[post_processing]") {
     std::string input =
         "fn add(x: i32, y: i32) -> i32 {"
         "   return x + y;"
@@ -156,7 +156,7 @@ TEST_CASE("Test two functions", "[codegen]") {
     REQUIRE(stoi(emulate(file_name, 5, 7)) == 12);
 }
 
-TEST_CASE("Test max func", "[codegen]") {
+TEST_CASE("Test max func", "[post_processing]") {
     std::string input =
         "fn max(x: i32, y: i32) -> i32 {"
         "   let result: i32 = 0;"
