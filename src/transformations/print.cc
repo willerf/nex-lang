@@ -59,8 +59,7 @@ void Print::visit(std::shared_ptr<UseLabel> use_label) {
 
 void Print::visit(std::shared_ptr<VarAccess> var_access) {
     std::cout << std::string(depth, ' ') << "VarAccess(" << var_access->reg
-              << ", " << var_access->variable->name << ", "
-              << (var_access->read ? "true" : "false") << ")" << std::endl;
+              << ", " << var_access->variable->name << ")" << std::endl;
 }
 
 void Print::visit(std::shared_ptr<Scope> scope) {

@@ -19,6 +19,8 @@ class Chunk {
     std::shared_ptr<Code>
     load(Reg base, Reg reg, std::shared_ptr<Variable>& variable);
     std::shared_ptr<Code>
+    load_address(Reg base, Reg reg, std::shared_ptr<Variable>& variable);
+    std::shared_ptr<Code>
     store(Reg base, std::shared_ptr<Variable>& variable, Reg reg);
 
     std::shared_ptr<Code> initialize();

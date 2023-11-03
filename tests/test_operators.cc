@@ -241,3 +241,18 @@ TEST_CASE("Test not.", "[operators]") {
     REQUIRE(stoi(emulate(file_name, -5, 0)) == (!-5));
     REQUIRE(stoi(emulate(file_name, 25, 0)) == (!25));
 }
+
+TEST_CASE("Test ampersand.", "[operators]") {
+    std::string input =
+        "fn test_func(x: i32, y: i32) -> i32 {"
+        "    return &x;"
+        "}"
+        "fn main(x: i32, y: i32) -> i32 {"
+        "    return test_func(x, y);"
+        "}";
+
+    auto program = compile(input);
+    write_file(file_name, program);
+    
+    std::cout << emulate(file_name, 0, 0) << std::endl;
+}

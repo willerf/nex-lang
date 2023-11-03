@@ -17,6 +17,7 @@
 #include "pseudo_assembly.h"
 #include "ret_stmt.h"
 #include "scope.h"
+#include "var_access.h"
 
 static std::set<NonTerminal> expr_non_terminals = {
     NonTerminal::expr,
@@ -51,6 +52,15 @@ visit_expr(ASTNode root, VariableMap& var_map, ProcedureMap& proc_map) {
     } else if (prod == std::vector<State> {NonTerminal::exprp8, Terminal::NUM}) {
         ASTNode num = root.children.at(0);
         result = int_literal(stoi(num.lexeme));
+    } else if (prod == std::vector<State> {NonTerminal::exprp8, Terminal::AMPERSAND, Terminal::ID}) {
+        ASTNode id = root.children.at(1);
+        std::string name = id.lexeme;
+        if (var_map.count(name)) {
+            result = make_read_address(Reg::Result, var_map[name]);
+        } else {
+            std::cerr << "Variable does not exist: " << name << std::endl;
+            exit(1);
+        }
     } else if (prod == std::vector<State> {NonTerminal::exprp8, Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN}) {
         ASTNode expr = root.children.at(1);
         result = visit_expr(expr, var_map, proc_map);

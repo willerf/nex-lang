@@ -51,8 +51,6 @@ std::vector<std::shared_ptr<Code>> compile_test(std::string input) {
         exit(1);
     }
 
-    // std::cout << ast_node->to_string(0) << std::endl;
-
     auto procedures = generate(ast_node.value());
 
     std::shared_ptr<Procedure> main_proc;

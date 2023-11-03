@@ -38,6 +38,7 @@ exprp7 exprp8
 exprp7 NOT exprp8
 exprp8 ID
 exprp8 NUM
+exprp8 AMPERSAND ID
 exprp8 LPAREN expr RPAREN
 exprp8 ID LPAREN optargs RPAREN
 optargs args

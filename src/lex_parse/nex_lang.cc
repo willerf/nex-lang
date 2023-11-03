@@ -304,6 +304,7 @@ static std::map<NonTerminal, std::vector<Production>> productions = {
     {NonTerminal::exprp8,
      {{NonTerminal::exprp8, {Terminal::ID}},
       {NonTerminal::exprp8, {Terminal::NUM}},
+      {NonTerminal::exprp8, {Terminal::AMPERSAND, Terminal::ID}},
       {NonTerminal::exprp8,
        {Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN}},
       {NonTerminal::exprp8,
@@ -327,7 +328,7 @@ static std::set<Terminal> terminals = {
     Terminal::EQ,     Terminal::NE,     Terminal::LT,    Terminal::GT,
     Terminal::LE,     Terminal::GE,     Terminal::PLUS,  Terminal::MINUS,
     Terminal::STAR,   Terminal::SLASH,  Terminal::PCT,   Terminal::NOT,
-    Terminal::NUM,
+    Terminal::NUM,    Terminal::AMPERSAND,
 };
 
 static std::set<NonTerminal> non_terminals = {
