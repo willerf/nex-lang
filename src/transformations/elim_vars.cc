@@ -25,8 +25,14 @@ std::shared_ptr<Code> ElimVars::visit(std::shared_ptr<VarAccess> var_access) {
     } else if (var_access->var_access_type == VarAccessType::Write) {
         return frame
             ->store(Reg::FramePtr, var_access->variable, var_access->reg);
+    } else if (var_access->var_access_type == VarAccessType::Address) {
+        return frame->load_address(
+            Reg::FramePtr,
+            var_access->reg,
+            var_access->variable
+        );
     } else {
-        std::cerr << "Unsupported access type." << std::endl;
+        std::cerr << "Unsupported access type 1." << std::endl;
         exit(1);
     }
 }

@@ -19,6 +19,19 @@ assign(std::shared_ptr<Variable> var, std::shared_ptr<Code> expr) {
     return make_block({expr, make_write(var, Reg::Result)});
 }
 
+std::shared_ptr<Code> assign_to_address(
+    std::shared_ptr<Code> addr,
+    std::shared_ptr<Code> expr,
+    uint32_t offset
+) {
+    return make_block(
+        {addr,
+         make_add(Reg::Scratch2, Reg::Result, Reg::Zero),
+         expr,
+         make_sw(Reg::Result, offset, Reg::Scratch2)}
+    );
+}
+
 std::shared_ptr<Code> deref(std::shared_ptr<Code> expr, uint32_t offset) {
     return make_block({expr, make_lw(Reg::Result, offset, Reg::Result)});
 }

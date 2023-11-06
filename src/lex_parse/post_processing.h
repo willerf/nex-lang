@@ -10,8 +10,12 @@
 using VariableMap = std::map<std::string, std::shared_ptr<Variable>>;
 using ProcedureMap = std::map<std::string, std::shared_ptr<Procedure>>;
 
-std::shared_ptr<Code>
-visit_expr(ASTNode root, VariableMap& var_map, ProcedureMap& proc_map);
+std::shared_ptr<Code> visit_expr(
+    ASTNode root,
+    bool read_address,
+    VariableMap& var_map,
+    ProcedureMap& proc_map
+);
 std::vector<std::shared_ptr<Procedure>> generate(ASTNode root);
 
 std::shared_ptr<Variable> visit_vardef(ASTNode root);

@@ -1,4 +1,4 @@
-R"(s BOF fns EOF
+s BOF fns EOF
 fns fn fns
 fns fn
 fn FN ID LPAREN optparams RPAREN ARROW type LBRACE stmts RBRACE
@@ -11,7 +11,7 @@ type I32
 stmts stmt stmts
 stmts stmt
 stmt LET vardef ASSIGN expr SEMI
-stmt ID ASSIGN expr SEMI
+stmt expr ASSIGN expr SEMI
 stmt IF LPAREN expr RPAREN LBRACE stmts RBRACE ELSE LBRACE stmts RBRACE
 stmt WHILE LPAREN expr RPAREN LBRACE stmts RBRACE
 stmt RET expr SEMI
@@ -46,4 +46,4 @@ exprp8 ID LPAREN optargs RPAREN
 optargs args
 optargs
 args expr COMMA args
-args expr)"
+args expr

@@ -46,7 +46,7 @@ std::shared_ptr<Code> ElimVarsProc::visit(std::shared_ptr<VarAccess> var_access
                 var_access->variable
             );
         } else {
-            std::cerr << "Unsupported access type." << std::endl;
+            std::cerr << "Unsupported access type 2." << std::endl;
             exit(1);
         }
     } else {
@@ -80,7 +80,7 @@ std::shared_ptr<Code> ElimVarsProc::visit(std::shared_ptr<VarAccess> var_access
                  )}
             );
         } else {
-            std::cerr << "Unsupported access type." << std::endl;
+            std::cerr << "Unsupported access type 3." << std::endl;
             exit(1);
         }
     }

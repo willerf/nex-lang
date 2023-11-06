@@ -12,13 +12,13 @@
 #include "block.h"
 #include "call.h"
 #include "if_stmt.h"
-#include "while_loop.h"
 #include "operators.h"
 #include "procedure.h"
 #include "pseudo_assembly.h"
 #include "ret_stmt.h"
 #include "scope.h"
 #include "var_access.h"
+#include "while_loop.h"
 
 static std::set<NonTerminal> expr_non_terminals = {
     NonTerminal::expr,
@@ -31,8 +31,12 @@ static std::set<NonTerminal> expr_non_terminals = {
     NonTerminal::exprp7,
     NonTerminal::exprp8};
 
-std::shared_ptr<Code>
-visit_expr(ASTNode root, VariableMap& var_map, ProcedureMap& proc_map) {
+std::shared_ptr<Code> visit_expr(
+    ASTNode root,
+    bool read_address,
+    VariableMap& var_map,
+    ProcedureMap& proc_map
+) {
     assert(
         std::holds_alternative<NonTerminal>(root.state)
         && expr_non_terminals.count(std::get<NonTerminal>(root.state))
@@ -45,7 +49,7 @@ visit_expr(ASTNode root, VariableMap& var_map, ProcedureMap& proc_map) {
         std::string name = id.lexeme;
 
         if (var_map.count(name)) {
-            result = var_map[name]->to_expr();
+            result = var_map[name]->to_expr(read_address);
         } else {
             std::cerr << "Variable does not exist: " << name << std::endl;
             exit(1);
@@ -57,14 +61,14 @@ visit_expr(ASTNode root, VariableMap& var_map, ProcedureMap& proc_map) {
         ASTNode id = root.children.at(1);
         std::string name = id.lexeme;
         if (var_map.count(name)) {
-            result = make_read_address(Reg::Result, var_map[name]);
+            result = var_map[name]->to_expr(true);
         } else {
             std::cerr << "Variable does not exist: " << name << std::endl;
             exit(1);
         }
     } else if (prod == std::vector<State> {NonTerminal::exprp8, Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN}) {
         ASTNode expr = root.children.at(1);
-        result = visit_expr(expr, var_map, proc_map);
+        result = visit_expr(expr, read_address, var_map, proc_map);
     } else if (prod == std::vector<State> {NonTerminal::exprp8, Terminal::ID, Terminal::LPAREN, NonTerminal::optargs, Terminal::RPAREN}) {
         ASTNode id = root.children.at(0);
         std::string name = id.lexeme;
@@ -82,7 +86,7 @@ visit_expr(ASTNode root, VariableMap& var_map, ProcedureMap& proc_map) {
     else if (root.children.size() == 1 && std::holds_alternative<NonTerminal>(root.children.at(0).state) && expr_non_terminals.count(std::get<NonTerminal>(root.children.at(0).state))) {
         // recursively call into next operator precedence layer
         ASTNode expr = root.children.at(0);
-        result = visit_expr(expr, var_map, proc_map);
+        result = visit_expr(expr, read_address, var_map, proc_map);
     }
     else if (root.children.size() == 2 && std::holds_alternative<Terminal>(root.children.at(0).state) && std::holds_alternative<NonTerminal>(root.children.at(1).state) && expr_non_terminals.count(std::get<NonTerminal>(root.children.at(1).state))) {
         // extract unary operator
@@ -90,7 +94,8 @@ visit_expr(ASTNode root, VariableMap& var_map, ProcedureMap& proc_map) {
         ASTNode expr = root.children.at(1);
 
         Terminal unary_op = std::get<Terminal>(lhs_op.state);
-        std::shared_ptr<Code> expr_code = visit_expr(expr, var_map, proc_map);
+        std::shared_ptr<Code> expr_code =
+            visit_expr(expr, read_address, var_map, proc_map);
         switch (unary_op) {
             case Terminal::NOT:
                 result = make_block({expr_code, op::not_bool()});
@@ -111,9 +116,11 @@ visit_expr(ASTNode root, VariableMap& var_map, ProcedureMap& proc_map) {
         ASTNode mid = root.children.at(1);
         ASTNode rhs = root.children.at(2);
 
-        std::shared_ptr<Code> lhs_code = visit_expr(lhs, var_map, proc_map);
+        std::shared_ptr<Code> lhs_code =
+            visit_expr(lhs, read_address, var_map, proc_map);
         Terminal mid_op = std::get<Terminal>(mid.state);
-        std::shared_ptr<Code> rhs_code = visit_expr(rhs, var_map, proc_map);
+        std::shared_ptr<Code> rhs_code =
+            visit_expr(rhs, read_address, var_map, proc_map);
         switch (mid_op) {
             case Terminal::OR:
                 result = bin_op(lhs_code, op::or_bool(), rhs_code);
@@ -183,11 +190,11 @@ visit_args(ASTNode root, VariableMap& var_map, ProcedureMap& proc_map) {
     if (prod == std::vector<State> {NonTerminal::args, NonTerminal::expr}) {
         // extract singular argument
         ASTNode expr = root.children.at(0);
-        result.push_back(visit_expr(expr, var_map, proc_map));
+        result.push_back(visit_expr(expr, false, var_map, proc_map));
     } else if (prod == std::vector<State> {NonTerminal::args, NonTerminal::expr, Terminal::COMMA, NonTerminal::args}) {
         // extract first argument
         ASTNode expr = root.children.at(0);
-        result.push_back(visit_expr(expr, var_map, proc_map));
+        result.push_back(visit_expr(expr, false, var_map, proc_map));
 
         // extract rest of arguments
         ASTNode args = root.children.at(2);
@@ -266,7 +273,7 @@ visit_stmt(ASTNode root, VariableMap& var_map, ProcedureMap& proc_map) {
         auto var = visit_vardef(vardef);
 
         ASTNode expr = root.children.at(3);
-        auto code = visit_expr(expr, var_map, proc_map);
+        auto code = visit_expr(expr, false, var_map, proc_map);
         if (var_map.count(var->name)) {
             std::cerr << "Duplicate variable name: " << var->name << std::endl;
             exit(1);
@@ -274,24 +281,18 @@ visit_stmt(ASTNode root, VariableMap& var_map, ProcedureMap& proc_map) {
             var_map[var->name] = var;
             result = assign(var, code);
         }
-    } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::ID, Terminal::ASSIGN, NonTerminal::expr, Terminal::SEMI}) {
+    } else if (prod == std::vector<State> {NonTerminal::stmt, NonTerminal::expr, Terminal::ASSIGN, NonTerminal::expr, Terminal::SEMI}) {
         // extract variable assignment
-        ASTNode id = root.children.at(0);
-        std::string name = id.lexeme;
+        ASTNode lhs = root.children.at(0);
+        auto mem_address = visit_expr(lhs, true, var_map, proc_map);
 
-        if (var_map.count(name)) {
-            std::shared_ptr<Variable> var = var_map[name];
-            ASTNode expr = root.children.at(2);
-            std::shared_ptr<Code> code = visit_expr(expr, var_map, proc_map);
-            result = assign(var, code);
-        } else {
-            std::cerr << "Variable does not exist: " << name << std::endl;
-            exit(1);
-        }
+        ASTNode expr = root.children.at(2);
+        std::shared_ptr<Code> code = visit_expr(expr, false, var_map, proc_map);
+        result = assign_to_address(mem_address, code);
     } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::IF, Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN, Terminal::LBRACE, NonTerminal::stmts, Terminal::RBRACE, Terminal::ELSE, Terminal::LBRACE, NonTerminal::stmts, Terminal::RBRACE}) {
         // extract if statements
         ASTNode expr = root.children.at(2);
-        auto comp = visit_expr(expr, var_map, proc_map);
+        auto comp = visit_expr(expr, false, var_map, proc_map);
 
         ASTNode thens_stmts = root.children.at(5);
         auto thens = visit_stmts(thens_stmts, var_map, proc_map);
@@ -310,7 +311,7 @@ visit_stmt(ASTNode root, VariableMap& var_map, ProcedureMap& proc_map) {
     } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::WHILE, Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN, Terminal::LBRACE, NonTerminal::stmts, Terminal::RBRACE}) {
         // extract while loops
         ASTNode expr = root.children.at(2);
-        auto comp = visit_expr(expr, var_map, proc_map);
+        auto comp = visit_expr(expr, false, var_map, proc_map);
 
         ASTNode stmts = root.children.at(5);
         auto code = visit_stmts(stmts, var_map, proc_map);
@@ -324,7 +325,9 @@ visit_stmt(ASTNode root, VariableMap& var_map, ProcedureMap& proc_map) {
     } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::RET, NonTerminal::expr, Terminal::SEMI}) {
         // extract return statements
         ASTNode expr = root.children.at(1);
-        result = std::make_shared<RetStmt>(visit_expr(expr, var_map, proc_map));
+        result =
+            std::make_shared<RetStmt>(visit_expr(expr, false, var_map, proc_map)
+            );
     } else {
         std::cerr << "Invalid production found while processing stmt."
                   << std::endl;

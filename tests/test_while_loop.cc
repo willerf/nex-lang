@@ -24,4 +24,3 @@ TEST_CASE("Test plus.", "[loops]") {
 
     REQUIRE(stoi(emulate(file_name, 10, 0)) == 10);
 }
-
