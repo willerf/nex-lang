@@ -19,6 +19,7 @@ enum class Terminal {
     ASSIGN,
     SEMI,
     IF,
+    WHILE,
     ELSE,
     RET,
     OR,

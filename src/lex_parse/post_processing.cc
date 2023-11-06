@@ -12,6 +12,7 @@
 #include "block.h"
 #include "call.h"
 #include "if_stmt.h"
+#include "while_loop.h"
 #include "operators.h"
 #include "procedure.h"
 #include "pseudo_assembly.h"
@@ -304,6 +305,21 @@ visit_stmt(ASTNode root, VariableMap& var_map, ProcedureMap& proc_map) {
             make_add(Reg::Result, Reg::Zero, Reg::Zero),
             thens,
             elses
+        );
+
+    } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::WHILE, Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN, Terminal::LBRACE, NonTerminal::stmts, Terminal::RBRACE}) {
+        // extract while loops
+        ASTNode expr = root.children.at(2);
+        auto comp = visit_expr(expr, var_map, proc_map);
+
+        ASTNode stmts = root.children.at(5);
+        auto code = visit_stmts(stmts, var_map, proc_map);
+
+        return make_while(
+            comp,
+            op::ne_cmp(),
+            make_add(Reg::Result, Reg::Zero, Reg::Zero),
+            code
         );
     } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::RET, NonTerminal::expr, Terminal::SEMI}) {
         // extract return statements
