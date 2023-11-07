@@ -45,6 +45,8 @@ add_library(compiler_lib STATIC
     src/lex_parse/ast_node.cc
     src/lex_parse/state.cc
     src/lex_parse/post_processing.cc
+    src/lex_parse/nl_type.cc
+    src/lex_parse/typed_identifiers.cc
     src/utils/reg.cc
 )
 

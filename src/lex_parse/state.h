@@ -15,6 +15,7 @@ enum class Terminal {
     COMMA,
     COLON,
     I32,
+    BOOL,
     LET,
     ASSIGN,
     SEMI,

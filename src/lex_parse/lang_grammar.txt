@@ -8,6 +8,8 @@ params vardef COMMA params
 params vardef
 vardef ID COLON type
 type I32
+type BOOL
+type STAR type
 stmts stmt stmts
 stmts stmt
 stmt LET vardef ASSIGN expr SEMI

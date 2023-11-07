@@ -45,7 +45,17 @@ std::vector<std::shared_ptr<Code>> compile(std::string input) {
         exit(1);
     }
 
-    auto procedures = generate(ast_node.value());
+    auto typed_ids = generate(ast_node.value());
+    std::vector<std::shared_ptr<Procedure>> procedures;
+    for (auto typed_id : typed_ids) {
+        if (auto typed_proc =
+                std::dynamic_pointer_cast<TypedProcedure>(typed_id)) {
+            procedures.push_back(typed_proc->procedure);
+        } else {
+            std::cerr << "TODO!" << std::endl;
+            exit(1);
+        }
+    }
 
     std::shared_ptr<Procedure> main_proc;
     for (auto proc : procedures) {

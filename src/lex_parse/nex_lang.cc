@@ -135,6 +135,7 @@ static std::map<std::string, Terminal> keywords = {
     {"else", Terminal::ELSE},
     {"return", Terminal::RET},
     {"i32", Terminal::I32},
+    {"bool", Terminal::BOOL},
 };
 
 std::vector<Token> scan(std::string_view input) {
@@ -156,6 +157,7 @@ std::vector<Token> scan(std::string_view input) {
         Terminal::WHILE,
         Terminal::ELSE,
         Terminal::I32,
+        Terminal::BOOL,
         Terminal::ID,
         Terminal::NUM};
     std::set<Terminal> sep_set2 = {
@@ -235,7 +237,10 @@ static std::map<NonTerminal, std::vector<Production>> productions = {
     {NonTerminal::vardef,
      {{NonTerminal::vardef,
        {Terminal::ID, Terminal::COLON, NonTerminal::type}}}},
-    {NonTerminal::type, {{NonTerminal::type, {Terminal::I32}}}},
+    {NonTerminal::type,
+     {{NonTerminal::type, {Terminal::I32}},
+      {NonTerminal::type, {Terminal::BOOL}},
+      {NonTerminal::type, {Terminal::STAR, NonTerminal::type}}}},
     {NonTerminal::stmts,
      {{NonTerminal::stmts, {NonTerminal::stmt, NonTerminal::stmts}},
       {NonTerminal::stmts, {NonTerminal::stmt}}}},
