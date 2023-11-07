@@ -47,6 +47,9 @@ add_library(compiler_lib STATIC
     src/lex_parse/post_processing.cc
     src/lex_parse/nl_type.cc
     src/lex_parse/typed_identifiers.cc
+    src/exceptions/type_mismatch_error.cc
+    src/exceptions/symbol_not_found_error.cc
+    src/exceptions/duplicate_symbol_error.cc
     src/utils/reg.cc
 )
 
@@ -58,6 +61,7 @@ target_include_directories(compiler_lib PUBLIC
     src/program_representation/code_builders
     src/transformations
     src/lex_parse
+    src/exceptions
     src/utils
 )
 

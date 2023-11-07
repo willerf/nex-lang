@@ -42,6 +42,8 @@ exprp7 NOT exprp8
 exprp7 STAR exprp8
 exprp8 ID
 exprp8 NUM
+exprp8 TRUE
+exprp8 FALSE
 exprp8 AMPERSAND ID
 exprp8 LPAREN expr RPAREN
 exprp8 ID LPAREN optargs RPAREN

@@ -26,9 +26,17 @@ std::shared_ptr<NLType> visit_type(ASTNode root);
 std::shared_ptr<TypedVariable>
 visit_vardef(ASTNode root, SymbolTable& symbol_table);
 
-std::shared_ptr<Code> visit_stmt(ASTNode root, SymbolTable& symbol_table);
+std::shared_ptr<Code> visit_stmt(
+    ASTNode root,
+    std::shared_ptr<TypedProcedure> curr_proc,
+    SymbolTable& symbol_table
+);
 
-std::shared_ptr<Code> visit_stmts(ASTNode root, SymbolTable& symbol_table);
+std::shared_ptr<Code> visit_stmts(
+    ASTNode root,
+    std::shared_ptr<TypedProcedure> curr_proc,
+    SymbolTable& symbol_table
+);
 
 std::vector<std::shared_ptr<TypedVariable>>
 visit_params(ASTNode root, SymbolTable& symbol_table);

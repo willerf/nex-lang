@@ -11,6 +11,7 @@
 #include "bin_op.h"
 #include "block.h"
 #include "call.h"
+#include "duplicate_symbol_error.h"
 #include "if_stmt.h"
 #include "nl_type.h"
 #include "operators.h"
@@ -18,6 +19,8 @@
 #include "pseudo_assembly.h"
 #include "ret_stmt.h"
 #include "scope.h"
+#include "symbol_not_found_error.h"
+#include "type_mismatch_error.h"
 #include "var_access.h"
 #include "while_loop.h"
 
@@ -67,19 +70,22 @@ visit_expr(ASTNode root, bool read_address, SymbolTable& symbol_table) {
                     typed_var->variable->to_expr(read_address),
                     typed_var->nl_type};
             } else {
-                std::cerr << "Expected variable for symbol: " << name
-                          << std::endl;
-                exit(1);
+                throw SymbolNotFoundError(name);
             }
         } else {
-            std::cerr << "Variable does not exist 1: " << name << std::endl;
-            exit(1);
+            throw SymbolNotFoundError(name);
         }
     } else if (prod == std::vector<State> {NonTerminal::exprp8, Terminal::NUM}) {
         ASTNode num = root.children.at(0);
         result = TypedExpr {
             int_literal(stoi(num.lexeme)),
             std::make_shared<NLTypeI32>()};
+    } else if (prod == std::vector<State> {NonTerminal::exprp8, Terminal::TRUE}) {
+        ASTNode expr = root.children.at(0);
+        result = TypedExpr {int_literal(1), std::make_shared<NLTypeBool>()};
+    } else if (prod == std::vector<State> {NonTerminal::exprp8, Terminal::FALSE}) {
+        ASTNode num = root.children.at(0);
+        result = TypedExpr {int_literal(0), std::make_shared<NLTypeBool>()};
     } else if (prod == std::vector<State> {NonTerminal::exprp8, Terminal::AMPERSAND, Terminal::ID}) {
         ASTNode id = root.children.at(1);
         std::string name = id.lexeme;
@@ -91,13 +97,10 @@ visit_expr(ASTNode root, bool read_address, SymbolTable& symbol_table) {
                     typed_var->variable->to_expr(true),
                     std::make_shared<NLTypePtr>(typed_var->nl_type)};
             } else {
-                std::cerr << "Expected variable for symbol: " << name
-                          << std::endl;
-                exit(1);
+                throw SymbolNotFoundError(name);
             }
         } else {
-            std::cerr << "Variable does not exist 2: " << name << std::endl;
-            exit(1);
+            throw SymbolNotFoundError(name);
         }
     } else if (prod == std::vector<State> {NonTerminal::exprp8, Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN}) {
         ASTNode expr = root.children.at(1);
@@ -121,13 +124,10 @@ visit_expr(ASTNode root, bool read_address, SymbolTable& symbol_table) {
                     make_call(typed_procedure->procedure, args),
                     typed_procedure->ret_type};
             } else {
-                std::cerr << "Expected procedure for symbol: " << name
-                          << std::endl;
-                exit(1);
+                throw SymbolNotFoundError(name);
             }
         } else {
-            std::cerr << "Procedure does not exist: " << name << std::endl;
-            exit(1);
+            throw SymbolNotFoundError(name);
         }
     }
     else if (root.children.size() == 1 && std::holds_alternative<NonTerminal>(root.children.at(0).state) && expr_non_terminals.count(std::get<NonTerminal>(root.children.at(0).state))) {
@@ -144,12 +144,26 @@ visit_expr(ASTNode root, bool read_address, SymbolTable& symbol_table) {
         TypedExpr expr_code = visit_expr(expr, read_address, symbol_table);
         switch (unary_op) {
             case Terminal::NOT:
+                if ((*expr_code.second) != NLTypeBool()) {
+                    throw TypeMismatchError(
+                        "Boolean operations require operands to be of type bool."
+                    );
+                }
                 result = TypedExpr {
                     make_block({expr_code.first, op::not_bool()}),
                     expr_code.second};
                 break;
             case Terminal::STAR:
-                result = TypedExpr {deref(expr_code.first), expr_code.second};
+                if (auto expr_type =
+                        std::dynamic_pointer_cast<NLTypePtr>(expr_code.second
+                        )) {
+                    result =
+                        TypedExpr {deref(expr_code.first), expr_type->nl_type};
+                } else {
+                    throw TypeMismatchError(
+                        "Dereference operations require operand to be of type pointer."
+                    );
+                }
                 break;
             default:
                 std::cerr
@@ -170,46 +184,103 @@ visit_expr(ASTNode root, bool read_address, SymbolTable& symbol_table) {
 
         std::shared_ptr<Code> lhs_code = typed_lhs_code.first;
         std::shared_ptr<Code> rhs_code = typed_rhs_code.first;
-        std::shared_ptr<Code> bin_op_result;
+
+        std::shared_ptr<NLType> lhs_type = typed_lhs_code.second;
+        std::shared_ptr<NLType> rhs_type = typed_rhs_code.second;
+
+        std::shared_ptr<NLType> result_type;
+        if (mid_op == Terminal::OR || mid_op == Terminal::AND) {
+            if ((*lhs_type) != NLTypeBool() || (*rhs_type) != NLTypeBool()) {
+                throw TypeMismatchError(
+                    "Boolean operations require operands to be of type bool."
+                );
+            }
+            result_type = std::make_shared<NLTypeBool>();
+        } else if (mid_op == Terminal::PLUS || mid_op == Terminal::MINUS || mid_op == Terminal::STAR || mid_op == Terminal::SLASH || mid_op == Terminal::PCT) {
+            if ((*lhs_type) != NLTypeI32() || (*rhs_type) != NLTypeI32()) {
+                throw TypeMismatchError(
+                    "Arithmetic operations require both operands to be of type NLTypeI32."
+                );
+            }
+            result_type = std::make_shared<NLTypeI32>();
+        } else if (mid_op == Terminal::EQ || mid_op == Terminal::NE || mid_op == Terminal::LT || mid_op == Terminal::GT || mid_op == Terminal::LE || mid_op == Terminal::GE) {
+            if ((*lhs_type) != (*rhs_type)) {
+                throw TypeMismatchError(
+                    "Comparison operations require operands to be of the same type."
+                );
+            }
+            result_type = std::make_shared<NLTypeBool>();
+        } else {
+            throw TypeMismatchError(
+                "Encountered unknown operation during type checking."
+            );
+        }
+
         switch (mid_op) {
             case Terminal::OR:
-                bin_op_result = bin_op(lhs_code, op::or_bool(), rhs_code);
+                result = TypedExpr {
+                    bin_op(lhs_code, op::or_bool(), rhs_code),
+                    result_type};
                 break;
             case Terminal::AND:
-                bin_op_result = bin_op(lhs_code, op::and_bool(), rhs_code);
+                result = TypedExpr {
+                    bin_op(lhs_code, op::and_bool(), rhs_code),
+                    result_type};
                 break;
             case Terminal::PLUS:
-                bin_op_result = bin_op(lhs_code, op::plus(), rhs_code);
+                result = TypedExpr {
+                    bin_op(lhs_code, op::plus(), rhs_code),
+                    result_type};
                 break;
             case Terminal::MINUS:
-                bin_op_result = bin_op(lhs_code, op::minus(), rhs_code);
+                result = TypedExpr {
+                    bin_op(lhs_code, op::minus(), rhs_code),
+                    result_type};
                 break;
             case Terminal::STAR:
-                bin_op_result = bin_op(lhs_code, op::times(), rhs_code);
+                result = TypedExpr {
+                    bin_op(lhs_code, op::times(), rhs_code),
+                    result_type};
                 break;
             case Terminal::SLASH:
-                bin_op_result = bin_op(lhs_code, op::divide(), rhs_code);
+                result = TypedExpr {
+                    bin_op(lhs_code, op::divide(), rhs_code),
+                    result_type};
                 break;
             case Terminal::PCT:
-                bin_op_result = bin_op(lhs_code, op::remainder(), rhs_code);
+                result = TypedExpr {
+                    bin_op(lhs_code, op::remainder(), rhs_code),
+                    result_type};
                 break;
             case Terminal::EQ:
-                bin_op_result = bin_op(lhs_code, op::eq_cmp(), rhs_code);
+                result = TypedExpr {
+                    bin_op(lhs_code, op::eq_cmp(), rhs_code),
+                    result_type};
                 break;
             case Terminal::NE:
-                bin_op_result = bin_op(lhs_code, op::ne_cmp(), rhs_code);
+                result = TypedExpr {
+                    bin_op(lhs_code, op::ne_cmp(), rhs_code),
+                    result_type};
                 break;
             case Terminal::LT:
-                bin_op_result = bin_op(lhs_code, op::lt_cmp(), rhs_code);
+                result = TypedExpr {
+                    bin_op(lhs_code, op::lt_cmp(), rhs_code),
+                    result_type};
                 break;
             case Terminal::GT:
-                bin_op_result = bin_op(lhs_code, op::gt_cmp(), rhs_code);
+                result = TypedExpr {
+                    bin_op(lhs_code, op::gt_cmp(), rhs_code),
+                    result_type};
                 break;
             case Terminal::LE:
-                bin_op_result = bin_op(lhs_code, op::le_cmp(), rhs_code);
+                result = TypedExpr {
+                    bin_op(lhs_code, op::le_cmp(), rhs_code),
+                    result_type};
                 break;
             case Terminal::GE:
-                bin_op_result = bin_op(lhs_code, op::ge_cmp(), rhs_code);
+                result = TypedExpr {
+                    bin_op(lhs_code, op::ge_cmp(), rhs_code),
+                    result_type};
                 break;
             default:
                 std::cerr
@@ -217,7 +288,6 @@ visit_expr(ASTNode root, bool read_address, SymbolTable& symbol_table) {
                     << std::endl;
                 exit(1);
         }
-        result = TypedExpr {bin_op_result, typed_lhs_code.second};
     } else {
         std::cerr << "Invalid production found while processing expr."
                   << std::endl;
@@ -283,6 +353,8 @@ std::shared_ptr<NLType> visit_type(ASTNode root) {
     std::vector<State> prod = root.get_production();
     if (prod == std::vector<State> {NonTerminal::type, Terminal::I32}) {
         result = std::make_shared<NLTypeI32>();
+    } else if (prod == std::vector<State> {NonTerminal::type, Terminal::BOOL}) {
+        result = std::make_shared<NLTypeBool>();
     } else if (prod == std::vector<State> {NonTerminal::type, Terminal::STAR, NonTerminal::type}) {
         ASTNode sub_type = root.children.at(1);
         std::shared_ptr<NLType> sub_nl_type = visit_type(sub_type);
@@ -314,8 +386,7 @@ visit_vardef(ASTNode root, SymbolTable& symbol_table) {
         std::string name = id.lexeme;
 
         if (symbol_table.count(name)) {
-            std::cerr << "Duplicate symbol name: " << name << std::endl;
-            exit(1);
+            throw DuplicateSymbolError(name);
         } else {
             ASTNode var_type = root.children.at(2);
             std::shared_ptr<NLType> nl_type = visit_type(var_type);
@@ -335,7 +406,11 @@ visit_vardef(ASTNode root, SymbolTable& symbol_table) {
     return result;
 }
 
-std::shared_ptr<Code> visit_stmt(ASTNode root, SymbolTable& symbol_table) {
+std::shared_ptr<Code> visit_stmt(
+    ASTNode root,
+    std::shared_ptr<TypedProcedure> curr_proc,
+    SymbolTable& symbol_table
+) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::stmt);
     std::shared_ptr<Code> result = nullptr;
 
@@ -356,8 +431,11 @@ std::shared_ptr<Code> visit_stmt(ASTNode root, SymbolTable& symbol_table) {
         TypedExpr expr = visit_expr(expr_node, false, symbol_table);
 
         if ((*typed_var->nl_type) != (*expr.second)) {
-            std::cout << "TODO type error" << std::endl;
-            throw 1;
+            throw TypeMismatchError(
+                "Cannot assign expression of type'" + expr.second->to_string()
+                + "' to left hand side of type '"
+                + typed_var->nl_type->to_string() + "'."
+            );
         }
         result = assign(typed_var->variable, expr.first);
     } else if (prod == std::vector<State> {NonTerminal::stmt, NonTerminal::expr, Terminal::ASSIGN, NonTerminal::expr, Terminal::SEMI}) {
@@ -369,8 +447,11 @@ std::shared_ptr<Code> visit_stmt(ASTNode root, SymbolTable& symbol_table) {
         TypedExpr code = visit_expr(expr, false, symbol_table);
 
         if ((*mem_address.second) != (*code.second)) {
-            std::cout << "TODO type error" << std::endl;
-            throw 1;
+            throw TypeMismatchError(
+                "Cannot assign expression of type'" + code.second->to_string()
+                + "' to left hand side of type '"
+                + mem_address.second->to_string() + "'."
+            );
         }
         result = assign_to_address(mem_address.first, code.first);
     } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::IF, Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN, Terminal::LBRACE, NonTerminal::stmts, Terminal::RBRACE, Terminal::ELSE, Terminal::LBRACE, NonTerminal::stmts, Terminal::RBRACE}) {
@@ -380,13 +461,17 @@ std::shared_ptr<Code> visit_stmt(ASTNode root, SymbolTable& symbol_table) {
 
         ASTNode thens_stmts = root.children.at(5);
         SymbolTable symbol_table_thens = symbol_table;
-        auto thens = visit_stmts(thens_stmts, symbol_table_thens);
+        auto thens = visit_stmts(thens_stmts, curr_proc, symbol_table_thens);
 
         ASTNode elses_stmts = root.children.at(9);
         SymbolTable symbol_table_elses = symbol_table;
-        auto elses = visit_stmts(elses_stmts, symbol_table_elses);
+        auto elses = visit_stmts(elses_stmts, curr_proc, symbol_table_elses);
 
-        // TODO: type checking
+        if ((*comp.second) != NLTypeBool()) {
+            throw TypeMismatchError(
+                "If statement condition must result in bool type."
+            );
+        }
         result = make_if(
             comp.first,
             op::ne_cmp(),
@@ -401,9 +486,13 @@ std::shared_ptr<Code> visit_stmt(ASTNode root, SymbolTable& symbol_table) {
         TypedExpr comp = visit_expr(expr, false, symbol_table);
 
         ASTNode stmts = root.children.at(5);
-        auto code = visit_stmts(stmts, symbol_table);
+        auto code = visit_stmts(stmts, curr_proc, symbol_table);
 
-        // TODO: type checking
+        if ((*comp.second) != NLTypeBool()) {
+            throw TypeMismatchError(
+                "While loop statement condition must result in bool type."
+            );
+        }
         return make_while(
             comp.first,
             op::ne_cmp(),
@@ -414,7 +503,14 @@ std::shared_ptr<Code> visit_stmt(ASTNode root, SymbolTable& symbol_table) {
         // extract return statements
         ASTNode expr_node = root.children.at(1);
         TypedExpr expr = visit_expr(expr_node, false, symbol_table);
-        // TODO: type checking
+
+        if ((*curr_proc->ret_type) != (*expr.second)) {
+            throw TypeMismatchError(
+                "Cannot return expression of type '" + expr.second->to_string()
+                + "' from function with return type '"
+                + curr_proc->ret_type->to_string() + "'."
+            );
+        }
         result = std::make_shared<RetStmt>(expr.first);
     } else {
         std::cerr << "Invalid production found while processing stmt."
@@ -426,7 +522,11 @@ std::shared_ptr<Code> visit_stmt(ASTNode root, SymbolTable& symbol_table) {
     return result;
 }
 
-std::shared_ptr<Code> visit_stmts(ASTNode root, SymbolTable& symbol_table) {
+std::shared_ptr<Code> visit_stmts(
+    ASTNode root,
+    std::shared_ptr<TypedProcedure> curr_proc,
+    SymbolTable& symbol_table
+) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::stmts);
     std::shared_ptr<Code> result = nullptr;
 
@@ -434,15 +534,16 @@ std::shared_ptr<Code> visit_stmts(ASTNode root, SymbolTable& symbol_table) {
     if (prod == std::vector<State> {NonTerminal::stmts, NonTerminal::stmt}) {
         // extract singular statement
         ASTNode stmt = root.children.at(0);
-        result = visit_stmt(stmt, symbol_table);
+        result = visit_stmt(stmt, curr_proc, symbol_table);
     } else if (prod == std::vector<State> {NonTerminal::stmts, NonTerminal::stmt, NonTerminal::stmts}) {
         // extract first statement
         ASTNode stmt = root.children.at(0);
-        std::shared_ptr<Code> code = visit_stmt(stmt, symbol_table);
+        std::shared_ptr<Code> code = visit_stmt(stmt, curr_proc, symbol_table);
 
         // extract rest of statements
         ASTNode stmts = root.children.at(1);
-        std::shared_ptr<Code> rest_of_code = visit_stmts(stmts, symbol_table);
+        std::shared_ptr<Code> rest_of_code =
+            visit_stmts(stmts, curr_proc, symbol_table);
         result = make_block({code, rest_of_code});
     } else {
         std::cerr << "Invalid production found while processing stmts."
@@ -559,7 +660,8 @@ visit_fn(ASTNode root, SymbolTable& symbol_table) {
 
         // extract list of statements of procedure
         ASTNode stmts = root.children.at(8);
-        std::shared_ptr<Code> code = visit_stmts(stmts, symbol_table_locals);
+        std::shared_ptr<Code> code =
+            visit_stmts(stmts, result, symbol_table_locals);
 
         // only include local variables in variable chunk
         std::vector<std::shared_ptr<Variable>> vars;

@@ -136,6 +136,8 @@ static std::map<std::string, Terminal> keywords = {
     {"return", Terminal::RET},
     {"i32", Terminal::I32},
     {"bool", Terminal::BOOL},
+    {"true", Terminal::TRUE},
+    {"false", Terminal::FALSE},
 };
 
 std::vector<Token> scan(std::string_view input) {
@@ -159,7 +161,9 @@ std::vector<Token> scan(std::string_view input) {
         Terminal::I32,
         Terminal::BOOL,
         Terminal::ID,
-        Terminal::NUM};
+        Terminal::NUM,
+        Terminal::TRUE,
+        Terminal::FALSE};
     std::set<Terminal> sep_set2 = {
         Terminal::EQ,
         Terminal::NE,
@@ -347,7 +351,8 @@ static std::set<Terminal> terminals = {
     Terminal::EQ,     Terminal::NE,        Terminal::LT,    Terminal::GT,
     Terminal::LE,     Terminal::GE,        Terminal::PLUS,  Terminal::MINUS,
     Terminal::STAR,   Terminal::SLASH,     Terminal::PCT,   Terminal::NOT,
-    Terminal::NUM,    Terminal::AMPERSAND, Terminal::WHILE,
+    Terminal::NUM,    Terminal::AMPERSAND, Terminal::WHILE, Terminal::BOOL,
+    Terminal::TRUE,   Terminal::FALSE,
 };
 
 static std::set<NonTerminal> non_terminals = {

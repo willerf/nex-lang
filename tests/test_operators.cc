@@ -91,7 +91,7 @@ TEST_CASE("Test mod.", "[operators]") {
 
 TEST_CASE("Test equal.", "[operators]") {
     std::string input =
-        "fn main(x: i32, y: i32) -> i32 {"
+        "fn main(x: i32, y: i32) -> bool {"
         "    return x == y;"
         "}";
 
@@ -108,7 +108,7 @@ TEST_CASE("Test equal.", "[operators]") {
 
 TEST_CASE("Test not equal.", "[operators]") {
     std::string input =
-        "fn main(x: i32, y: i32) -> i32 {"
+        "fn main(x: i32, y: i32) -> bool {"
         "    return x != y;"
         "}";
 
@@ -125,7 +125,7 @@ TEST_CASE("Test not equal.", "[operators]") {
 
 TEST_CASE("Test greater than.", "[operators]") {
     std::string input =
-        "fn main(x: i32, y: i32) -> i32 {"
+        "fn main(x: i32, y: i32) -> bool {"
         "    return x > y;"
         "}";
 
@@ -142,7 +142,7 @@ TEST_CASE("Test greater than.", "[operators]") {
 
 TEST_CASE("Test greater than or equal to.", "[operators]") {
     std::string input =
-        "fn main(x: i32, y: i32) -> i32 {"
+        "fn main(x: i32, y: i32) -> bool {"
         "    return x >= y;"
         "}";
 
@@ -159,7 +159,7 @@ TEST_CASE("Test greater than or equal to.", "[operators]") {
 
 TEST_CASE("Test less than.", "[operators]") {
     std::string input =
-        "fn main(x: i32, y: i32) -> i32 {"
+        "fn main(x: i32, y: i32) -> bool {"
         "    return x < y;"
         "}";
 
@@ -176,7 +176,7 @@ TEST_CASE("Test less than.", "[operators]") {
 
 TEST_CASE("Test less than or equal to.", "[operators]") {
     std::string input =
-        "fn main(x: i32, y: i32) -> i32 {"
+        "fn main(x: i32, y: i32) -> bool {"
         "    return x <= y;"
         "}";
 
@@ -193,7 +193,7 @@ TEST_CASE("Test less than or equal to.", "[operators]") {
 
 TEST_CASE("Test and.", "[operators]") {
     std::string input =
-        "fn main(x: i32, y: i32) -> i32 {"
+        "fn main(x: bool, y: bool) -> bool {"
         "    return x && y;"
         "}";
 
@@ -211,7 +211,7 @@ TEST_CASE("Test and.", "[operators]") {
 
 TEST_CASE("Test or.", "[operators]") {
     std::string input =
-        "fn main(x: i32, y: i32) -> i32 {"
+        "fn main(x: bool, y: bool) -> bool {"
         "    return x || y;"
         "}";
 
@@ -229,7 +229,7 @@ TEST_CASE("Test or.", "[operators]") {
 
 TEST_CASE("Test not.", "[operators]") {
     std::string input =
-        "fn main(x: i32, y: i32) -> i32 {"
+        "fn main(x: bool, y: bool) -> bool {"
         "    return !x;"
         "}";
 
@@ -244,7 +244,7 @@ TEST_CASE("Test not.", "[operators]") {
 
 TEST_CASE("Test ampersand and star.", "[operators]") {
     std::string input =
-        "fn test_func(x: i32, y: i32) -> i32 {"
+        "fn test_func(x: *i32, y: i32) -> i32 {"
         "    return *x;"
         "}"
         "fn main(x: i32, y: i32) -> i32 {"
