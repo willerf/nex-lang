@@ -5,14 +5,10 @@
 
 #include "ast_node.h"
 #include "procedure.h"
-#include "typed_identifiers.h"
+#include "typed_id.h"
 #include "variable.h"
 
-using SymbolTable = std::map<std::string, std::shared_ptr<TypedID>>;
 using TypedExpr = std::pair<std::shared_ptr<Code>, std::shared_ptr<NLType>>;
-
-std::vector<std::shared_ptr<TypedID>>
-symbol_table_sub(SymbolTable& symbol_table_one, SymbolTable& symbol_table_two);
 
 TypedExpr
 visit_expr(ASTNode root, bool read_address, SymbolTable& symbol_table);

@@ -39,14 +39,8 @@ add_library(compiler_lib STATIC
     src/transformations/write_file.cc
     src/transformations/entry_exit.cc
     src/lex_parse/scanning.cc
-    src/lex_parse/token.cc
-    src/lex_parse/nex_lang.cc
     src/lex_parse/parsing.cc
     src/lex_parse/ast_node.cc
-    src/lex_parse/state.cc
-    src/lex_parse/post_processing.cc
-    src/lex_parse/nl_type.cc
-    src/lex_parse/typed_identifiers.cc
     src/exceptions/type_mismatch_error.cc
     src/exceptions/symbol_not_found_error.cc
     src/exceptions/duplicate_symbol_error.cc

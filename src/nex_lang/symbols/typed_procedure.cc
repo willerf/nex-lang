@@ -1,12 +1,5 @@
 
-#include "typed_identifiers.h"
-
-TypedVariable::TypedVariable(
-    std::shared_ptr<Variable> variable,
-    std::shared_ptr<NLType> nl_type
-) :
-    variable {variable},
-    nl_type {nl_type} {}
+#include "typed_procedure.h"
 
 TypedProcedure::TypedProcedure(
     std::shared_ptr<Procedure> procedure,
