@@ -10,5 +10,3 @@ struct TypedVariable: TypedID {
         std::shared_ptr<NLType> nl_type = nullptr
     );
 };
-
-

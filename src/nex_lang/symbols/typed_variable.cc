@@ -7,5 +7,3 @@ TypedVariable::TypedVariable(
 ) :
     variable {variable},
     nl_type {nl_type} {}
-
-

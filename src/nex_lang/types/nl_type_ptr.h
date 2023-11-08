@@ -10,5 +10,3 @@ struct NLTypePtr: NLType {
     std::type_index type() const override;
     std::string to_string() override;
 };
-
-

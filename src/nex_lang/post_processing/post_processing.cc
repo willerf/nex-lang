@@ -14,6 +14,9 @@
 #include "duplicate_symbol_error.h"
 #include "if_stmt.h"
 #include "nl_type.h"
+#include "nl_type_bool.h"
+#include "nl_type_i32.h"
+#include "nl_type_ptr.h"
 #include "operators.h"
 #include "procedure.h"
 #include "pseudo_assembly.h"
@@ -23,9 +26,6 @@
 #include "type_mismatch_error.h"
 #include "var_access.h"
 #include "while_loop.h"
-#include "nl_type_i32.h"
-#include "nl_type_bool.h"
-#include "nl_type_ptr.h"
 
 static std::set<NonTerminal> expr_non_terminals = {
     NonTerminal::expr,
@@ -107,7 +107,7 @@ visit_expr(ASTNode root, bool read_address, SymbolTable& symbol_table) {
                     visit_optargs(optargs, symbol_table);
                 std::vector<std::shared_ptr<Code>> args;
                 for (auto typed_arg : typed_args) {
-                    args.push_back(typed_arg.first);
+                    args.push_back(typed_arg.code);
                 }
                 result = TypedExpr {
                     make_call(typed_procedure->procedure, args),
@@ -133,21 +133,21 @@ visit_expr(ASTNode root, bool read_address, SymbolTable& symbol_table) {
         TypedExpr expr_code = visit_expr(expr, read_address, symbol_table);
         switch (unary_op) {
             case Terminal::NOT:
-                if ((*expr_code.second) != NLTypeBool()) {
+                if ((*expr_code.nl_type) != NLTypeBool()) {
                     throw TypeMismatchError(
                         "Boolean operations require operands to be of type bool."
                     );
                 }
                 result = TypedExpr {
-                    make_block({expr_code.first, op::not_bool()}),
-                    expr_code.second};
+                    make_block({expr_code.code, op::not_bool()}),
+                    expr_code.nl_type};
                 break;
             case Terminal::STAR:
                 if (auto expr_type =
-                        std::dynamic_pointer_cast<NLTypePtr>(expr_code.second
+                        std::dynamic_pointer_cast<NLTypePtr>(expr_code.nl_type
                         )) {
                     result =
-                        TypedExpr {deref(expr_code.first), expr_type->nl_type};
+                        TypedExpr {deref(expr_code.code), expr_type->nl_type};
                 } else {
                     throw TypeMismatchError(
                         "Dereference operations require operand to be of type pointer."
@@ -171,11 +171,11 @@ visit_expr(ASTNode root, bool read_address, SymbolTable& symbol_table) {
         Terminal mid_op = std::get<Terminal>(mid.state);
         TypedExpr typed_rhs_code = visit_expr(rhs, read_address, symbol_table);
 
-        std::shared_ptr<Code> lhs_code = typed_lhs_code.first;
-        std::shared_ptr<Code> rhs_code = typed_rhs_code.first;
+        std::shared_ptr<Code> lhs_code = typed_lhs_code.code;
+        std::shared_ptr<Code> rhs_code = typed_rhs_code.code;
 
-        std::shared_ptr<NLType> lhs_type = typed_lhs_code.second;
-        std::shared_ptr<NLType> rhs_type = typed_rhs_code.second;
+        std::shared_ptr<NLType> lhs_type = typed_lhs_code.nl_type;
+        std::shared_ptr<NLType> rhs_type = typed_rhs_code.nl_type;
 
         std::shared_ptr<NLType> result_type;
         if (mid_op == Terminal::OR || mid_op == Terminal::AND) {
@@ -283,8 +283,8 @@ visit_expr(ASTNode root, bool read_address, SymbolTable& symbol_table) {
         exit(1);
     }
 
-    assert(result.first);
-    assert(result.second);
+    assert(result.code);
+    assert(result.nl_type);
     return result;
 }
 
@@ -298,7 +298,7 @@ std::vector<TypedExpr> visit_args(ASTNode root, SymbolTable& symbol_table) {
         ASTNode expr = root.children.at(0);
         result.push_back(visit_expr(expr, false, symbol_table));
     } else if (prod == std::vector<State> {NonTerminal::args, NonTerminal::expr, Terminal::COMMA, NonTerminal::args}) {
-        // extract first argument
+        // extract code argument
         ASTNode expr = root.children.at(0);
         result.push_back(visit_expr(expr, false, symbol_table));
 
@@ -419,14 +419,14 @@ std::shared_ptr<Code> visit_stmt(
         ASTNode expr_node = root.children.at(3);
         TypedExpr expr = visit_expr(expr_node, false, symbol_table);
 
-        if ((*typed_var->nl_type) != (*expr.second)) {
+        if ((*typed_var->nl_type) != (*expr.nl_type)) {
             throw TypeMismatchError(
-                "Cannot assign expression of type'" + expr.second->to_string()
+                "Cannot assign expression of type'" + expr.nl_type->to_string()
                 + "' to left hand side of type '"
                 + typed_var->nl_type->to_string() + "'."
             );
         }
-        result = assign(typed_var->variable, expr.first);
+        result = assign(typed_var->variable, expr.code);
     } else if (prod == std::vector<State> {NonTerminal::stmt, NonTerminal::expr, Terminal::ASSIGN, NonTerminal::expr, Terminal::SEMI}) {
         // extract variable assignment
         ASTNode lhs = root.children.at(0);
@@ -435,14 +435,14 @@ std::shared_ptr<Code> visit_stmt(
         ASTNode expr = root.children.at(2);
         TypedExpr code = visit_expr(expr, false, symbol_table);
 
-        if ((*mem_address.second) != (*code.second)) {
+        if ((*mem_address.nl_type) != (*code.nl_type)) {
             throw TypeMismatchError(
-                "Cannot assign expression of type'" + code.second->to_string()
+                "Cannot assign expression of type'" + code.nl_type->to_string()
                 + "' to left hand side of type '"
-                + mem_address.second->to_string() + "'."
+                + mem_address.nl_type->to_string() + "'."
             );
         }
-        result = assign_to_address(mem_address.first, code.first);
+        result = assign_to_address(mem_address.code, code.code);
     } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::IF, Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN, Terminal::LBRACE, NonTerminal::stmts, Terminal::RBRACE, Terminal::ELSE, Terminal::LBRACE, NonTerminal::stmts, Terminal::RBRACE}) {
         // extract if statements
         ASTNode expr = root.children.at(2);
@@ -456,13 +456,13 @@ std::shared_ptr<Code> visit_stmt(
         SymbolTable symbol_table_elses = symbol_table;
         auto elses = visit_stmts(elses_stmts, curr_proc, symbol_table_elses);
 
-        if ((*comp.second) != NLTypeBool()) {
+        if ((*comp.nl_type) != NLTypeBool()) {
             throw TypeMismatchError(
                 "If statement condition must result in bool type."
             );
         }
         result = make_if(
-            comp.first,
+            comp.code,
             op::ne_cmp(),
             make_add(Reg::Result, Reg::Zero, Reg::Zero),
             thens,
@@ -477,13 +477,13 @@ std::shared_ptr<Code> visit_stmt(
         ASTNode stmts = root.children.at(5);
         auto code = visit_stmts(stmts, curr_proc, symbol_table);
 
-        if ((*comp.second) != NLTypeBool()) {
+        if ((*comp.nl_type) != NLTypeBool()) {
             throw TypeMismatchError(
                 "While loop statement condition must result in bool type."
             );
         }
         return make_while(
-            comp.first,
+            comp.code,
             op::ne_cmp(),
             make_add(Reg::Result, Reg::Zero, Reg::Zero),
             code
@@ -493,14 +493,14 @@ std::shared_ptr<Code> visit_stmt(
         ASTNode expr_node = root.children.at(1);
         TypedExpr expr = visit_expr(expr_node, false, symbol_table);
 
-        if ((*curr_proc->ret_type) != (*expr.second)) {
+        if ((*curr_proc->ret_type) != (*expr.nl_type)) {
             throw TypeMismatchError(
-                "Cannot return expression of type '" + expr.second->to_string()
+                "Cannot return expression of type '" + expr.nl_type->to_string()
                 + "' from function with return type '"
                 + curr_proc->ret_type->to_string() + "'."
             );
         }
-        result = std::make_shared<RetStmt>(expr.first);
+        result = std::make_shared<RetStmt>(expr.code);
     } else {
         std::cerr << "Invalid production found while processing stmt."
                   << std::endl;
@@ -525,7 +525,7 @@ std::shared_ptr<Code> visit_stmts(
         ASTNode stmt = root.children.at(0);
         result = visit_stmt(stmt, curr_proc, symbol_table);
     } else if (prod == std::vector<State> {NonTerminal::stmts, NonTerminal::stmt, NonTerminal::stmts}) {
-        // extract first statement
+        // extract code statement
         ASTNode stmt = root.children.at(0);
         std::shared_ptr<Code> code = visit_stmt(stmt, curr_proc, symbol_table);
 
@@ -555,7 +555,7 @@ visit_params(ASTNode root, SymbolTable& symbol_table) {
         ASTNode vardef = root.children.at(0);
         result.push_back(visit_vardef(vardef, symbol_table));
     } else if (prod == std::vector<State> {NonTerminal::params, NonTerminal::vardef, Terminal::COMMA, NonTerminal::params}) {
-        // extract first parameter
+        // extract code parameter
         ASTNode vardef = root.children.at(0);
         result.push_back(visit_vardef(vardef, symbol_table));
 
@@ -683,7 +683,7 @@ visit_fns(ASTNode root, SymbolTable& symbol_table) {
         ASTNode fn = root.children.at(0);
         result.push_back(visit_fn(fn, symbol_table));
     } else if (prod == std::vector<State> {NonTerminal::fns, NonTerminal::fn, NonTerminal::fns}) {
-        // extract first function
+        // extract code function
         ASTNode fn = root.children.at(0);
         result.push_back(visit_fn(fn, symbol_table));
 

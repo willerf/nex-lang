@@ -14,5 +14,3 @@ symbol_table_sub(SymbolTable& symbol_table_one, SymbolTable& symbol_table_two) {
 
     return result;
 }
-
-

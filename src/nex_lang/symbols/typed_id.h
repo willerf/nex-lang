@@ -10,5 +10,3 @@
 struct TypedID {
     virtual ~TypedID() = default;
 };
-
-

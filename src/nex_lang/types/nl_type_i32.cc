@@ -12,5 +12,3 @@ std::type_index NLTypeI32::type() const {
 std::string NLTypeI32::to_string() {
     return "i32";
 }
-
-
