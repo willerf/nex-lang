@@ -5,59 +5,76 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_library(compiler_lib STATIC
     src/compile.cc
+    src/exceptions/duplicate_symbol_error.cc
+    src/exceptions/symbol_not_found_error.cc
+    src/exceptions/type_mismatch_error.cc
+    src/lex_parse/ast_node.cc
+    src/lex_parse/parsing.cc
+    src/lex_parse/scanning.cc
+    src/main.cc
     src/memory_management/chunk.cc
     src/memory_management/stack.cc
+    src/nex_lang/nex_lang.cc
+    src/nex_lang/post_processing/post_processing.cc
+    src/nex_lang/post_processing/symbol_table.cc
+    src/nex_lang/symbols/typed_procedure.cc
+    src/nex_lang/symbols/typed_variable.cc
+    src/nex_lang/types/nl_type.cc
+    src/nex_lang/types/nl_type_bool.cc
+    src/nex_lang/types/nl_type_i32.cc
+    src/nex_lang/types/nl_type_ptr.cc
     src/program_representation/assembly.cc
-    src/program_representation/pseudo_assembly.cc
     src/program_representation/code_builders/bin_op.cc
     src/program_representation/code_builders/operators.cc
     src/program_representation/code_builders/while_loop.cc
-    src/program_representation/code_structures/block.cc
     src/program_representation/code_structures/beq_label.cc
+    src/program_representation/code_structures/block.cc
     src/program_representation/code_structures/bne_label.cc
+    src/program_representation/code_structures/call.cc
     src/program_representation/code_structures/define_label.cc
     src/program_representation/code_structures/if_stmt.cc
+    src/program_representation/code_structures/ret_stmt.cc
     src/program_representation/code_structures/scope.cc
-    src/program_representation/code_structures/call.cc
     src/program_representation/code_structures/use_label.cc
     src/program_representation/code_structures/var_access.cc
-    src/program_representation/code_structures/ret_stmt.cc
     src/program_representation/code_structures/word.cc
     src/program_representation/label.cc
-    src/program_representation/variable.cc
     src/program_representation/procedure.cc
+    src/program_representation/pseudo_assembly.cc
+    src/program_representation/variable.cc
+    src/transformations/elim_calls.cc
     src/transformations/elim_if_stmts.cc
-    src/transformations/elim_ret_stmts.cc
     src/transformations/elim_labels.cc
+    src/transformations/elim_ret_stmts.cc
     src/transformations/elim_scopes.cc
     src/transformations/elim_vars.cc
     src/transformations/elim_vars_proc.cc
-    src/transformations/elim_calls.cc
+    src/transformations/entry_exit.cc
     src/transformations/flatten.cc
     src/transformations/print.cc
     src/transformations/visitor.cc
     src/transformations/write_file.cc
-    src/transformations/entry_exit.cc
-    src/lex_parse/scanning.cc
-    src/lex_parse/parsing.cc
-    src/lex_parse/ast_node.cc
-    src/exceptions/type_mismatch_error.cc
-    src/exceptions/symbol_not_found_error.cc
-    src/exceptions/duplicate_symbol_error.cc
     src/utils/reg.cc
+    src/utils/state.cc
+    src/utils/token.cc
 )
 
 target_include_directories(compiler_lib PUBLIC
     src
-    src/memory_management
-    src/program_representation
-    src/program_representation/code_structures
-    src/program_representation/code_builders
-    src/transformations
-    src/lex_parse
     src/exceptions
+    src/lex_parse
+    src/memory_management
+    src/nex_lang
+    src/nex_lang/post_processing
+    src/nex_lang/symbols
+    src/nex_lang/types
+    src/program_representation
+    src/program_representation/code_builders
+    src/program_representation/code_structures
+    src/transformations
     src/utils
 )
+
 
 add_executable(main src/main.cc)
 target_link_libraries(main compiler_lib)

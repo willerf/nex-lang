@@ -1,5 +1,11 @@
 #pragma once
 
+#include <map>
+#include <string>
+
+#include "typed_procedure.h"
+#include "typed_variable.h"
+
 using SymbolTable = std::map<std::string, std::shared_ptr<TypedID>>;
 
 std::vector<std::shared_ptr<TypedID>>

@@ -7,6 +7,10 @@
 #include "procedure.h"
 #include "typed_id.h"
 #include "variable.h"
+#include "symbol_table.h"
+#include "nl_type.h"
+#include "typed_procedure.h"
+#include "typed_variable.h"
 
 using TypedExpr = std::pair<std::shared_ptr<Code>, std::shared_ptr<NLType>>;
 

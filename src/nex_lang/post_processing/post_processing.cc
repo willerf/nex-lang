@@ -23,6 +23,9 @@
 #include "type_mismatch_error.h"
 #include "var_access.h"
 #include "while_loop.h"
+#include "nl_type_i32.h"
+#include "nl_type_bool.h"
+#include "nl_type_ptr.h"
 
 static std::set<NonTerminal> expr_non_terminals = {
     NonTerminal::expr,
