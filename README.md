@@ -1,6 +1,6 @@
 # compiler-v2
 ### Getting Started
-- Ensure you have cmake installed
+- Ensure you have cmake and rust installed
 - Then run the following commands
   - `mkdir build`
   - `cd build`
