@@ -2,6 +2,8 @@
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_vector.hpp>
 
+#include <bitset>
+
 #include "block.h"
 #include "chunk.h"
 #include "elim_vars.h"

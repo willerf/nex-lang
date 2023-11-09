@@ -3,6 +3,7 @@
 
 #include <span>
 #include <unordered_map>
+#include <optional>
 
 #include "ast_node.h"
 #include "state.h"

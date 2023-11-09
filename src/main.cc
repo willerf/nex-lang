@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <cstring>
 
 #include "compile.h"
 #include "write_file.h"

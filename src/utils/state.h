@@ -1,6 +1,7 @@
 
 #pragma once
 #include <variant>
+#include <string>
 
 enum class Terminal {
     BOFS,
