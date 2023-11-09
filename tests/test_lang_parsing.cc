@@ -5,7 +5,7 @@
 #include <iostream>
 
 #include "nex_lang.h"
-#include "parsing.h"
+#include "parse_cyk.h"
 
 TEST_CASE("Test parsing lang", "[parser]") {
     Grammar grammar = make_grammar();

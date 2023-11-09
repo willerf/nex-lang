@@ -9,7 +9,8 @@ add_library(compiler_lib STATIC
     src/exceptions/symbol_not_found_error.cc
     src/exceptions/type_mismatch_error.cc
     src/lex_parse/ast_node.cc
-    src/lex_parse/parsing.cc
+    src/lex_parse/memo_map.cc
+    src/lex_parse/parse_cyk.cc
     src/lex_parse/scanning.cc
     src/main.cc
     src/memory_management/chunk.cc

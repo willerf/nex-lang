@@ -23,7 +23,7 @@
 #include "label.h"
 #include "nex_lang.h"
 #include "operators.h"
-#include "parsing.h"
+#include "parse_cyk.h"
 #include "post_processing.h"
 #include "print.h"
 #include "procedure.h"
