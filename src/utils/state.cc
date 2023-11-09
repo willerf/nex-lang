@@ -29,6 +29,10 @@ std::string state::to_string(Terminal terminal) {
             return "COLON";
         case Terminal::I32:
             return "I32";
+        case Terminal::BOOL:
+            return "BOOL";
+        case Terminal::CHAR:
+            return "CHAR";
         case Terminal::LET:
             return "LET";
         case Terminal::ASSIGN:
@@ -75,6 +79,10 @@ std::string state::to_string(Terminal terminal) {
             return "NOT";
         case Terminal::NUM:
             return "NUM";
+        case Terminal::CHARLITERAL:
+            return "CHARLITERAL";
+        case Terminal::STRLITERAL:
+            return "STRLITERAL";
         case Terminal::WHITESPACE:
             return "WHITESPACE";
         case Terminal::COMMENT:

@@ -11,10 +11,12 @@
 #include "bin_op.h"
 #include "block.h"
 #include "call.h"
+#include "define_label.h"
 #include "duplicate_symbol_error.h"
 #include "if_stmt.h"
 #include "nl_type.h"
 #include "nl_type_bool.h"
+#include "nl_type_char.h"
 #include "nl_type_i32.h"
 #include "nl_type_ptr.h"
 #include "operators.h"
@@ -24,8 +26,10 @@
 #include "scope.h"
 #include "symbol_not_found_error.h"
 #include "type_mismatch_error.h"
+#include "use_label.h"
 #include "var_access.h"
 #include "while_loop.h"
+#include "word.h"
 
 static std::set<NonTerminal> expr_non_terminals = {
     NonTerminal::expr,
@@ -38,8 +42,12 @@ static std::set<NonTerminal> expr_non_terminals = {
     NonTerminal::exprp7,
     NonTerminal::exprp8};
 
-TypedExpr
-visit_expr(ASTNode root, bool read_address, SymbolTable& symbol_table) {
+TypedExpr visit_expr(
+    ASTNode root,
+    bool read_address,
+    SymbolTable& symbol_table,
+    std::vector<std::shared_ptr<Code>>& static_data
+) {
     assert(
         std::holds_alternative<NonTerminal>(root.state)
         && expr_non_terminals.count(std::get<NonTerminal>(root.state))
@@ -91,9 +99,34 @@ visit_expr(ASTNode root, bool read_address, SymbolTable& symbol_table) {
         } else {
             throw SymbolNotFoundError(name);
         }
+    } else if (prod == std::vector<State> {NonTerminal::exprp8, Terminal::CHARLITERAL}) {
+        ASTNode id = root.children.at(0);
+        std::string letter_str = id.lexeme;
+        if (letter_str.length() == 1) {
+            result = TypedExpr {
+                int_literal(static_cast<uint32_t>(letter_str[0])),
+                std::make_shared<NLTypeChar>()};
+        } else {
+            std::cerr << "TODO" << std::endl;
+            exit(1);
+        }
+    } else if (prod == std::vector<State> {NonTerminal::exprp8, Terminal::STRLITERAL}) {
+        ASTNode id = root.children.at(0);
+        std::string str_literal = id.lexeme.substr(1, id.lexeme.length() - 2);
+        std::vector<std::shared_ptr<Code>> code_str;
+        std::shared_ptr<Label> label = std::make_shared<Label>(str_literal);
+        code_str.push_back(make_define(label));
+        for (char c : str_literal) {
+            code_str.push_back(make_word(static_cast<uint32_t>(c)));
+        }
+        code_str.push_back(make_word(0));
+        static_data.push_back(make_block(code_str));
+        result = TypedExpr {
+            make_block({make_lis(Reg::Result), make_use(label)}),
+            std::make_shared<NLTypePtr>(std::make_shared<NLTypeChar>())};
     } else if (prod == std::vector<State> {NonTerminal::exprp8, Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN}) {
         ASTNode expr = root.children.at(1);
-        result = visit_expr(expr, read_address, symbol_table);
+        result = visit_expr(expr, read_address, symbol_table, static_data);
     } else if (prod == std::vector<State> {NonTerminal::exprp8, Terminal::ID, Terminal::LPAREN, NonTerminal::optargs, Terminal::RPAREN}) {
         ASTNode id = root.children.at(0);
         std::string name = id.lexeme;
@@ -104,7 +137,7 @@ visit_expr(ASTNode root, bool read_address, SymbolTable& symbol_table) {
                     )) {
                 ASTNode optargs = root.children.at(2);
                 std::vector<TypedExpr> typed_args =
-                    visit_optargs(optargs, symbol_table);
+                    visit_optargs(optargs, symbol_table, static_data);
                 std::vector<std::shared_ptr<Code>> args;
                 for (auto typed_arg : typed_args) {
                     args.push_back(typed_arg.code);
@@ -122,7 +155,7 @@ visit_expr(ASTNode root, bool read_address, SymbolTable& symbol_table) {
     else if (root.children.size() == 1 && std::holds_alternative<NonTerminal>(root.children.at(0).state) && expr_non_terminals.count(std::get<NonTerminal>(root.children.at(0).state))) {
         // recursively call into next operator precedence layer
         ASTNode expr = root.children.at(0);
-        result = visit_expr(expr, read_address, symbol_table);
+        result = visit_expr(expr, read_address, symbol_table, static_data);
     }
     else if (root.children.size() == 2 && std::holds_alternative<Terminal>(root.children.at(0).state) && std::holds_alternative<NonTerminal>(root.children.at(1).state) && expr_non_terminals.count(std::get<NonTerminal>(root.children.at(1).state))) {
         // extract unary operator
@@ -130,7 +163,8 @@ visit_expr(ASTNode root, bool read_address, SymbolTable& symbol_table) {
         ASTNode expr = root.children.at(1);
 
         Terminal unary_op = std::get<Terminal>(lhs_op.state);
-        TypedExpr expr_code = visit_expr(expr, read_address, symbol_table);
+        TypedExpr expr_code =
+            visit_expr(expr, read_address, symbol_table, static_data);
         switch (unary_op) {
             case Terminal::NOT:
                 if ((*expr_code.nl_type) != NLTypeBool()) {
@@ -167,9 +201,11 @@ visit_expr(ASTNode root, bool read_address, SymbolTable& symbol_table) {
         ASTNode mid = root.children.at(1);
         ASTNode rhs = root.children.at(2);
 
-        TypedExpr typed_lhs_code = visit_expr(lhs, read_address, symbol_table);
+        TypedExpr typed_lhs_code =
+            visit_expr(lhs, read_address, symbol_table, static_data);
         Terminal mid_op = std::get<Terminal>(mid.state);
-        TypedExpr typed_rhs_code = visit_expr(rhs, read_address, symbol_table);
+        TypedExpr typed_rhs_code =
+            visit_expr(rhs, read_address, symbol_table, static_data);
 
         std::shared_ptr<Code> lhs_code = typed_lhs_code.code;
         std::shared_ptr<Code> rhs_code = typed_rhs_code.code;
@@ -288,7 +324,11 @@ visit_expr(ASTNode root, bool read_address, SymbolTable& symbol_table) {
     return result;
 }
 
-std::vector<TypedExpr> visit_args(ASTNode root, SymbolTable& symbol_table) {
+std::vector<TypedExpr> visit_args(
+    ASTNode root,
+    SymbolTable& symbol_table,
+    std::vector<std::shared_ptr<Code>>& static_data
+) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::args);
     std::vector<TypedExpr> result;
 
@@ -296,15 +336,15 @@ std::vector<TypedExpr> visit_args(ASTNode root, SymbolTable& symbol_table) {
     if (prod == std::vector<State> {NonTerminal::args, NonTerminal::expr}) {
         // extract singular argument
         ASTNode expr = root.children.at(0);
-        result.push_back(visit_expr(expr, false, symbol_table));
+        result.push_back(visit_expr(expr, false, symbol_table, static_data));
     } else if (prod == std::vector<State> {NonTerminal::args, NonTerminal::expr, Terminal::COMMA, NonTerminal::args}) {
         // extract code argument
         ASTNode expr = root.children.at(0);
-        result.push_back(visit_expr(expr, false, symbol_table));
+        result.push_back(visit_expr(expr, false, symbol_table, static_data));
 
         // extract rest of arguments
         ASTNode args = root.children.at(2);
-        auto child_result = visit_args(args, symbol_table);
+        auto child_result = visit_args(args, symbol_table, static_data);
         result.insert(result.end(), child_result.begin(), child_result.end());
     } else {
         std::cerr << "Invalid production found while processing args."
@@ -315,7 +355,11 @@ std::vector<TypedExpr> visit_args(ASTNode root, SymbolTable& symbol_table) {
     return result;
 }
 
-std::vector<TypedExpr> visit_optargs(ASTNode root, SymbolTable& symbol_table) {
+std::vector<TypedExpr> visit_optargs(
+    ASTNode root,
+    SymbolTable& symbol_table,
+    std::vector<std::shared_ptr<Code>>& static_data
+) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::optargs);
     std::vector<TypedExpr> result;
 
@@ -325,7 +369,7 @@ std::vector<TypedExpr> visit_optargs(ASTNode root, SymbolTable& symbol_table) {
     } else if (prod == std::vector<State> {NonTerminal::optargs, NonTerminal::args}) {
         // extract arguments
         ASTNode args = root.children.at(0);
-        result = visit_args(args, symbol_table);
+        result = visit_args(args, symbol_table, static_data);
     } else {
         std::cerr << "Invalid production found while processing optargs."
                   << std::endl;
@@ -344,6 +388,8 @@ std::shared_ptr<NLType> visit_type(ASTNode root) {
         result = std::make_shared<NLTypeI32>();
     } else if (prod == std::vector<State> {NonTerminal::type, Terminal::BOOL}) {
         result = std::make_shared<NLTypeBool>();
+    } else if (prod == std::vector<State> {NonTerminal::type, Terminal::CHAR}) {
+        result = std::make_shared<NLTypeChar>();
     } else if (prod == std::vector<State> {NonTerminal::type, Terminal::STAR, NonTerminal::type}) {
         ASTNode sub_type = root.children.at(1);
         std::shared_ptr<NLType> sub_nl_type = visit_type(sub_type);
@@ -398,7 +444,8 @@ visit_vardef(ASTNode root, SymbolTable& symbol_table) {
 std::shared_ptr<Code> visit_stmt(
     ASTNode root,
     std::shared_ptr<TypedProcedure> curr_proc,
-    SymbolTable& symbol_table
+    SymbolTable& symbol_table,
+    std::vector<std::shared_ptr<Code>>& static_data
 ) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::stmt);
     std::shared_ptr<Code> result = nullptr;
@@ -417,7 +464,8 @@ std::shared_ptr<Code> visit_stmt(
         auto typed_var = visit_vardef(vardef, symbol_table);
 
         ASTNode expr_node = root.children.at(3);
-        TypedExpr expr = visit_expr(expr_node, false, symbol_table);
+        TypedExpr expr =
+            visit_expr(expr_node, false, symbol_table, static_data);
 
         if ((*typed_var->nl_type) != (*expr.nl_type)) {
             throw TypeMismatchError(
@@ -430,10 +478,11 @@ std::shared_ptr<Code> visit_stmt(
     } else if (prod == std::vector<State> {NonTerminal::stmt, NonTerminal::expr, Terminal::ASSIGN, NonTerminal::expr, Terminal::SEMI}) {
         // extract variable assignment
         ASTNode lhs = root.children.at(0);
-        TypedExpr mem_address = visit_expr(lhs, true, symbol_table);
+        TypedExpr mem_address =
+            visit_expr(lhs, true, symbol_table, static_data);
 
         ASTNode expr = root.children.at(2);
-        TypedExpr code = visit_expr(expr, false, symbol_table);
+        TypedExpr code = visit_expr(expr, false, symbol_table, static_data);
 
         if ((*mem_address.nl_type) != (*code.nl_type)) {
             throw TypeMismatchError(
@@ -446,15 +495,25 @@ std::shared_ptr<Code> visit_stmt(
     } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::IF, Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN, Terminal::LBRACE, NonTerminal::stmts, Terminal::RBRACE, Terminal::ELSE, Terminal::LBRACE, NonTerminal::stmts, Terminal::RBRACE}) {
         // extract if statements
         ASTNode expr = root.children.at(2);
-        TypedExpr comp = visit_expr(expr, false, symbol_table);
+        TypedExpr comp = visit_expr(expr, false, symbol_table, static_data);
 
         ASTNode thens_stmts = root.children.at(5);
         SymbolTable symbol_table_thens = symbol_table;
-        auto thens = visit_stmts(thens_stmts, curr_proc, symbol_table_thens);
+        auto thens = visit_stmts(
+            thens_stmts,
+            curr_proc,
+            symbol_table_thens,
+            static_data
+        );
 
         ASTNode elses_stmts = root.children.at(9);
         SymbolTable symbol_table_elses = symbol_table;
-        auto elses = visit_stmts(elses_stmts, curr_proc, symbol_table_elses);
+        auto elses = visit_stmts(
+            elses_stmts,
+            curr_proc,
+            symbol_table_elses,
+            static_data
+        );
 
         if ((*comp.nl_type) != NLTypeBool()) {
             throw TypeMismatchError(
@@ -472,10 +531,10 @@ std::shared_ptr<Code> visit_stmt(
     } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::WHILE, Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN, Terminal::LBRACE, NonTerminal::stmts, Terminal::RBRACE}) {
         // extract while loops
         ASTNode expr = root.children.at(2);
-        TypedExpr comp = visit_expr(expr, false, symbol_table);
+        TypedExpr comp = visit_expr(expr, false, symbol_table, static_data);
 
         ASTNode stmts = root.children.at(5);
-        auto code = visit_stmts(stmts, curr_proc, symbol_table);
+        auto code = visit_stmts(stmts, curr_proc, symbol_table, static_data);
 
         if ((*comp.nl_type) != NLTypeBool()) {
             throw TypeMismatchError(
@@ -491,7 +550,8 @@ std::shared_ptr<Code> visit_stmt(
     } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::RET, NonTerminal::expr, Terminal::SEMI}) {
         // extract return statements
         ASTNode expr_node = root.children.at(1);
-        TypedExpr expr = visit_expr(expr_node, false, symbol_table);
+        TypedExpr expr =
+            visit_expr(expr_node, false, symbol_table, static_data);
 
         if ((*curr_proc->ret_type) != (*expr.nl_type)) {
             throw TypeMismatchError(
@@ -514,7 +574,8 @@ std::shared_ptr<Code> visit_stmt(
 std::shared_ptr<Code> visit_stmts(
     ASTNode root,
     std::shared_ptr<TypedProcedure> curr_proc,
-    SymbolTable& symbol_table
+    SymbolTable& symbol_table,
+    std::vector<std::shared_ptr<Code>>& static_data
 ) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::stmts);
     std::shared_ptr<Code> result = nullptr;
@@ -523,16 +584,17 @@ std::shared_ptr<Code> visit_stmts(
     if (prod == std::vector<State> {NonTerminal::stmts, NonTerminal::stmt}) {
         // extract singular statement
         ASTNode stmt = root.children.at(0);
-        result = visit_stmt(stmt, curr_proc, symbol_table);
+        result = visit_stmt(stmt, curr_proc, symbol_table, static_data);
     } else if (prod == std::vector<State> {NonTerminal::stmts, NonTerminal::stmt, NonTerminal::stmts}) {
         // extract code statement
         ASTNode stmt = root.children.at(0);
-        std::shared_ptr<Code> code = visit_stmt(stmt, curr_proc, symbol_table);
+        std::shared_ptr<Code> code =
+            visit_stmt(stmt, curr_proc, symbol_table, static_data);
 
         // extract rest of statements
         ASTNode stmts = root.children.at(1);
         std::shared_ptr<Code> rest_of_code =
-            visit_stmts(stmts, curr_proc, symbol_table);
+            visit_stmts(stmts, curr_proc, symbol_table, static_data);
         result = make_block({code, rest_of_code});
     } else {
         std::cerr << "Invalid production found while processing stmts."
@@ -594,8 +656,11 @@ visit_optparams(ASTNode root, SymbolTable& symbol_table) {
     return result;
 }
 
-std::shared_ptr<TypedProcedure>
-visit_fn(ASTNode root, SymbolTable& symbol_table) {
+std::shared_ptr<TypedProcedure> visit_fn(
+    ASTNode root,
+    SymbolTable& symbol_table,
+    std::vector<std::shared_ptr<Code>>& static_data
+) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::fn);
     std::shared_ptr<TypedProcedure> result;
 
@@ -650,7 +715,7 @@ visit_fn(ASTNode root, SymbolTable& symbol_table) {
         // extract list of statements of procedure
         ASTNode stmts = root.children.at(8);
         std::shared_ptr<Code> code =
-            visit_stmts(stmts, result, symbol_table_locals);
+            visit_stmts(stmts, result, symbol_table_locals, static_data);
 
         // only include local variables in variable chunk
         std::vector<std::shared_ptr<Variable>> vars;
@@ -672,8 +737,11 @@ visit_fn(ASTNode root, SymbolTable& symbol_table) {
     return result;
 }
 
-std::vector<std::shared_ptr<TypedProcedure>>
-visit_fns(ASTNode root, SymbolTable& symbol_table) {
+std::vector<std::shared_ptr<TypedProcedure>> visit_fns(
+    ASTNode root,
+    SymbolTable& symbol_table,
+    std::vector<std::shared_ptr<Code>>& static_data
+) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::fns);
     std::vector<std::shared_ptr<TypedProcedure>> result;
 
@@ -681,16 +749,16 @@ visit_fns(ASTNode root, SymbolTable& symbol_table) {
     if (prod == std::vector<State> {NonTerminal::fns, NonTerminal::fn}) {
         // extract singular function
         ASTNode fn = root.children.at(0);
-        result.push_back(visit_fn(fn, symbol_table));
+        result.push_back(visit_fn(fn, symbol_table, static_data));
     } else if (prod == std::vector<State> {NonTerminal::fns, NonTerminal::fn, NonTerminal::fns}) {
         // extract code function
         ASTNode fn = root.children.at(0);
-        result.push_back(visit_fn(fn, symbol_table));
+        result.push_back(visit_fn(fn, symbol_table, static_data));
 
         // extract rest of functions
         ASTNode fns = root.children.at(1);
         std::vector<std::shared_ptr<TypedProcedure>> child_result =
-            visit_fns(fns, symbol_table);
+            visit_fns(fns, symbol_table, static_data);
         result.insert(result.end(), child_result.begin(), child_result.end());
     } else {
         std::cerr << "Invalid production found while processing fns."
@@ -701,8 +769,11 @@ visit_fns(ASTNode root, SymbolTable& symbol_table) {
     return result;
 }
 
-std::vector<std::shared_ptr<TypedProcedure>>
-visit_s(ASTNode root, SymbolTable& symbol_table) {
+std::vector<std::shared_ptr<TypedProcedure>> visit_s(
+    ASTNode root,
+    SymbolTable& symbol_table,
+    std::vector<std::shared_ptr<Code>>& static_data
+) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::s);
     std::vector<std::shared_ptr<TypedProcedure>> result;
 
@@ -715,7 +786,7 @@ visit_s(ASTNode root, SymbolTable& symbol_table) {
             Terminal::EOFS}) {
         // extract functions of program
         ASTNode fns = root.children.at(1);
-        result = visit_fns(fns, symbol_table);
+        result = visit_fns(fns, symbol_table, static_data);
     } else {
         std::cerr << "Invalid production found while processing s."
                   << std::endl;
@@ -725,11 +796,12 @@ visit_s(ASTNode root, SymbolTable& symbol_table) {
     return result;
 }
 
-std::vector<std::shared_ptr<TypedProcedure>> generate(ASTNode root) {
+std::vector<std::shared_ptr<TypedProcedure>>
+generate(ASTNode root, std::vector<std::shared_ptr<Code>>& static_data) {
     std::vector<std::shared_ptr<TypedProcedure>> result;
 
     SymbolTable symbol_table;
-    result = visit_s(root, symbol_table);
+    result = visit_s(root, symbol_table, static_data);
 
     return result;
 }

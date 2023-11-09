@@ -1,5 +1,6 @@
 #include "nex_lang.h"
 
+#include <cassert>
 #include <iostream>
 #include <sstream>
 
@@ -44,6 +45,14 @@ static std::optional<Terminal> transition_func(Terminal curr_state, char c) {
         if (isdigit(c)) {
             return Terminal::NUM;
         }
+
+        if (c == '\'') {
+            return Terminal::CHARLITERALNF;
+        }
+
+        if (c == '\"') {
+            return Terminal::STRLITERALNF;
+        }
     }
 
     if (curr_state == Terminal::ASSIGN && c == '=') {
@@ -82,6 +91,22 @@ static std::optional<Terminal> transition_func(Terminal curr_state, char c) {
         return Terminal::COMMENT;
     }
 
+    if (curr_state == Terminal::CHARLITERALNF) {
+        if (c == '\'') {
+            return Terminal::CHARLITERAL;
+        } else {
+            return Terminal::CHARLITERALNF;
+        }
+    }
+
+    if (curr_state == Terminal::STRLITERALNF) {
+        if (c == '\"') {
+            return Terminal::STRLITERAL;
+        } else {
+            return Terminal::STRLITERALNF;
+        }
+    }
+
     if (curr_state == Terminal::NUM && isdigit(c)) {
         return Terminal::NUM;
     }
@@ -95,7 +120,7 @@ static std::optional<Terminal> transition_func(Terminal curr_state, char c) {
 
 DFA make_dfa() {
     std::string alphabet_str =
-        "<>=+-_*/%(){},;:!&| \t\n\rabcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        "<>=+-_*/%(){},;:!&| \t\n\r\'\"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     std::set<char> alphabet(alphabet_str.begin(), alphabet_str.end());
     Terminal init_state = Terminal::START;
 
@@ -106,6 +131,8 @@ DFA make_dfa() {
     std::set<Terminal> accepting = {
         Terminal::ID,
         Terminal::NUM,
+        Terminal::STRLITERAL,
+        Terminal::CHARLITERAL,
     };
 
     for (const auto& [key, value] : one_char_symbols) {
@@ -136,6 +163,7 @@ static std::map<std::string, Terminal> keywords = {
     {"return", Terminal::RET},
     {"i32", Terminal::I32},
     {"bool", Terminal::BOOL},
+    {"char", Terminal::CHAR},
     {"true", Terminal::TRUE},
     {"false", Terminal::FALSE},
 };
@@ -160,8 +188,11 @@ std::vector<Token> scan(std::string_view input) {
         Terminal::ELSE,
         Terminal::I32,
         Terminal::BOOL,
+        Terminal::CHAR,
         Terminal::ID,
         Terminal::NUM,
+        Terminal::STRLITERAL,
+        Terminal::CHARLITERAL,
         Terminal::TRUE,
         Terminal::FALSE};
     std::set<Terminal> sep_set2 = {
@@ -244,6 +275,7 @@ static std::map<NonTerminal, std::vector<Production>> productions = {
     {NonTerminal::type,
      {{NonTerminal::type, {Terminal::I32}},
       {NonTerminal::type, {Terminal::BOOL}},
+      {NonTerminal::type, {Terminal::CHAR}},
       {NonTerminal::type, {Terminal::STAR, NonTerminal::type}}}},
     {NonTerminal::stmts,
      {{NonTerminal::stmts, {NonTerminal::stmt, NonTerminal::stmts}},
@@ -328,6 +360,8 @@ static std::map<NonTerminal, std::vector<Production>> productions = {
      {{NonTerminal::exprp8, {Terminal::ID}},
       {NonTerminal::exprp8, {Terminal::NUM}},
       {NonTerminal::exprp8, {Terminal::AMPERSAND, Terminal::ID}},
+      {NonTerminal::exprp8, {Terminal::STRLITERAL}},
+      {NonTerminal::exprp8, {Terminal::CHARLITERAL}},
       {NonTerminal::exprp8,
        {Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN}},
       {NonTerminal::exprp8,
@@ -343,16 +377,20 @@ static std::map<NonTerminal, std::vector<Production>> productions = {
       {NonTerminal::args, {NonTerminal::expr}}}}};
 
 static std::set<Terminal> terminals = {
-    Terminal::BOFS,   Terminal::EOFS,      Terminal::FN,    Terminal::ID,
-    Terminal::LPAREN, Terminal::RPAREN,    Terminal::ARROW, Terminal::LBRACE,
-    Terminal::RBRACE, Terminal::COMMA,     Terminal::COLON, Terminal::I32,
-    Terminal::LET,    Terminal::ASSIGN,    Terminal::SEMI,  Terminal::IF,
-    Terminal::ELSE,   Terminal::RET,       Terminal::OR,    Terminal::AND,
-    Terminal::EQ,     Terminal::NE,        Terminal::LT,    Terminal::GT,
-    Terminal::LE,     Terminal::GE,        Terminal::PLUS,  Terminal::MINUS,
-    Terminal::STAR,   Terminal::SLASH,     Terminal::PCT,   Terminal::NOT,
-    Terminal::NUM,    Terminal::AMPERSAND, Terminal::WHILE, Terminal::BOOL,
-    Terminal::TRUE,   Terminal::FALSE,
+    Terminal::BOFS,        Terminal::EOFS,   Terminal::FN,
+    Terminal::ID,          Terminal::LPAREN, Terminal::RPAREN,
+    Terminal::ARROW,       Terminal::LBRACE, Terminal::RBRACE,
+    Terminal::COMMA,       Terminal::COLON,  Terminal::I32,
+    Terminal::LET,         Terminal::ASSIGN, Terminal::SEMI,
+    Terminal::IF,          Terminal::ELSE,   Terminal::RET,
+    Terminal::OR,          Terminal::AND,    Terminal::EQ,
+    Terminal::NE,          Terminal::LT,     Terminal::GT,
+    Terminal::LE,          Terminal::GE,     Terminal::PLUS,
+    Terminal::MINUS,       Terminal::STAR,   Terminal::SLASH,
+    Terminal::PCT,         Terminal::NOT,    Terminal::NUM,
+    Terminal::AMPERSAND,   Terminal::WHILE,  Terminal::BOOL,
+    Terminal::TRUE,        Terminal::FALSE,  Terminal::STRLITERAL,
+    Terminal::CHARLITERAL, Terminal::CHAR,
 };
 
 static std::set<NonTerminal> non_terminals = {
