@@ -18,6 +18,7 @@
 #include "nl_type_bool.h"
 #include "nl_type_char.h"
 #include "nl_type_i32.h"
+#include "nl_type_none.h"
 #include "nl_type_ptr.h"
 #include "operators.h"
 #include "procedure.h"
@@ -506,6 +507,11 @@ std::shared_ptr<Code> visit_stmt(
             );
         }
         result = assign_to_address(mem_address.code, code.code);
+    } else if (prod == std::vector<State> {NonTerminal::stmt, NonTerminal::expr, Terminal::SEMI}) {
+        // extract run expression
+        ASTNode expr = root.children.at(0);
+        TypedExpr code = visit_expr(expr, false, symbol_table, static_data);
+        result = code.code;
     } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::IF, Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN, Terminal::LBRACE, NonTerminal::stmts, Terminal::RBRACE, Terminal::ELSE, Terminal::LBRACE, NonTerminal::stmts, Terminal::RBRACE}) {
         // extract if statements
         ASTNode expr = root.children.at(2);
@@ -728,6 +734,54 @@ std::shared_ptr<TypedProcedure> visit_fn(
 
         // extract list of statements of procedure
         ASTNode stmts = root.children.at(8);
+        std::shared_ptr<Code> code =
+            visit_stmts(stmts, result, symbol_table_locals, static_data);
+
+        // only include local variables in variable chunk
+        std::vector<std::shared_ptr<Variable>> vars;
+        for (auto typed_id :
+             symbol_table_sub(symbol_table_locals, symbol_table_params)) {
+            if (auto typed_variable =
+                    std::dynamic_pointer_cast<TypedVariable>(typed_id)) {
+                vars.push_back(typed_variable->variable);
+            }
+        }
+        result->procedure->code = make_scope(vars, code);
+    } else if (prod == std::vector<State> {NonTerminal::fn, Terminal::FN, Terminal::ID, Terminal::LPAREN, NonTerminal::optparams, Terminal::RPAREN, Terminal::LBRACE, NonTerminal::stmts, Terminal::RBRACE}) {
+        result = std::make_shared<TypedProcedure>();
+
+        // extract function name
+        ASTNode id = root.children.at(1);
+        std::string name = id.lexeme;
+
+        // add identifier to symbol table
+        symbol_table[name] = result;
+
+        // make clone of symbol table to scope params
+        SymbolTable symbol_table_params = symbol_table;
+
+        // extract function parameters
+        ASTNode optparams = root.children.at(3);
+        std::vector<std::shared_ptr<TypedVariable>> typed_params =
+            visit_optparams(optparams, symbol_table_params);
+
+        std::vector<std::shared_ptr<Variable>> params;
+        std::vector<std::shared_ptr<NLType>> param_types;
+        for (auto typed_variable : typed_params) {
+            params.push_back(typed_variable->variable);
+            param_types.push_back(typed_variable->nl_type);
+        }
+        result->procedure = std::make_shared<Procedure>(name, params);
+        result->param_types = param_types;
+
+        // return type of none
+        result->ret_type = std::make_shared<NLTypeNone>();
+
+        // make clone of symbol table to scope local vars
+        SymbolTable symbol_table_locals = symbol_table_params;
+
+        // extract list of statements of procedure
+        ASTNode stmts = root.children.at(6);
         std::shared_ptr<Code> code =
             visit_stmts(stmts, result, symbol_table_locals, static_data);
 

@@ -22,6 +22,7 @@ add_library(compiler_lib STATIC
     src/nex_lang/symbols/typed_procedure.cc
     src/nex_lang/symbols/typed_variable.cc
     src/nex_lang/types/nl_type.cc
+    src/nex_lang/types/nl_type_none.cc
     src/nex_lang/types/nl_type_bool.cc
     src/nex_lang/types/nl_type_i32.cc
     src/nex_lang/types/nl_type_char.cc

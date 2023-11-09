@@ -2,6 +2,7 @@ s BOF fns EOF
 fns fn fns
 fns fn
 fn FN ID LPAREN optparams RPAREN ARROW type LBRACE stmts RBRACE
+fn FN ID LPAREN optparams RPAREN LBRACE stmts RBRACE
 optparams params
 optparams
 params vardef COMMA params
@@ -16,6 +17,7 @@ stmts stmt stmts
 stmts stmt
 stmt LET vardef ASSIGN expr SEMI
 stmt expr ASSIGN expr SEMI
+stmt expr SEMI
 stmt IF LPAREN expr RPAREN LBRACE stmts RBRACE ELSE LBRACE stmts RBRACE
 stmt WHILE LPAREN expr RPAREN LBRACE stmts RBRACE
 stmt RET expr SEMI
