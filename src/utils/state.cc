@@ -27,6 +27,8 @@ std::string state::to_string(Terminal terminal) {
             return "COMMA";
         case Terminal::COLON:
             return "COLON";
+        case Terminal::AS:
+            return "AS";
         case Terminal::I32:
             return "I32";
         case Terminal::BOOL:
@@ -132,6 +134,8 @@ std::string state::to_string(NonTerminal non_terminal) {
             return "exprp7";
         case NonTerminal::exprp8:
             return "exprp8";
+        case NonTerminal::exprp9:
+            return "exprp9";
         case NonTerminal::optargs:
             return "optargs";
         case NonTerminal::args:

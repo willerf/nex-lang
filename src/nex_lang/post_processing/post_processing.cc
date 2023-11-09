@@ -40,7 +40,8 @@ static std::set<NonTerminal> expr_non_terminals = {
     NonTerminal::exprp5,
     NonTerminal::exprp6,
     NonTerminal::exprp7,
-    NonTerminal::exprp8};
+    NonTerminal::exprp8,
+    NonTerminal::exprp9};
 
 TypedExpr visit_expr(
     ASTNode root,
@@ -55,7 +56,7 @@ TypedExpr visit_expr(
     TypedExpr result = TypedExpr {nullptr, nullptr};
 
     std::vector<State> prod = root.get_production();
-    if (prod == std::vector<State> {NonTerminal::exprp8, Terminal::ID}) {
+    if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::ID}) {
         ASTNode id = root.children.at(0);
         std::string name = id.lexeme;
 
@@ -72,18 +73,18 @@ TypedExpr visit_expr(
         } else {
             throw SymbolNotFoundError(name);
         }
-    } else if (prod == std::vector<State> {NonTerminal::exprp8, Terminal::NUM}) {
+    } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::NUM}) {
         ASTNode num = root.children.at(0);
         result = TypedExpr {
             int_literal(stoi(num.lexeme)),
             std::make_shared<NLTypeI32>()};
-    } else if (prod == std::vector<State> {NonTerminal::exprp8, Terminal::TRUE}) {
+    } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::TRUE}) {
         ASTNode expr = root.children.at(0);
         result = TypedExpr {int_literal(1), std::make_shared<NLTypeBool>()};
-    } else if (prod == std::vector<State> {NonTerminal::exprp8, Terminal::FALSE}) {
+    } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::FALSE}) {
         ASTNode num = root.children.at(0);
         result = TypedExpr {int_literal(0), std::make_shared<NLTypeBool>()};
-    } else if (prod == std::vector<State> {NonTerminal::exprp8, Terminal::AMPERSAND, Terminal::ID}) {
+    } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::AMPERSAND, Terminal::ID}) {
         ASTNode id = root.children.at(1);
         std::string name = id.lexeme;
         if (symbol_table.count(name)) {
@@ -99,7 +100,7 @@ TypedExpr visit_expr(
         } else {
             throw SymbolNotFoundError(name);
         }
-    } else if (prod == std::vector<State> {NonTerminal::exprp8, Terminal::CHARLITERAL}) {
+    } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::CHARLITERAL}) {
         ASTNode id = root.children.at(0);
         std::string letter_str = id.lexeme;
         if (letter_str.length() == 1) {
@@ -110,7 +111,7 @@ TypedExpr visit_expr(
             std::cerr << "TODO" << std::endl;
             exit(1);
         }
-    } else if (prod == std::vector<State> {NonTerminal::exprp8, Terminal::STRLITERAL}) {
+    } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::STRLITERAL}) {
         ASTNode id = root.children.at(0);
         std::string str_literal = id.lexeme.substr(1, id.lexeme.length() - 2);
         std::vector<std::shared_ptr<Code>> code_str;
@@ -124,10 +125,10 @@ TypedExpr visit_expr(
         result = TypedExpr {
             make_block({make_lis(Reg::Result), make_use(label)}),
             std::make_shared<NLTypePtr>(std::make_shared<NLTypeChar>())};
-    } else if (prod == std::vector<State> {NonTerminal::exprp8, Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN}) {
+    } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN}) {
         ASTNode expr = root.children.at(1);
         result = visit_expr(expr, read_address, symbol_table, static_data);
-    } else if (prod == std::vector<State> {NonTerminal::exprp8, Terminal::ID, Terminal::LPAREN, NonTerminal::optargs, Terminal::RPAREN}) {
+    } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::ID, Terminal::LPAREN, NonTerminal::optargs, Terminal::RPAREN}) {
         ASTNode id = root.children.at(0);
         std::string name = id.lexeme;
 
@@ -151,6 +152,15 @@ TypedExpr visit_expr(
         } else {
             throw SymbolNotFoundError(name);
         }
+    } else if (prod == std::vector<State> {NonTerminal::exprp8, NonTerminal::exprp8, Terminal::AS, NonTerminal::type}) {
+        ASTNode expr = root.children.at(0);
+        TypedExpr expr_code =
+            visit_expr(expr, read_address, symbol_table, static_data);
+
+        ASTNode type_node = root.children.at(2);
+        std::shared_ptr<NLType> nl_type = visit_type(type_node);
+
+        return TypedExpr {expr_code.code, nl_type};
     }
     else if (root.children.size() == 1 && std::holds_alternative<NonTerminal>(root.children.at(0).state) && expr_non_terminals.count(std::get<NonTerminal>(root.children.at(0).state))) {
         // recursively call into next operator precedence layer
@@ -394,6 +404,9 @@ std::shared_ptr<NLType> visit_type(ASTNode root) {
         ASTNode sub_type = root.children.at(1);
         std::shared_ptr<NLType> sub_nl_type = visit_type(sub_type);
         result = std::make_shared<NLTypePtr>(sub_nl_type);
+    } else if (prod == std::vector<State> {NonTerminal::type, Terminal::LPAREN, NonTerminal::type, Terminal::RPAREN}) {
+        ASTNode type_node = root.children.at(1);
+        result = visit_type(type_node);
     } else {
         std::cerr << "Invalid production found while processing type."
                   << std::endl;

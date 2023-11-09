@@ -14,6 +14,7 @@ enum class Terminal {
     RBRACE,
     COMMA,
     COLON,
+    AS,
     I32,
     BOOL,
     CHAR,
@@ -72,6 +73,7 @@ enum class NonTerminal {
     exprp6,
     exprp7,
     exprp8,
+    exprp9,
     optargs,
     args
 };
