@@ -6,6 +6,7 @@
 
 #include "ast_node.h"
 #include "grammar.h"
+#include "memo_map.h"
 #include "token.h"
 
 std::optional<ASTNode> parse_cyk(std::span<Token> input, Grammar& grammar);

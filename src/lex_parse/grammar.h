@@ -9,6 +9,7 @@
 struct Production {
     NonTerminal lhs;
     std::vector<State> rhs;
+    bool operator==(const Production&) const = default;
 };
 
 struct Grammar {
