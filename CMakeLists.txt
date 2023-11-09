@@ -13,7 +13,6 @@ add_library(compiler_lib STATIC
     src/lex_parse/parse_cyk.cc
     src/lex_parse/parse_earley.cc
     src/lex_parse/scanning.cc
-    src/main.cc
     src/memory_management/chunk.cc
     src/memory_management/stack.cc
     src/nex_lang/nex_lang.cc
