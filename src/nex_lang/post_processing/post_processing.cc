@@ -108,7 +108,7 @@ TypedExpr visit_expr(
                 int_literal(static_cast<uint32_t>(letter_str[0])),
                 std::make_shared<NLTypeChar>()};
         } else {
-            std::cerr << "TODO" << std::endl;
+            std::cerr << "Character literal must be one character." << std::endl;
             exit(1);
         }
     } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::STRLITERAL}) {
