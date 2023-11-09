@@ -11,6 +11,7 @@ add_library(compiler_lib STATIC
     src/lex_parse/ast_node.cc
     src/lex_parse/memo_map.cc
     src/lex_parse/parse_cyk.cc
+    src/lex_parse/parse_earley.cc
     src/lex_parse/scanning.cc
     src/main.cc
     src/memory_management/chunk.cc

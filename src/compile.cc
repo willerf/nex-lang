@@ -20,7 +20,7 @@
 #include "label.h"
 #include "nex_lang.h"
 #include "operators.h"
-#include "parse_cyk.h"
+#include "parse_earley.h"
 #include "post_processing.h"
 #include "print.h"
 #include "procedure.h"
@@ -38,7 +38,7 @@ static uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
 std::vector<std::shared_ptr<Code>> compile(std::string input) {
     Grammar grammar = make_grammar();
     auto tokens = scan(input);
-    auto ast_node = parse_cyk(tokens, grammar);
+    auto ast_node = parse_earley(tokens, grammar);
 
     if (!ast_node) {
         std::cerr << "Failed to parse!" << std::endl;
