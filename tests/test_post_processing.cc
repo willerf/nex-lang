@@ -51,7 +51,8 @@ std::vector<std::shared_ptr<Code>> compile_test(std::string input) {
         exit(1);
     }
 
-    auto typed_ids = generate(ast_node.value());
+    std::vector<std::shared_ptr<Code>> static_data;
+    auto typed_ids = generate(ast_node.value(), static_data);
     std::vector<std::shared_ptr<Procedure>> procedures;
     for (auto typed_id : typed_ids) {
         if (auto typed_proc =

@@ -9,7 +9,9 @@ params vardef
 vardef ID COLON type
 type I32
 type BOOL
+type CHAR
 type STAR type
+type LPAREN type RPAREN
 stmts stmt stmts
 stmts stmt
 stmt LET vardef ASSIGN expr SEMI
@@ -40,13 +42,17 @@ exprp6 exprp6 PCT exprp7
 exprp7 exprp8
 exprp7 NOT exprp8
 exprp7 STAR exprp8
-exprp8 ID
-exprp8 NUM
-exprp8 TRUE
-exprp8 FALSE
-exprp8 AMPERSAND ID
-exprp8 LPAREN expr RPAREN
-exprp8 ID LPAREN optargs RPAREN
+exprp8 exprp9
+exprp8 exprp8 AS type
+exprp9 ID
+exprp9 NUM
+exprp9 TRUE
+exprp9 FALSE
+exprp9 AMPERSAND ID
+exprp9 STRLITERAL
+exprp9 CHARLITERAL 
+exprp9 LPAREN expr RPAREN
+exprp9 ID LPAREN optargs RPAREN
 optargs args
 optargs
 args expr COMMA args

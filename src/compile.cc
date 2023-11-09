@@ -45,7 +45,8 @@ std::vector<std::shared_ptr<Code>> compile(std::string input) {
         exit(1);
     }
 
-    auto typed_ids = generate(ast_node.value());
+    std::vector<std::shared_ptr<Code>> static_data;
+    auto typed_ids = generate(ast_node.value(), static_data);
     std::vector<std::shared_ptr<Procedure>> procedures;
     for (auto typed_id : typed_ids) {
         if (auto typed_proc =
@@ -119,7 +120,7 @@ std::vector<std::shared_ptr<Code>> compile(std::string input) {
     for (auto proc : procedures) {
         all_code.push_back(proc->code);
     }
-    auto program = make_block(all_code);
+    auto program = make_block({make_block(all_code), make_block(static_data)});
 
     Flatten flatten;
     program->accept(flatten);
