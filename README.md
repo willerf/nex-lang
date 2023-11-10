@@ -67,7 +67,7 @@ fn main(x: i32, y: i32) -> i32 {
 ```bash
 mkdir build && cd build && cmake .. && make -j8
 ```
-- To verify everything is working correctly, run `./tests/tests` to run the unit tests.
+- To verify everything is working correctly, run `./tests/tests` to run the unit tests
 
 #### User Guide
 Within the build directly, you will find an executable named cnl. To compile your first program, simply run the executable and provide the filepath as an argument.
