@@ -104,9 +104,9 @@ TypedExpr visit_expr(
     } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::CHARLITERAL}) {
         ASTNode id = root.children.at(0);
         std::string letter_str = id.lexeme;
-        if (letter_str.length() == 1) {
+        if (letter_str.length() == 3) {
             result = TypedExpr {
-                int_literal(static_cast<uint32_t>(letter_str[0])),
+                int_literal(static_cast<uint32_t>(letter_str[1])),
                 std::make_shared<NLTypeChar>()};
         } else {
             std::cerr << "Character literal must be one character."
@@ -141,6 +141,24 @@ TypedExpr visit_expr(
                 ASTNode optargs = root.children.at(2);
                 std::vector<TypedExpr> typed_args =
                     visit_optargs(optargs, symbol_table, static_data);
+
+                if (typed_args.size() != typed_procedure->param_types.size()) {
+                    throw CompileError(
+                        "Mismatched number of parameters for function call.",
+                        id.line_no
+                    );
+                }
+
+                for (size_t i = 0; i < typed_args.size(); ++i) {
+                    if ((*typed_args.at(i).nl_type)
+                        != (*typed_procedure->param_types.at(i))) {
+                        throw CompileError(
+                            "Type mismatch of parameters for function call.",
+                            id.line_no
+                        );
+                    }
+                }
+
                 std::vector<std::shared_ptr<Code>> args;
                 for (auto typed_arg : typed_args) {
                     args.push_back(typed_arg.code);
@@ -534,6 +552,16 @@ std::shared_ptr<Code> visit_stmt(
             static_data
         );
 
+        // grab scoped variables
+        std::vector<std::shared_ptr<Variable>> thens_vars;
+        for (auto typed_id :
+             symbol_table_sub(symbol_table_thens, symbol_table)) {
+            if (auto typed_variable =
+                    std::dynamic_pointer_cast<TypedVariable>(typed_id)) {
+                thens_vars.push_back(typed_variable->variable);
+            }
+        }
+
         ASTNode elses_stmts = root.children.at(9);
         SymbolTable symbol_table_elses = symbol_table;
         auto elses = visit_stmts(
@@ -542,6 +570,16 @@ std::shared_ptr<Code> visit_stmt(
             symbol_table_elses,
             static_data
         );
+
+        // grab scoped variables
+        std::vector<std::shared_ptr<Variable>> elses_vars;
+        for (auto typed_id :
+             symbol_table_sub(symbol_table_elses, symbol_table)) {
+            if (auto typed_variable =
+                    std::dynamic_pointer_cast<TypedVariable>(typed_id)) {
+                elses_vars.push_back(typed_variable->variable);
+            }
+        }
 
         if ((*comp.nl_type) != NLTypeBool()) {
             throw TypeMismatchError(
@@ -553,10 +591,45 @@ std::shared_ptr<Code> visit_stmt(
             comp.code,
             op::ne_cmp(),
             make_add(Reg::Result, Reg::Zero, Reg::Zero),
-            thens,
-            elses
+            make_scope(thens_vars, thens),
+            make_scope(elses_vars, elses)
+        );
+    } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::IF, Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN, Terminal::LBRACE, NonTerminal::stmts, Terminal::RBRACE}) {
+        // extract if statements
+        ASTNode expr = root.children.at(2);
+        TypedExpr comp = visit_expr(expr, false, symbol_table, static_data);
+
+        ASTNode thens_stmts = root.children.at(5);
+        SymbolTable symbol_table_thens = symbol_table;
+        auto thens = visit_stmts(
+            thens_stmts,
+            curr_proc,
+            symbol_table_thens,
+            static_data
         );
 
+        // grab scoped variables
+        std::vector<std::shared_ptr<Variable>> thens_vars;
+        for (auto typed_id :
+             symbol_table_sub(symbol_table_thens, symbol_table)) {
+            if (auto typed_variable =
+                    std::dynamic_pointer_cast<TypedVariable>(typed_id)) {
+                thens_vars.push_back(typed_variable->variable);
+            }
+        }
+
+        if ((*comp.nl_type) != NLTypeBool()) {
+            throw TypeMismatchError(
+                "If statement condition must result in bool type.",
+                root.children.at(0).line_no
+            );
+        }
+        result = make_if(
+            comp.code,
+            op::ne_cmp(),
+            make_add(Reg::Result, Reg::Zero, Reg::Zero),
+            make_scope(thens_vars, thens)
+        );
     } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::WHILE, Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN, Terminal::LBRACE, NonTerminal::stmts, Terminal::RBRACE}) {
         // extract while loops
         ASTNode expr = root.children.at(2);
