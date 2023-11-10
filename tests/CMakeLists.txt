@@ -11,7 +11,7 @@ FetchContent_Declare(
 FetchContent_Declare(
   rust_emulator
   GIT_REPOSITORY https://github.com/willerf/mips-emulator
-  GIT_TAG        v1.5
+  GIT_TAG        v1.6
 )
 
 FetchContent_MakeAvailable(Catch2)
