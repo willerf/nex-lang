@@ -1,10 +1,9 @@
 
 #pragma once
 
-#include <stdexcept>
-#include <string>
+#include "compile_error.h"
 
-class TypeMismatchError: public std::runtime_error {
+class TypeMismatchError: public CompileError {
   public:
-    TypeMismatchError(const std::string& message);
+    TypeMismatchError(const std::string& message, size_t line_no);
 };

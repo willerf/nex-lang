@@ -1,9 +1,8 @@
 #pragma once
 
-#include <stdexcept>
-#include <string>
+#include "compile_error.h"
 
-class DuplicateSymbolError: public std::runtime_error {
+class DuplicateSymbolError: public CompileError {
   public:
-    DuplicateSymbolError(const std::string& symbol);
+    DuplicateSymbolError(const std::string& symbol, size_t line_no);
 };

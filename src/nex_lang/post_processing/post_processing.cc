@@ -69,10 +69,10 @@ TypedExpr visit_expr(
                     typed_var->variable->to_expr(read_address),
                     typed_var->nl_type};
             } else {
-                throw SymbolNotFoundError(name);
+                throw SymbolNotFoundError(name, id.line_no);
             }
         } else {
-            throw SymbolNotFoundError(name);
+            throw SymbolNotFoundError(name, id.line_no);
         }
     } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::NUM}) {
         ASTNode num = root.children.at(0);
@@ -96,17 +96,17 @@ TypedExpr visit_expr(
                     typed_var->variable->to_expr(true),
                     std::make_shared<NLTypePtr>(typed_var->nl_type)};
             } else {
-                throw SymbolNotFoundError(name);
+                throw SymbolNotFoundError(name, id.line_no);
             }
         } else {
-            throw SymbolNotFoundError(name);
+            throw SymbolNotFoundError(name, id.line_no);
         }
     } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::CHARLITERAL}) {
         ASTNode id = root.children.at(0);
         std::string letter_str = id.lexeme;
-        if (letter_str.length() == 1) {
+        if (letter_str.length() == 3) {
             result = TypedExpr {
-                int_literal(static_cast<uint32_t>(letter_str[0])),
+                int_literal(static_cast<uint32_t>(letter_str[1])),
                 std::make_shared<NLTypeChar>()};
         } else {
             std::cerr << "Character literal must be one character."
@@ -141,6 +141,24 @@ TypedExpr visit_expr(
                 ASTNode optargs = root.children.at(2);
                 std::vector<TypedExpr> typed_args =
                     visit_optargs(optargs, symbol_table, static_data);
+
+                if (typed_args.size() != typed_procedure->param_types.size()) {
+                    throw CompileError(
+                        "Mismatched number of parameters for function call.",
+                        id.line_no
+                    );
+                }
+
+                for (size_t i = 0; i < typed_args.size(); ++i) {
+                    if ((*typed_args.at(i).nl_type)
+                        != (*typed_procedure->param_types.at(i))) {
+                        throw CompileError(
+                            "Type mismatch of parameters for function call.",
+                            id.line_no
+                        );
+                    }
+                }
+
                 std::vector<std::shared_ptr<Code>> args;
                 for (auto typed_arg : typed_args) {
                     args.push_back(typed_arg.code);
@@ -149,10 +167,10 @@ TypedExpr visit_expr(
                     make_call(typed_procedure->procedure, args),
                     typed_procedure->ret_type};
             } else {
-                throw SymbolNotFoundError(name);
+                throw SymbolNotFoundError(name, id.line_no);
             }
         } else {
-            throw SymbolNotFoundError(name);
+            throw SymbolNotFoundError(name, id.line_no);
         }
     } else if (prod == std::vector<State> {NonTerminal::exprp8, NonTerminal::exprp8, Terminal::AS, NonTerminal::type}) {
         ASTNode expr = root.children.at(0);
@@ -181,7 +199,8 @@ TypedExpr visit_expr(
             case Terminal::NOT:
                 if ((*expr_code.nl_type) != NLTypeBool()) {
                     throw TypeMismatchError(
-                        "Boolean operations require operands to be of type bool."
+                        "Boolean operations require operands to be of type bool.",
+                        lhs_op.line_no
                     );
                 }
                 result = TypedExpr {
@@ -196,7 +215,8 @@ TypedExpr visit_expr(
                         TypedExpr {deref(expr_code.code), expr_type->nl_type};
                 } else {
                     throw TypeMismatchError(
-                        "Dereference operations require operand to be of type pointer."
+                        "Dereference operations require operand to be of type pointer.",
+                        lhs_op.line_no
                     );
                 }
                 break;
@@ -229,27 +249,31 @@ TypedExpr visit_expr(
         if (mid_op == Terminal::OR || mid_op == Terminal::AND) {
             if ((*lhs_type) != NLTypeBool() || (*rhs_type) != NLTypeBool()) {
                 throw TypeMismatchError(
-                    "Boolean operations require operands to be of type bool."
+                    "Boolean operations require operands to be of type bool.",
+                    mid.line_no
                 );
             }
             result_type = std::make_shared<NLTypeBool>();
         } else if (mid_op == Terminal::PLUS || mid_op == Terminal::MINUS || mid_op == Terminal::STAR || mid_op == Terminal::SLASH || mid_op == Terminal::PCT) {
             if ((*lhs_type) != NLTypeI32() || (*rhs_type) != NLTypeI32()) {
                 throw TypeMismatchError(
-                    "Arithmetic operations require both operands to be of type NLTypeI32."
+                    "Arithmetic operations require both operands to be of type NLTypeI32.",
+                    mid.line_no
                 );
             }
             result_type = std::make_shared<NLTypeI32>();
         } else if (mid_op == Terminal::EQ || mid_op == Terminal::NE || mid_op == Terminal::LT || mid_op == Terminal::GT || mid_op == Terminal::LE || mid_op == Terminal::GE) {
             if ((*lhs_type) != (*rhs_type)) {
                 throw TypeMismatchError(
-                    "Comparison operations require operands to be of the same type."
+                    "Comparison operations require operands to be of the same type.",
+                    mid.line_no
                 );
             }
             result_type = std::make_shared<NLTypeBool>();
         } else {
             throw TypeMismatchError(
-                "Encountered unknown operation during type checking."
+                "Encountered unknown operation during type checking.",
+                mid.line_no
             );
         }
 
@@ -436,7 +460,7 @@ visit_vardef(ASTNode root, SymbolTable& symbol_table) {
         std::string name = id.lexeme;
 
         if (symbol_table.count(name)) {
-            throw DuplicateSymbolError(name);
+            throw DuplicateSymbolError(name, id.line_no);
         } else {
             ASTNode var_type = root.children.at(2);
             std::shared_ptr<NLType> nl_type = visit_type(var_type);
@@ -485,8 +509,9 @@ std::shared_ptr<Code> visit_stmt(
         if ((*typed_var->nl_type) != (*expr.nl_type)) {
             throw TypeMismatchError(
                 "Cannot assign expression of type'" + expr.nl_type->to_string()
-                + "' to left hand side of type '"
-                + typed_var->nl_type->to_string() + "'."
+                    + "' to left hand side of type '"
+                    + typed_var->nl_type->to_string() + "'.",
+                root.children.at(2).line_no
             );
         }
         result = assign(typed_var->variable, expr.code);
@@ -502,8 +527,9 @@ std::shared_ptr<Code> visit_stmt(
         if ((*mem_address.nl_type) != (*code.nl_type)) {
             throw TypeMismatchError(
                 "Cannot assign expression of type'" + code.nl_type->to_string()
-                + "' to left hand side of type '"
-                + mem_address.nl_type->to_string() + "'."
+                    + "' to left hand side of type '"
+                    + mem_address.nl_type->to_string() + "'.",
+                root.children.at(1).line_no
             );
         }
         result = assign_to_address(mem_address.code, code.code);
@@ -526,6 +552,16 @@ std::shared_ptr<Code> visit_stmt(
             static_data
         );
 
+        // grab scoped variables
+        std::vector<std::shared_ptr<Variable>> thens_vars;
+        for (auto typed_id :
+             symbol_table_sub(symbol_table_thens, symbol_table)) {
+            if (auto typed_variable =
+                    std::dynamic_pointer_cast<TypedVariable>(typed_id)) {
+                thens_vars.push_back(typed_variable->variable);
+            }
+        }
+
         ASTNode elses_stmts = root.children.at(9);
         SymbolTable symbol_table_elses = symbol_table;
         auto elses = visit_stmts(
@@ -535,19 +571,65 @@ std::shared_ptr<Code> visit_stmt(
             static_data
         );
 
+        // grab scoped variables
+        std::vector<std::shared_ptr<Variable>> elses_vars;
+        for (auto typed_id :
+             symbol_table_sub(symbol_table_elses, symbol_table)) {
+            if (auto typed_variable =
+                    std::dynamic_pointer_cast<TypedVariable>(typed_id)) {
+                elses_vars.push_back(typed_variable->variable);
+            }
+        }
+
         if ((*comp.nl_type) != NLTypeBool()) {
             throw TypeMismatchError(
-                "If statement condition must result in bool type."
+                "If statement condition must result in bool type.",
+                root.children.at(0).line_no
             );
         }
         result = make_if(
             comp.code,
             op::ne_cmp(),
             make_add(Reg::Result, Reg::Zero, Reg::Zero),
-            thens,
-            elses
+            make_scope(thens_vars, thens),
+            make_scope(elses_vars, elses)
+        );
+    } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::IF, Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN, Terminal::LBRACE, NonTerminal::stmts, Terminal::RBRACE}) {
+        // extract if statements
+        ASTNode expr = root.children.at(2);
+        TypedExpr comp = visit_expr(expr, false, symbol_table, static_data);
+
+        ASTNode thens_stmts = root.children.at(5);
+        SymbolTable symbol_table_thens = symbol_table;
+        auto thens = visit_stmts(
+            thens_stmts,
+            curr_proc,
+            symbol_table_thens,
+            static_data
         );
 
+        // grab scoped variables
+        std::vector<std::shared_ptr<Variable>> thens_vars;
+        for (auto typed_id :
+             symbol_table_sub(symbol_table_thens, symbol_table)) {
+            if (auto typed_variable =
+                    std::dynamic_pointer_cast<TypedVariable>(typed_id)) {
+                thens_vars.push_back(typed_variable->variable);
+            }
+        }
+
+        if ((*comp.nl_type) != NLTypeBool()) {
+            throw TypeMismatchError(
+                "If statement condition must result in bool type.",
+                root.children.at(0).line_no
+            );
+        }
+        result = make_if(
+            comp.code,
+            op::ne_cmp(),
+            make_add(Reg::Result, Reg::Zero, Reg::Zero),
+            make_scope(thens_vars, thens)
+        );
     } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::WHILE, Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN, Terminal::LBRACE, NonTerminal::stmts, Terminal::RBRACE}) {
         // extract while loops
         ASTNode expr = root.children.at(2);
@@ -558,7 +640,8 @@ std::shared_ptr<Code> visit_stmt(
 
         if ((*comp.nl_type) != NLTypeBool()) {
             throw TypeMismatchError(
-                "While loop statement condition must result in bool type."
+                "While loop statement condition must result in bool type.",
+                root.children.at(0).line_no
             );
         }
         return make_while(
@@ -576,8 +659,9 @@ std::shared_ptr<Code> visit_stmt(
         if ((*curr_proc->ret_type) != (*expr.nl_type)) {
             throw TypeMismatchError(
                 "Cannot return expression of type '" + expr.nl_type->to_string()
-                + "' from function with return type '"
-                + curr_proc->ret_type->to_string() + "'."
+                    + "' from function with return type '"
+                    + curr_proc->ret_type->to_string() + "'.",
+                root.children.at(0).line_no
             );
         }
         result = std::make_shared<RetStmt>(expr.code);

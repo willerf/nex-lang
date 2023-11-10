@@ -43,6 +43,8 @@ std::string state::to_string(Terminal terminal) {
             return "SEMI";
         case Terminal::IF:
             return "IF";
+        case Terminal::WHILE:
+            return "WHILE";
         case Terminal::ELSE:
             return "ELSE";
         case Terminal::RET:
@@ -85,8 +87,14 @@ std::string state::to_string(Terminal terminal) {
             return "CHARLITERAL";
         case Terminal::STRLITERAL:
             return "STRLITERAL";
-        case Terminal::WHITESPACE:
-            return "WHITESPACE";
+        case Terminal::SPACE:
+            return "SPACE";
+        case Terminal::NEWLINE:
+            return "NEWLINE";
+        case Terminal::CARRIAGERETURN:
+            return "CARRIAGERETURN";
+        case Terminal::TAB:
+            return "TAB";
         case Terminal::COMMENT:
             return "COMMENT";
         case Terminal::START:

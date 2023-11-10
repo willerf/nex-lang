@@ -8,6 +8,7 @@
 #include <vector>
 
 #include "memo_map.h"
+#include "parsing_error.h"
 
 struct CompleteEarleyItem {
     int64_t rule;
@@ -49,8 +50,11 @@ static std::optional<std::vector<ASTNode>> search_sets(
             );
             memo_map[MemoKey {lhs.subspan(1), from + 1, length - 1}] = sub_tree;
             if (sub_tree) {
-                std::vector<ASTNode> result = {
-                    ASTNode {input[from].kind, input[from].lexeme, {}}};
+                std::vector<ASTNode> result = {ASTNode {
+                    input[from].kind,
+                    input[from].lexeme,
+                    {},
+                    input[from].line_no}};
                 result.insert(result.end(), sub_tree->begin(), sub_tree->end());
                 return result;
             }
@@ -247,6 +251,12 @@ std::optional<ASTNode> parse_earley(std::span<Token> input, Grammar& grammar) {
     );
     if (result && result->size()) {
         return result->front();
+    }
+    if (x > 0 && x <= input.size()) {
+        throw ParsingError(input[x - 1].line_no);
+    }
+    if (x == 0 && input.size() > 0) {
+        throw ParsingError(input[x].line_no);
     }
     return std::nullopt;
 }

@@ -1,9 +1,8 @@
 #pragma once
 
-#include <stdexcept>
-#include <string>
+#include "compile_error.h"
 
-class SymbolNotFoundError: public std::runtime_error {
+class SymbolNotFoundError: public CompileError {
   public:
-    SymbolNotFoundError(const std::string& symbol);
+    SymbolNotFoundError(const std::string& symbol, size_t line_no);
 };

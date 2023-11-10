@@ -19,6 +19,7 @@ stmt LET vardef ASSIGN expr SEMI
 stmt expr ASSIGN expr SEMI
 stmt expr SEMI
 stmt IF LPAREN expr RPAREN LBRACE stmts RBRACE ELSE LBRACE stmts RBRACE
+stmt IF LPAREN expr RPAREN LBRACE stmts RBRACE 
 stmt WHILE LPAREN expr RPAREN LBRACE stmts RBRACE
 stmt RET expr SEMI
 expr exprp1

@@ -50,7 +50,10 @@ enum class Terminal {
     STRLITERAL,
     CHARLITERAL,
     ZERO,
-    WHITESPACE,
+    SPACE,
+    CARRIAGERETURN,
+    NEWLINE,
+    TAB,
     COMMENT,
     START
 };
