@@ -3,7 +3,9 @@
 
 #include <iostream>
 
-Token scan_one(std::string_view input, DFA& dfa) {
+#include "scanning_error.h"
+
+Token scan_one(std::string_view input, DFA& dfa, size_t line_no) {
     Terminal curr_state = dfa.init_state;
     std::optional<std::pair<Terminal, std::string_view>> last_accepting =
         std::nullopt;
@@ -26,9 +28,7 @@ Token scan_one(std::string_view input, DFA& dfa) {
                     last_accepting.value().first,
                     std::string(last_accepting.value().second)};
             } else {
-                std::cerr << "Failed to scan, no token found!" << std::endl;
-                std::cerr << input << std::endl;
-                exit(1);
+                throw ScanningError(line_no);
             }
         }
     }
@@ -37,18 +37,21 @@ Token scan_one(std::string_view input, DFA& dfa) {
             last_accepting.value().first,
             std::string(last_accepting.value().second)};
     } else {
-        std::cerr << "Failed to scan, no token found!" << std::endl;
-        std::cerr << input << std::endl;
-        exit(1);
+        throw ScanningError(line_no);
     }
 }
 
 std::vector<Token> maximal_munch_scan(std::string_view input, DFA& dfa) {
     std::vector<Token> tokens;
     std::string_view rem = input;
+    size_t line_no = 1;
     while (rem.length() > 0) {
-        Token token = scan_one(rem, dfa);
+        Token token = scan_one(rem, dfa, line_no);
         rem.remove_prefix(token.lexeme.length());
+        token.line_no = line_no;
+        if (token.kind == Terminal::NEWLINE) {
+            ++line_no;
+        }
         tokens.push_back(token);
     }
     return tokens;

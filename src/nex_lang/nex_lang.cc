@@ -7,17 +7,17 @@
 #include "scanning.h"
 
 static std::map<char, Terminal> one_char_symbols = {
-    {' ', Terminal::WHITESPACE},  {'\t', Terminal::WHITESPACE},
-    {'\n', Terminal::WHITESPACE}, {'\r', Terminal::WHITESPACE},
-    {'0', Terminal::ZERO},        {'<', Terminal::LT},
-    {'>', Terminal::GT},          {'!', Terminal::NOT},
-    {'=', Terminal::ASSIGN},      {'+', Terminal::PLUS},
-    {'-', Terminal::MINUS},       {'*', Terminal::STAR},
-    {'/', Terminal::SLASH},       {'%', Terminal::PCT},
-    {'(', Terminal::LPAREN},      {')', Terminal::RPAREN},
-    {'{', Terminal::LBRACE},      {'}', Terminal::RBRACE},
-    {',', Terminal::COMMA},       {';', Terminal::SEMI},
-    {':', Terminal::COLON},       {'|', Terminal::PIPE},
+    {' ', Terminal::SPACE},     {'\t', Terminal::TAB},
+    {'\n', Terminal::NEWLINE},  {'\r', Terminal::CARRIAGERETURN},
+    {'0', Terminal::ZERO},      {'<', Terminal::LT},
+    {'>', Terminal::GT},        {'!', Terminal::NOT},
+    {'=', Terminal::ASSIGN},    {'+', Terminal::PLUS},
+    {'-', Terminal::MINUS},     {'*', Terminal::STAR},
+    {'/', Terminal::SLASH},     {'%', Terminal::PCT},
+    {'(', Terminal::LPAREN},    {')', Terminal::RPAREN},
+    {'{', Terminal::LBRACE},    {'}', Terminal::RBRACE},
+    {',', Terminal::COMMA},     {';', Terminal::SEMI},
+    {':', Terminal::COLON},     {'|', Terminal::PIPE},
     {'&', Terminal::AMPERSAND},
 };
 
@@ -233,8 +233,13 @@ std::vector<Token> scan(std::string_view input) {
             prev_set2 = false;
         }
 
-        if (token.kind != Terminal::WHITESPACE
-            && token.kind != Terminal::COMMENT) {
+        const std::set<Terminal> remove_symbols = {
+            Terminal::SPACE,
+            Terminal::NEWLINE,
+            Terminal::CARRIAGERETURN,
+            Terminal::TAB,
+            Terminal::COMMENT};
+        if (!remove_symbols.count(token.kind)) {
             result.push_back(token);
         }
     }

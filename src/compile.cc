@@ -1,6 +1,8 @@
 
 #include "compile.h"
 
+#include <iostream>
+
 #include "assembly.h"
 #include "beq_label.h"
 #include "bin_op.h"
@@ -32,7 +34,6 @@
 #include "variable.h"
 #include "while_loop.h"
 #include "word.h"
-
 static uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
 
 std::vector<std::shared_ptr<Code>> compile(std::string input) {

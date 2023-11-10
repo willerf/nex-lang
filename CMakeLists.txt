@@ -5,9 +5,12 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_library(compiler_lib STATIC
     src/compile.cc
+    src/exceptions/compile_error.cc
     src/exceptions/duplicate_symbol_error.cc
     src/exceptions/symbol_not_found_error.cc
     src/exceptions/type_mismatch_error.cc
+    src/exceptions/scanning_error.cc
+    src/exceptions/parsing_error.cc
     src/lex_parse/ast_node.cc
     src/lex_parse/memo_map.cc
     src/lex_parse/parse_cyk.cc
