@@ -82,8 +82,8 @@ target_include_directories(compiler_lib PUBLIC
 )
 
 
-add_executable(main src/main.cc)
-target_link_libraries(main compiler_lib)
+add_executable(cnl src/main.cc)
+target_link_libraries(cnl compiler_lib)
 
 add_subdirectory(examples)
 add_subdirectory(tests)
