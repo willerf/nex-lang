@@ -1,5 +1,14 @@
 # Welcome to NexLang
 
+### Table of Contents
+- [About]()
+- [Examples]()
+- [Example Print Implementation]()
+- [Example Power Implementation]()
+- [Getting Started]()
+- [Install & Build]()
+- [User Guide]()
+
 ### About
 NexLang is a custom systems programming language focused on providing strong control over the low level fundamentals of your program while bringing a modern syntax and robust type checking. Currently, this compiler targets the MIPS assembly language instruction set and uses an emulator to run programs and unit tests. Additional architectures should be relatively straight forward to port over to and RISC-V support is currently in the works.
 
@@ -41,8 +50,8 @@ fn power(base: i32, exponent: i32) -> i32 {
 }
 
 fn main(x: i32, y: i32) -> i32 {
-    return power(x, y);"
-};
+    return power(x, y);
+}
 ```
 
 ### Getting Started
