@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 #include <stdlib.h>
+
 #include <iostream>
 #include <map>
 #include <optional>
@@ -10,6 +11,7 @@
 
 #include "assembly.h"
 #include "block.h"
+#include "call.h"
 #include "chunk.h"
 #include "elim_calls.h"
 #include "elim_if_stmts.h"
@@ -19,6 +21,7 @@
 #include "elim_vars_proc.h"
 #include "entry_exit.h"
 #include "flatten.h"
+#include "grammar.h"
 #include "nex_lang.h"
 #include "parse_earley.h"
 #include "post_processing.h"
@@ -26,8 +29,6 @@
 #include "pseudo_assembly.h"
 #include "reg.h"
 #include "word.h"
-#include "call.h"
-#include "grammar.h"
 
 struct TypedProcedure;
 struct Variable;
@@ -95,10 +96,8 @@ std::vector<std::shared_ptr<Code>> compile(std::string input) {
         proc->code = proc->code->accept(elim_scopes);
         auto local_vars = elim_scopes.get();
 
-        std::vector<std::shared_ptr<Variable>> all_local_vars = {
-            proc->param_ptr,
-            proc->dynamic_link,
-            proc->saved_pc};
+        std::vector<std::shared_ptr<Variable>> all_local_vars =
+            {proc->param_ptr, proc->dynamic_link, proc->saved_pc};
         all_local_vars
             .insert(all_local_vars.end(), local_vars.begin(), local_vars.end());
         std::shared_ptr<Chunk> local_vars_chunk =

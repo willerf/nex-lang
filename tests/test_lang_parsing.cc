@@ -4,9 +4,9 @@
 #include <span>
 #include <string>
 
+#include "grammar.h"
 #include "nex_lang.h"
 #include "parse_cyk.h"
-#include "grammar.h"
 
 TEST_CASE("Test parsing lang", "[parser]") {
     Grammar grammar = make_grammar();

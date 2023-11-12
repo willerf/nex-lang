@@ -2,6 +2,7 @@
 #include "scanning.h"
 
 #include <stddef.h>
+
 #include <functional>
 #include <optional>
 #include <set>
@@ -9,8 +10,8 @@
 #include <string_view>
 #include <utility>
 
-#include "scanning_error.h"
 #include "dfa.h"
+#include "scanning_error.h"
 #include "state.h"
 
 Token scan_one(std::string_view input, DFA& dfa, size_t line_no) {
@@ -34,7 +35,8 @@ Token scan_one(std::string_view input, DFA& dfa, size_t line_no) {
             if (last_accepting) {
                 return Token {
                     last_accepting.value().first,
-                    std::string(last_accepting.value().second)};
+                    std::string(last_accepting.value().second)
+                };
             } else {
                 throw ScanningError(line_no);
             }
@@ -43,7 +45,8 @@ Token scan_one(std::string_view input, DFA& dfa, size_t line_no) {
     if (last_accepting) {
         return Token {
             last_accepting.value().first,
-            std::string(last_accepting.value().second)};
+            std::string(last_accepting.value().second)
+        };
     } else {
         throw ScanningError(line_no);
     }

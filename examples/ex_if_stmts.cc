@@ -1,5 +1,6 @@
 
 #include <stdint.h>
+
 #include <memory>
 #include <string>
 #include <vector>
@@ -16,12 +17,12 @@
 #include "operators.h"
 #include "print.h"
 #include "reg.h"
+#include "scope.h"
 #include "stack.h"
 #include "var_access.h"
 #include "variable.h"
 #include "word.h"
 #include "write_file.h"
-#include "scope.h"
 
 struct Code;
 

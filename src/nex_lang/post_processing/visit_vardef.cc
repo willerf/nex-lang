@@ -2,17 +2,18 @@
 #include "visit_vardef.h"
 
 #include <stdlib.h>
+
 #include <cassert>
 #include <iostream>
 #include <string>
 #include <variant>
 #include <vector>
 
-#include "duplicate_symbol_error.h"
-#include "visit_type.h"
 #include "ast_node.h"
+#include "duplicate_symbol_error.h"
 #include "state.h"
 #include "variable.h"
+#include "visit_type.h"
 
 struct NLType;
 
@@ -27,7 +28,8 @@ visit_vardef(ASTNode root, SymbolTable& symbol_table) {
             NonTerminal::vardef,
             Terminal::ID,
             Terminal::COLON,
-            NonTerminal::type}) {
+            NonTerminal::type
+        }) {
         // extract variable definition
         ASTNode id = root.children.at(0);
         std::string name = id.lexeme;

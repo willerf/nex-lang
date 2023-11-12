@@ -6,10 +6,10 @@
 #include <string_view>
 #include <vector>
 
-#include "nex_lang.h"
-#include "scanning.h"
 #include "catch2/matchers/catch_matchers.hpp"
 #include "dfa.h"
+#include "nex_lang.h"
+#include "scanning.h"
 #include "state.h"
 #include "token.h"
 
@@ -20,8 +20,9 @@ TEST_CASE("Test scanning various symbols", "[scanning]") {
     tokens = maximal_munch_scan("->", dfa);
     REQUIRE_THAT(
         tokens,
-        Catch::Matchers::Equals(std::vector<Token> {
-            Token {Terminal::ARROW, "->"}})
+        Catch::Matchers::Equals(
+            std::vector<Token> {Token {Terminal::ARROW, "->"}}
+        )
     );
 }
 

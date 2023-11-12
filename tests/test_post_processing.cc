@@ -1,8 +1,9 @@
 
 
-#include <catch2/catch_test_macros.hpp>
 #include <stdint.h>
 #include <stdlib.h>
+
+#include <catch2/catch_test_macros.hpp>
 #include <iostream>
 #include <map>
 #include <memory>
@@ -13,6 +14,7 @@
 
 #include "assembly.h"
 #include "block.h"
+#include "call.h"
 #include "chunk.h"
 #include "elim_calls.h"
 #include "elim_if_stmts.h"
@@ -22,6 +24,7 @@
 #include "elim_vars_proc.h"
 #include "entry_exit.h"
 #include "flatten.h"
+#include "grammar.h"
 #include "nex_lang.h"
 #include "parse_cyk.h"
 #include "post_processing.h"
@@ -31,8 +34,6 @@
 #include "utils.h"
 #include "word.h"
 #include "write_file.h"
-#include "call.h"
-#include "grammar.h"
 
 struct Code;
 struct TypedProcedure;
@@ -102,10 +103,8 @@ std::vector<std::shared_ptr<Code>> compile_test(std::string input) {
         proc->code = proc->code->accept(elim_scopes);
         auto local_vars = elim_scopes.get();
 
-        std::vector<std::shared_ptr<Variable>> all_local_vars = {
-            proc->param_ptr,
-            proc->dynamic_link,
-            proc->saved_pc};
+        std::vector<std::shared_ptr<Variable>> all_local_vars =
+            {proc->param_ptr, proc->dynamic_link, proc->saved_pc};
         all_local_vars
             .insert(all_local_vars.end(), local_vars.begin(), local_vars.end());
         std::shared_ptr<Chunk> local_vars_chunk =

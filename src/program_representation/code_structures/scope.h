@@ -4,10 +4,10 @@
 #include <memory>
 #include <vector>
 
+#include "code.h"
 #include "code_visit.h"
 #include "reg.h"
 #include "variable.h"
-#include "code.h"
 
 struct Variable;
 

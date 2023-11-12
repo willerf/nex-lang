@@ -1,12 +1,12 @@
 
 #pragma once
 
-#include <vector>
 #include <memory>
+#include <vector>
 
-#include "visitor.h"
 #include "block.h"
 #include "code.h"
+#include "visitor.h"
 
 class Flatten: public Visitor<void> {
     std::vector<std::shared_ptr<Code>> result;

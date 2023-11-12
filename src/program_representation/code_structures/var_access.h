@@ -3,10 +3,10 @@
 
 #include <memory>
 
+#include "code.h"
 #include "code_visit.h"
 #include "reg.h"
 #include "variable.h"
-#include "code.h"
 
 enum class Reg;
 

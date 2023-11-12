@@ -16,7 +16,7 @@ std::shared_ptr<Code> ElimRetStmts::visit(std::shared_ptr<Code> code) {
 
 std::shared_ptr<Code> ElimRetStmts::visit(std::shared_ptr<RetStmt> ret_stmt) {
     return make_block(
-        {ret_stmt->code->accept(*this),
-         make_beq(Reg::Zero, Reg::Zero, proc_end)}
+        {ret_stmt->code->accept(*this), make_beq(Reg::Zero, Reg::Zero, proc_end)
+        }
     );
 }

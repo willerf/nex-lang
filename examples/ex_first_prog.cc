@@ -1,5 +1,6 @@
 
 #include <stdint.h>
+
 #include <memory>
 #include <string>
 #include <vector>
@@ -34,7 +35,8 @@ int main() {
         make_define(end_label),
         make_lis(Reg::TargetPC),
         make_word(TERMINATION_PC),
-        make_jr(Reg::TargetPC)};
+        make_jr(Reg::TargetPC)
+    };
 
     Print print_v;
 

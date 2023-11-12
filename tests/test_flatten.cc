@@ -6,9 +6,9 @@
 #include <vector>
 
 #include "block.h"
+#include "catch2/matchers/catch_matchers.hpp"
 #include "flatten.h"
 #include "word.h"
-#include "catch2/matchers/catch_matchers.hpp"
 
 struct Code;
 
@@ -24,7 +24,8 @@ TEST_CASE("Flatten simple nested structure", "[flatten]") {
             std::make_shared<Block>(
                 std::vector<std::shared_ptr<Code>> {word2, word3}
             ),
-            word4});
+            word4
+        });
 
     Flatten flatten;
     block->accept(flatten);

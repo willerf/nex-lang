@@ -6,8 +6,8 @@
 #include <string_view>
 #include <vector>
 
-#include "nex_lang.h"
 #include "catch2/matchers/catch_matchers.hpp"
+#include "nex_lang.h"
 #include "state.h"
 #include "token.h"
 

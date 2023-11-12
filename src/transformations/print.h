@@ -1,10 +1,9 @@
 
 #pragma once
 
-#include <vector>
 #include <memory>
+#include <vector>
 
-#include "visitor.h"
 #include "beq_label.h"
 #include "block.h"
 #include "bne_label.h"
@@ -14,6 +13,7 @@
 #include "scope.h"
 #include "use_label.h"
 #include "var_access.h"
+#include "visitor.h"
 #include "word.h"
 
 class Print: public Visitor<void> {

@@ -1,8 +1,9 @@
 
-#include <catch2/catch_test_macros.hpp>
 #include <stdint.h>
-#include <map>
+
+#include <catch2/catch_test_macros.hpp>
 #include <initializer_list>
+#include <map>
 #include <memory>
 #include <string>
 #include <vector>
@@ -10,6 +11,7 @@
 #include "assembly.h"
 #include "bin_op.h"
 #include "block.h"
+#include "call.h"
 #include "chunk.h"
 #include "elim_calls.h"
 #include "elim_if_stmts.h"
@@ -23,12 +25,11 @@
 #include "procedure.h"
 #include "pseudo_assembly.h"
 #include "reg.h"
+#include "scope.h"
 #include "utils.h"
 #include "variable.h"
 #include "word.h"
 #include "write_file.h"
-#include "call.h"
-#include "scope.h"
 
 struct Code;
 
@@ -99,7 +100,8 @@ TEST_CASE("Test factorial program", "[programs]") {
 
     std::vector<std::shared_ptr<Procedure>> procedures = {
         main_proc,
-        factorial_proc};
+        factorial_proc
+    };
 
     auto start_proc = std::make_shared<Procedure>(
         "start_proc",
@@ -124,10 +126,8 @@ TEST_CASE("Test factorial program", "[programs]") {
         proc->code = proc->code->accept(elim_scopes);
         auto local_vars = elim_scopes.get();
 
-        std::vector<std::shared_ptr<Variable>> all_local_vars = {
-            proc->param_ptr,
-            proc->dynamic_link,
-            proc->saved_pc};
+        std::vector<std::shared_ptr<Variable>> all_local_vars =
+            {proc->param_ptr, proc->dynamic_link, proc->saved_pc};
         all_local_vars
             .insert(all_local_vars.end(), local_vars.begin(), local_vars.end());
         std::shared_ptr<Chunk> local_vars_chunk =

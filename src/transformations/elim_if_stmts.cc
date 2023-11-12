@@ -5,8 +5,8 @@
 
 #include "beq_label.h"
 #include "bin_op.h"
-#include "define_label.h"
 #include "block.h"
+#include "define_label.h"
 #include "label.h"
 #include "reg.h"
 

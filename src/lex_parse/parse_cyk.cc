@@ -2,6 +2,7 @@
 #include "parse_cyk.h"
 
 #include <stdint.h>
+
 #include <map>
 #include <set>
 #include <string>
@@ -45,7 +46,8 @@ static std::optional<std::vector<ASTNode>> recur(
             memo_map[MemoKey {lhs.subspan(1), from + 1, length - 1}] = sub_tree;
             if (sub_tree) {
                 std::vector<ASTNode> result = {
-                    ASTNode {input[from].kind, input[from].lexeme, {}}};
+                    ASTNode {input[from].kind, input[from].lexeme, {}}
+                };
                 result.insert(result.end(), sub_tree->begin(), sub_tree->end());
                 return result;
             }
@@ -58,7 +60,8 @@ static std::optional<std::vector<ASTNode>> recur(
             memo_map[MemoKey {prod.rhs, from, length}] = sub_tree;
             if (sub_tree) {
                 return std::vector<ASTNode> {
-                    ASTNode {lhs.front(), "", sub_tree.value()}};
+                    ASTNode {lhs.front(), "", sub_tree.value()}
+                };
             }
         }
     } else {

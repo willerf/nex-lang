@@ -2,11 +2,12 @@
 #pragma once
 
 #include <stdint.h>
+
 #include <memory>
 
+#include "code.h"
 #include "code_visit.h"
 #include "stdint.h"
-#include "code.h"
 
 struct Word: CodeVisit<Word> {
     uint32_t bits;

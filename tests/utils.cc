@@ -1,11 +1,11 @@
 
 #include "utils.h"
 
+#include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <cstdlib>
 
 #include "word.h"
 

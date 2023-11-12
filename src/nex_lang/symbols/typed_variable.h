@@ -2,8 +2,8 @@
 #pragma once
 #include <memory>
 
-#include "typed_id.h"
 #include "nl_type.h"
+#include "typed_id.h"
 #include "variable.h"
 
 struct TypedVariable: TypedID {

@@ -4,10 +4,10 @@
 #include <vector>
 
 #include "block.h"
+#include "reg.h"
 #include "scope.h"
 #include "var_access.h"
 #include "variable.h"
-#include "reg.h"
 
 std::shared_ptr<Code> bin_op(
     std::shared_ptr<Code> e1,

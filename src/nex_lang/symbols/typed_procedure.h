@@ -2,9 +2,9 @@
 #include <memory>
 #include <vector>
 
-#include "typed_id.h"
 #include "nl_type.h"
 #include "procedure.h"
+#include "typed_id.h"
 
 struct TypedProcedure: TypedID {
     std::shared_ptr<Procedure> procedure;

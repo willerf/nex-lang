@@ -4,12 +4,12 @@
 #include <map>
 #include <memory>
 
+#include "block.h"
 #include "call.h"
 #include "chunk.h"
+#include "code.h"
 #include "procedure.h"
 #include "visitor.h"
-#include "block.h"
-#include "code.h"
 
 class Chunk;
 

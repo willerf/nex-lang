@@ -2,13 +2,14 @@
 #include "visit_s.h"
 
 #include <stdlib.h>
+
 #include <cassert>
 #include <iostream>
 #include <variant>
 
-#include "visit_fns.h"
 #include "ast_node.h"
 #include "state.h"
+#include "visit_fns.h"
 
 struct Code;
 
@@ -26,7 +27,8 @@ std::vector<std::shared_ptr<TypedProcedure>> visit_s(
             NonTerminal::s,
             Terminal::BOFS,
             NonTerminal::fns,
-            Terminal::EOFS}) {
+            Terminal::EOFS
+        }) {
         // extract functions of program
         ASTNode fns = root.children.at(1);
         result = visit_fns(fns, symbol_table, static_data);

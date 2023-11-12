@@ -2,16 +2,17 @@
 #include "visit_type.h"
 
 #include <stdlib.h>
+
 #include <cassert>
 #include <iostream>
 #include <variant>
 #include <vector>
 
+#include "ast_node.h"
 #include "nl_type_bool.h"
 #include "nl_type_char.h"
 #include "nl_type_i32.h"
 #include "nl_type_ptr.h"
-#include "ast_node.h"
 #include "state.h"
 
 std::shared_ptr<NLType> visit_type(ASTNode root) {

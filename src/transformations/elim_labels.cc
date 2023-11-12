@@ -3,8 +3,9 @@
 
 #include <stdint.h>
 #include <stdlib.h>
-#include <map>
+
 #include <iostream>
+#include <map>
 #include <string>
 
 #include "assembly.h"

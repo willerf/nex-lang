@@ -2,8 +2,9 @@
 #pragma once
 
 #include <stdint.h>
-#include <vector>
+
 #include <memory>
+#include <vector>
 
 #include "code.h"
 #include "reg.h"

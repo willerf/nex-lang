@@ -5,9 +5,9 @@
 
 #include "assembly.h"
 #include "block.h"
+#include "reg.h"
 #include "var_access.h"
 #include "word.h"
-#include "reg.h"
 
 std::shared_ptr<Code> to_expr(Reg reg) {
     return make_add(Reg::Result, reg, Reg::Zero);

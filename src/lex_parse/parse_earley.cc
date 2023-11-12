@@ -2,16 +2,17 @@
 #include "parse_earley.h"
 
 #include <stdint.h>
-#include <span>
-#include <vector>
+
 #include <map>
 #include <set>
+#include <span>
 #include <string>
 #include <variant>
+#include <vector>
 
+#include "grammar.h"
 #include "memo_map.h"
 #include "parsing_error.h"
-#include "grammar.h"
 #include "state.h"
 #include "token.h"
 
@@ -59,7 +60,8 @@ static std::optional<std::vector<ASTNode>> search_sets(
                     input[from].kind,
                     input[from].lexeme,
                     {},
-                    input[from].line_no}};
+                    input[from].line_no
+                }};
                 result.insert(result.end(), sub_tree->begin(), sub_tree->end());
                 return result;
             }
@@ -80,7 +82,8 @@ static std::optional<std::vector<ASTNode>> search_sets(
             memo_map[MemoKey {prod.rhs, from, length}] = sub_tree;
             if (sub_tree) {
                 return std::vector<ASTNode> {
-                    ASTNode {lhs.front(), "", sub_tree.value()}};
+                    ASTNode {lhs.front(), "", sub_tree.value()}
+                };
             }
         }
     } else {
@@ -114,7 +117,8 @@ static std::optional<std::vector<ASTNode>> search_sets(
                     memo_map[MemoKey {
                         lhs.subspan(1),
                         item.end,
-                        length - (item.end - from)}] = sub_tree2;
+                        length - (item.end - from)
+                    }] = sub_tree2;
                     if (sub_tree2) {
                         std::vector<ASTNode> result = sub_tree1.value();
                         result.insert(
@@ -175,7 +179,8 @@ std::optional<ASTNode> parse_earley(std::span<Token> input, Grammar& grammar) {
                         EarleyItem new_entry {
                             old.rule,
                             old.start,
-                            old.next + 1};
+                            old.next + 1
+                        };
                         bool repeat = false;
                         for (int64_t j = 0; j < earley_sets.at(x).size(); j++) {
                             if (earley_sets.at(x).at(j) == new_entry) {

@@ -1,7 +1,8 @@
 
 
-#include <catch2/catch_test_macros.hpp>
 #include <stdint.h>
+
+#include <catch2/catch_test_macros.hpp>
 #include <memory>
 #include <string>
 #include <vector>
@@ -17,13 +18,13 @@
 #include "if_stmt.h"
 #include "operators.h"
 #include "reg.h"
+#include "scope.h"
 #include "stack.h"
 #include "utils.h"
 #include "var_access.h"
 #include "variable.h"
 #include "word.h"
 #include "write_file.h"
-#include "scope.h"
 
 struct Code;
 

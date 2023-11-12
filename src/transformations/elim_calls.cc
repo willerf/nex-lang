@@ -7,11 +7,11 @@
 #include "assembly.h"
 #include "block.h"
 #include "pseudo_assembly.h"
+#include "reg.h"
 #include "scope.h"
 #include "stack.h"
 #include "use_label.h"
 #include "var_access.h"
-#include "reg.h"
 #include "variable.h"
 
 class Chunk;

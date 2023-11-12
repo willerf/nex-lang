@@ -1,13 +1,15 @@
 
+#include <stdint.h>
+
+#include <bitset>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_vector.hpp>
-#include <stdint.h>
-#include <bitset>
 #include <memory>
 #include <string>
 #include <vector>
 
 #include "block.h"
+#include "catch2/matchers/catch_matchers.hpp"
 #include "chunk.h"
 #include "elim_vars.h"
 #include "flatten.h"
@@ -15,7 +17,6 @@
 #include "utils.h"
 #include "var_access.h"
 #include "variable.h"
-#include "catch2/matchers/catch_matchers.hpp"
 
 TEST_CASE("Simple test read write variable", "[vars]") {
     auto var1 = std::make_shared<Variable>("var1");
@@ -55,6 +56,7 @@ TEST_CASE("Simple test read write variable", "[vars]") {
         program4,
         Catch::Matchers::Equals(std::vector<uint32_t> {
             (uint32_t)instr1.to_ulong(),
-            (uint32_t)instr2.to_ulong()})
+            (uint32_t)instr2.to_ulong()
+        })
     );
 }

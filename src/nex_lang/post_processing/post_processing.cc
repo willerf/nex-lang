@@ -3,9 +3,9 @@
 
 #include <string>
 
+#include "ast_node.h"
 #include "symbol_table.h"
 #include "visit_s.h"
-#include "ast_node.h"
 
 struct Code;
 

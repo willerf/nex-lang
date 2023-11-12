@@ -2,29 +2,30 @@
 #include "visit_stmts.h"
 
 #include <stdlib.h>
+
 #include <cassert>
 #include <iostream>
 #include <string>
 #include <variant>
 
 #include "assembly.h"
+#include "ast_node.h"
+#include "block.h"
 #include "if_stmt.h"
+#include "nl_type.h"
 #include "nl_type_bool.h"
 #include "operators.h"
 #include "pseudo_assembly.h"
+#include "reg.h"
 #include "ret_stmt.h"
 #include "scope.h"
+#include "state.h"
 #include "type_mismatch_error.h"
 #include "typed_expr.h"
+#include "typed_variable.h"
 #include "visit_expr.h"
 #include "visit_vardef.h"
 #include "while_loop.h"
-#include "ast_node.h"
-#include "block.h"
-#include "nl_type.h"
-#include "reg.h"
-#include "state.h"
-#include "typed_variable.h"
 
 struct Variable;
 
@@ -45,7 +46,8 @@ std::shared_ptr<Code> visit_stmt(
             NonTerminal::vardef,
             Terminal::ASSIGN,
             NonTerminal::expr,
-            Terminal::SEMI}) {
+            Terminal::SEMI
+        }) {
         // extract variable declaration and assignment
         ASTNode vardef = root.children.at(1);
         auto typed_var = visit_vardef(vardef, symbol_table);
