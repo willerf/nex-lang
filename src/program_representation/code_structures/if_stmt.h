@@ -2,9 +2,12 @@
 #pragma once
 
 #include <functional>
+#include <memory>
+#include <vector>
 
 #include "assembly.h"
 #include "block.h"
+#include "code.h"
 #include "code_visit.h"
 #include "label.h"
 

@@ -1,6 +1,8 @@
 
 #include "visitor.h"
 
+#include <vector>
+
 #include "beq_label.h"
 #include "block.h"
 #include "bne_label.h"

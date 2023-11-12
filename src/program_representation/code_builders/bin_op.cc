@@ -1,7 +1,10 @@
 
 #include "bin_op.h"
 
+#include <vector>
+
 #include "block.h"
+#include "reg.h"
 #include "scope.h"
 #include "var_access.h"
 #include "variable.h"

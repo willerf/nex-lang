@@ -1,6 +1,8 @@
 
 #include "beq_label.h"
 
+enum class Reg;
+
 BeqLabel::BeqLabel(Reg s, Reg t, std::shared_ptr<Label> label) :
     s {s},
     t {t},

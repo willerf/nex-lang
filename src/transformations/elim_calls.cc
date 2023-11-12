@@ -1,13 +1,20 @@
 
 #include "elim_calls.h"
 
+#include <string>
+#include <vector>
+
 #include "assembly.h"
 #include "block.h"
 #include "pseudo_assembly.h"
+#include "reg.h"
 #include "scope.h"
 #include "stack.h"
 #include "use_label.h"
 #include "var_access.h"
+#include "variable.h"
+
+class Chunk;
 
 ElimCalls::ElimCalls(
     std::shared_ptr<Procedure> current_procedure,

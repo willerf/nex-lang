@@ -1,9 +1,14 @@
 
 #pragma once
 
+#include <stddef.h>
+
 #include <ostream>
+#include <string>
 
 #include "dfa.h"
+
+enum class Terminal;
 
 struct Token {
     Terminal kind;

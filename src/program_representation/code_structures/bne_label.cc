@@ -1,6 +1,8 @@
 
 #include "bne_label.h"
 
+enum class Reg;
+
 BneLabel::BneLabel(Reg s, Reg t, std::shared_ptr<Label> label) :
     s {s},
     t {t},

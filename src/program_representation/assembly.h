@@ -1,11 +1,15 @@
 
 #pragma once
 
+#include <stdint.h>
+
 #include <cassert>
 #include <memory>
 
 #include "code.h"
 #include "reg.h"
+
+enum class Reg;
 
 // compiled Bit Value Sequence (BVS)
 template<uint32_t Start, uint32_t End, uint32_t Value>

@@ -1,9 +1,13 @@
 
 #pragma once
 
+#include <memory>
+
 #include "code_visit.h"
 #include "label.h"
 #include "reg.h"
+
+enum class Reg;
 
 struct BeqLabel: CodeVisit<BeqLabel> {
     Reg s;

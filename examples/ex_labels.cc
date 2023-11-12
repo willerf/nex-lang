@@ -1,5 +1,8 @@
 
-#include "assembly.h"
+#include <iostream>
+#include <memory>
+#include <vector>
+
 #include "beq_label.h"
 #include "block.h"
 #include "bne_label.h"
@@ -10,6 +13,8 @@
 #include "reg.h"
 #include "use_label.h"
 #include "word.h"
+
+struct Code;
 
 int main() {
     std::shared_ptr<Label> label = std::make_shared<Label>("mylabel");
@@ -30,7 +35,8 @@ int main() {
         std::make_shared<BeqLabel>(Reg::Result, Reg::Scratch, label),
         std::make_shared<UseLabel>(label),
         make_word(500),
-        std::make_shared<BneLabel>(Reg::Result, Reg::Scratch, label)};
+        std::make_shared<BneLabel>(Reg::Result, Reg::Scratch, label)
+    };
 
     Print print_v;
 

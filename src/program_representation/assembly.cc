@@ -1,7 +1,11 @@
 
 #include "assembly.h"
 
+#include <cassert>
+
 #include "code_structures/word.h"
+
+enum class Reg;
 
 // runtime Bit Value Sequence (BVS)
 uint32_t bvs(uint32_t start, uint32_t end, uint32_t value) {

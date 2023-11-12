@@ -1,9 +1,10 @@
 
 
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_vector.hpp>
-#include <iostream>
+#include <span>
+#include <string>
 
+#include "grammar.h"
 #include "nex_lang.h"
 #include "parse_cyk.h"
 

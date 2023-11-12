@@ -1,6 +1,8 @@
 
 #include "var_access.h"
 
+enum class Reg;
+
 VarAccess::VarAccess(
     Reg reg,
     std::shared_ptr<Variable> variable,

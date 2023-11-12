@@ -1,6 +1,10 @@
 
 #include "token.h"
 
+#include <ostream>
+
+#include "state.h"
+
 bool Token::operator==(const Token& other) const {
     return kind == other.kind && lexeme == other.lexeme;
 }

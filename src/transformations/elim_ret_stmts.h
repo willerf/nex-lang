@@ -1,7 +1,11 @@
 
 #pragma once
 
+#include <memory>
+
+#include "code.h"
 #include "label.h"
+#include "ret_stmt.h"
 #include "visitor.h"
 
 class ElimRetStmts: public Visitor<std::shared_ptr<Code>> {

@@ -1,6 +1,9 @@
 
 #pragma once
 
+#include <string>
+#include <typeindex>
+
 #include "nl_type.h"
 
 struct NLTypeNone: NLType {

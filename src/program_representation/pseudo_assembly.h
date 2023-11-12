@@ -1,11 +1,15 @@
 
 #pragma once
 
+#include <stdint.h>
+
 #include <memory>
 
 #include "code.h"
 #include "reg.h"
 #include "variable.h"
+
+enum class Reg;
 
 std::shared_ptr<Code> to_expr(Reg reg);
 std::shared_ptr<Code> int_literal(int32_t);

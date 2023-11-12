@@ -1,10 +1,15 @@
 
 #include "write_file.h"
 
+#include <stdint.h>
+
 #include <fstream>
 #include <iostream>
+#include <typeinfo>
 
 #include "word.h"
+
+struct Code;
 
 void write_file(
     std::string file_name,

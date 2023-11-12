@@ -1,5 +1,6 @@
 
 #include <string_view>
+#include <vector>
 
 #include "dfa.h"
 #include "grammar.h"

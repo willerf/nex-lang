@@ -1,10 +1,16 @@
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_vector.hpp>
+#include <memory>
+#include <string>
+#include <vector>
 
 #include "block.h"
+#include "catch2/matchers/catch_matchers.hpp"
 #include "flatten.h"
 #include "word.h"
+
+struct Code;
 
 TEST_CASE("Flatten simple nested structure", "[flatten]") {
     std::shared_ptr<Word> word1 = std::make_shared<Word>(1);
@@ -18,7 +24,8 @@ TEST_CASE("Flatten simple nested structure", "[flatten]") {
             std::make_shared<Block>(
                 std::vector<std::shared_ptr<Code>> {word2, word3}
             ),
-            word4});
+            word4
+        });
 
     Flatten flatten;
     block->accept(flatten);

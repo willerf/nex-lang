@@ -1,6 +1,9 @@
 
 #include "procedure.h"
 
+#include "label.h"
+#include "variable.h"
+
 Procedure::Procedure(
     std::string name,
     std::vector<std::shared_ptr<Variable>> parameters

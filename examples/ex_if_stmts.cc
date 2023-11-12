@@ -1,26 +1,31 @@
 
+#include <stdint.h>
+
+#include <memory>
+#include <string>
+#include <vector>
+
 #include "assembly.h"
-#include "beq_label.h"
 #include "block.h"
-#include "bne_label.h"
 #include "chunk.h"
-#include "define_label.h"
 #include "elim_if_stmts.h"
 #include "elim_labels.h"
 #include "elim_scopes.h"
 #include "elim_vars.h"
 #include "flatten.h"
 #include "if_stmt.h"
-#include "label.h"
 #include "operators.h"
 #include "print.h"
 #include "reg.h"
+#include "scope.h"
 #include "stack.h"
-#include "use_label.h"
 #include "var_access.h"
 #include "variable.h"
 #include "word.h"
 #include "write_file.h"
+
+struct Code;
+
 const uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
 
 int main() {

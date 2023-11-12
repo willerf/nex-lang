@@ -1,9 +1,14 @@
 
 #pragma once
 
+#include <memory>
+
+#include "code.h"
 #include "code_visit.h"
 #include "reg.h"
 #include "variable.h"
+
+enum class Reg;
 
 enum class VarAccessType { Read, Write, Address };
 

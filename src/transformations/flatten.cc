@@ -1,9 +1,6 @@
 
 #include "flatten.h"
 
-#include "block.h"
-#include "word.h"
-
 void Flatten::visit(std::shared_ptr<Code> code) {
     result.push_back(code);
 }
