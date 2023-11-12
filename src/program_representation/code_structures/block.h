@@ -6,6 +6,8 @@
 
 #include "code_visit.h"
 
+struct Code;
+
 struct Block: CodeVisit<Block> {
     std::vector<std::shared_ptr<Code>> code;
 

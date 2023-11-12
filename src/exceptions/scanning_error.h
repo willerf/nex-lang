@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stddef.h>
+
 #include "compile_error.h"
 
 class ScanningError: public CompileError {

@@ -1,8 +1,11 @@
 
 #include "pseudo_assembly.h"
 
+#include <vector>
+
 #include "assembly.h"
 #include "block.h"
+#include "reg.h"
 #include "var_access.h"
 #include "word.h"
 

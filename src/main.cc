@@ -1,9 +1,12 @@
 
+#include <stdlib.h>
+
 #include <cassert>
 #include <cstring>
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <string>
 
 #include "compile.h"
 #include "compile_error.h"

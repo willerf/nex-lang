@@ -3,6 +3,8 @@
 
 #include "block.h"
 
+struct Variable;
+
 Scope::Scope(
     std::vector<std::shared_ptr<Variable>> variables,
     std::shared_ptr<Code> code

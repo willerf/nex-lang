@@ -1,6 +1,10 @@
 
 #include "memo_map.h"
 
+#include <algorithm>
+#include <functional>
+#include <variant>
+
 #include "span_hash.h"
 
 bool MemoKey::operator==(const MemoKey& other) const {

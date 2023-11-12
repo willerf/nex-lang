@@ -1,6 +1,10 @@
 
 #pragma once
 
+#include <memory>
+#include <vector>
+
+#include "code.h"
 #include "code_visit.h"
 #include "procedure.h"
 

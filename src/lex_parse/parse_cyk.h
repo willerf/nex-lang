@@ -9,4 +9,7 @@
 #include "memo_map.h"
 #include "token.h"
 
+struct Grammar;
+struct Token;
+
 std::optional<ASTNode> parse_cyk(std::span<Token> input, Grammar& grammar);

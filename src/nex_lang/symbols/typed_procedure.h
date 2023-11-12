@@ -1,4 +1,9 @@
 #pragma once
+#include <memory>
+#include <vector>
+
+#include "nl_type.h"
+#include "procedure.h"
 #include "typed_id.h"
 
 struct TypedProcedure: TypedID {

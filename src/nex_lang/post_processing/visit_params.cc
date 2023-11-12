@@ -1,9 +1,14 @@
 
 #include "visit_params.h"
 
+#include <stdlib.h>
+
 #include <cassert>
 #include <iostream>
+#include <variant>
 
+#include "ast_node.h"
+#include "state.h"
 #include "visit_vardef.h"
 
 std::vector<std::shared_ptr<TypedVariable>>

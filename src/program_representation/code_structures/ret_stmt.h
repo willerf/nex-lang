@@ -1,6 +1,9 @@
 
 #pragma once
 
+#include <memory>
+
+#include "code.h"
 #include "code_visit.h"
 
 struct RetStmt: CodeVisit<RetStmt> {

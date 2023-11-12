@@ -1,6 +1,8 @@
 
 #include "operators.h"
 
+#include <vector>
+
 #include "assembly.h"
 #include "beq_label.h"
 #include "block.h"

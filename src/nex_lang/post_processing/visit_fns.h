@@ -1,9 +1,15 @@
 
 #pragma once
 
+#include <memory>
+#include <vector>
+
 #include "ast_node.h"
 #include "symbol_table.h"
 #include "typed_procedure.h"
+
+struct ASTNode;
+struct Code;
 
 std::shared_ptr<TypedProcedure> visit_fn(
     ASTNode root,

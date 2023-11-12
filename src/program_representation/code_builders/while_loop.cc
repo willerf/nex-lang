@@ -1,10 +1,14 @@
 
 #include "while_loop.h"
 
+#include <vector>
+
 #include "beq_label.h"
+#include "block.h"
 #include "define_label.h"
 #include "if_stmt.h"
 #include "label.h"
+#include "reg.h"
 
 std::shared_ptr<Code> make_while(
     std::shared_ptr<Code> e1,

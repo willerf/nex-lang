@@ -1,11 +1,17 @@
 
 #pragma once
 
+#include <stdint.h>
+
+#include <memory>
 #include <vector>
 
 #include "code.h"
 #include "reg.h"
 #include "variable.h"
+
+enum class Reg;
+struct Variable;
 
 class Chunk {
     uint32_t get_offset(std::shared_ptr<Variable>& variable);

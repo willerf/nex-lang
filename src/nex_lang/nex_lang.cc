@@ -1,10 +1,19 @@
 #include "nex_lang.h"
 
-#include <cassert>
+#include <_ctype.h>
+#include <stdlib.h>
+
+#include <functional>
 #include <iostream>
-#include <sstream>
+#include <map>
+#include <optional>
+#include <set>
+#include <string>
+#include <string_view>
+#include <variant>
 
 #include "scanning.h"
+#include "state.h"
 
 static std::map<char, Terminal> one_char_symbols = {
     {' ', Terminal::SPACE},     {'\t', Terminal::TAB},
@@ -195,7 +204,8 @@ std::vector<Token> scan(std::string_view input) {
         Terminal::STRLITERAL,
         Terminal::CHARLITERAL,
         Terminal::TRUE,
-        Terminal::FALSE};
+        Terminal::FALSE
+    };
     std::set<Terminal> sep_set2 = {
         Terminal::EQ,
         Terminal::NE,
@@ -206,7 +216,8 @@ std::vector<Token> scan(std::string_view input) {
         Terminal::OR,
         Terminal::AND,
         Terminal::ASSIGN,
-        Terminal::ARROW};
+        Terminal::ARROW
+    };
 
     bool prev_set1 = false;
     bool prev_set2 = false;
@@ -238,7 +249,8 @@ std::vector<Token> scan(std::string_view input) {
             Terminal::NEWLINE,
             Terminal::CARRIAGERETURN,
             Terminal::TAB,
-            Terminal::COMMENT};
+            Terminal::COMMENT
+        };
         if (!remove_symbols.count(token.kind)) {
             result.push_back(token);
         }
@@ -285,8 +297,8 @@ static std::map<NonTerminal, std::vector<Production>> productions = {
        {NonTerminal::vardef, Terminal::COMMA, NonTerminal::params}},
       {NonTerminal::params, {NonTerminal::vardef}}}},
     {NonTerminal::vardef,
-     {{NonTerminal::vardef,
-       {Terminal::ID, Terminal::COLON, NonTerminal::type}}}},
+     {{NonTerminal::vardef, {Terminal::ID, Terminal::COLON, NonTerminal::type}}}
+    },
     {NonTerminal::type,
      {{NonTerminal::type, {Terminal::I32}},
       {NonTerminal::type, {Terminal::BOOL}},
@@ -305,10 +317,8 @@ static std::map<NonTerminal, std::vector<Production>> productions = {
         NonTerminal::expr,
         Terminal::SEMI}},
       {NonTerminal::stmt,
-       {NonTerminal::expr,
-        Terminal::ASSIGN,
-        NonTerminal::expr,
-        Terminal::SEMI}},
+       {NonTerminal::expr, Terminal::ASSIGN, NonTerminal::expr, Terminal::SEMI}
+      },
       {NonTerminal::stmt, {NonTerminal::expr, Terminal::SEMI}},
       {NonTerminal::stmt,
        {Terminal::IF,
@@ -395,16 +405,15 @@ static std::map<NonTerminal, std::vector<Production>> productions = {
       {NonTerminal::exprp9,
        {Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN}},
       {NonTerminal::exprp9,
-       {Terminal::ID,
-        Terminal::LPAREN,
-        NonTerminal::optargs,
-        Terminal::RPAREN}}}},
+       {Terminal::ID, Terminal::LPAREN, NonTerminal::optargs, Terminal::RPAREN}}
+     }},
     {NonTerminal::optargs,
      {{NonTerminal::optargs, {NonTerminal::args}}, {NonTerminal::optargs, {}}}},
     {NonTerminal::args,
      {{NonTerminal::args,
        {NonTerminal::expr, Terminal::COMMA, NonTerminal::args}},
-      {NonTerminal::args, {NonTerminal::expr}}}}};
+      {NonTerminal::args, {NonTerminal::expr}}}}
+};
 
 static std::set<Terminal> terminals = {
     Terminal::BOFS,        Terminal::EOFS,   Terminal::FN,

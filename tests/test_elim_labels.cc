@@ -1,10 +1,16 @@
 
+#include <stdint.h>
+
 #include <bitset>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_vector.hpp>
+#include <memory>
+#include <string>
+#include <vector>
 
 #include "beq_label.h"
 #include "bne_label.h"
+#include "catch2/matchers/catch_matchers.hpp"
 #include "define_label.h"
 #include "elim_labels.h"
 #include "label.h"
@@ -12,6 +18,8 @@
 #include "use_label.h"
 #include "utils.h"
 #include "word.h"
+
+struct Code;
 
 TEST_CASE("Simple test use label", "[labels]") {
     auto label = std::make_shared<Label>("label1");
@@ -250,6 +258,7 @@ TEST_CASE("Simple test bne/beq adjacent", "[labels]") {
             4,
             (uint32_t)instr3.to_ulong(),
             (uint32_t)instr4.to_ulong(),
-            5})
+            5
+        })
     );
 }

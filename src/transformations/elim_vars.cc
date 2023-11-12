@@ -1,7 +1,13 @@
 
 #include "elim_vars.h"
 
+#include <stdlib.h>
+
+#include <iostream>
+#include <vector>
+
 #include "block.h"
+#include "reg.h"
 #include "var_access.h"
 
 ElimVars::ElimVars(std::shared_ptr<Chunk> frame) : frame {frame} {}

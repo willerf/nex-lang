@@ -1,8 +1,11 @@
 #pragma once
 
 #include <map>
+#include <memory>
 #include <string>
+#include <vector>
 
+#include "typed_id.h"
 #include "typed_procedure.h"
 #include "typed_variable.h"
 

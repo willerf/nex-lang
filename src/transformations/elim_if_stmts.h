@@ -1,6 +1,10 @@
 
 #pragma once
 
+#include <memory>
+
+#include "code.h"
+#include "if_stmt.h"
 #include "visitor.h"
 
 class ElimIfStmts: public Visitor<std::shared_ptr<Code>> {

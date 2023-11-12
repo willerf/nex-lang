@@ -1,5 +1,9 @@
 #pragma once
 
+#include <memory>
+#include <string>
+#include <typeindex>
+
 #include "nl_type.h"
 
 struct NLTypePtr: NLType {
