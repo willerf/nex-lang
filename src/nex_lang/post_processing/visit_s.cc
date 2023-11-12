@@ -39,7 +39,7 @@ std::vector<std::shared_ptr<TypedProcedure>> visit_s(
         SymbolTable symbol_table = module_table.at(name);
 
         ASTNode fns = root.children.at(4);
-        result = visit_fns(fns, symbol_table, static_data);
+        result = visit_fns(fns, symbol_table, module_table, static_data);
     } else {
         std::cerr << "Invalid production found while processing s."
                   << std::endl;

@@ -33,6 +33,7 @@ std::shared_ptr<Code> visit_stmt(
     ASTNode root,
     std::shared_ptr<TypedProcedure> curr_proc,
     SymbolTable& symbol_table,
+    ModuleTable& module_table,
     std::vector<std::shared_ptr<Code>>& static_data
 ) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::stmt);
@@ -52,8 +53,13 @@ std::shared_ptr<Code> visit_stmt(
         auto typed_var = visit_vardef(vardef, symbol_table);
 
         ASTNode expr_node = root.children.at(3);
-        TypedExpr expr =
-            visit_expr(expr_node, false, symbol_table, static_data);
+        TypedExpr expr = visit_expr(
+            expr_node,
+            false,
+            symbol_table,
+            module_table,
+            static_data
+        );
 
         if ((*typed_var->nl_type) != (*expr.nl_type)) {
             throw TypeMismatchError(
@@ -68,10 +74,11 @@ std::shared_ptr<Code> visit_stmt(
         // extract variable assignment
         ASTNode lhs = root.children.at(0);
         TypedExpr mem_address =
-            visit_expr(lhs, true, symbol_table, static_data);
+            visit_expr(lhs, true, symbol_table, module_table, static_data);
 
         ASTNode expr = root.children.at(2);
-        TypedExpr code = visit_expr(expr, false, symbol_table, static_data);
+        TypedExpr code =
+            visit_expr(expr, false, symbol_table, module_table, static_data);
 
         if ((*mem_address.nl_type) != (*code.nl_type)) {
             throw TypeMismatchError(
@@ -85,18 +92,21 @@ std::shared_ptr<Code> visit_stmt(
     } else if (prod == std::vector<State> {NonTerminal::stmt, NonTerminal::expr, Terminal::SEMI}) {
         // extract run expression
         ASTNode expr = root.children.at(0);
-        TypedExpr code = visit_expr(expr, false, symbol_table, static_data);
+        TypedExpr code =
+            visit_expr(expr, false, symbol_table, module_table, static_data);
         result = code.code;
     } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::IF, Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN, NonTerminal::stmtblock, Terminal::ELSE, NonTerminal::stmtblock}) {
         // extract if else statements
         ASTNode expr = root.children.at(2);
-        TypedExpr comp = visit_expr(expr, false, symbol_table, static_data);
+        TypedExpr comp =
+            visit_expr(expr, false, symbol_table, module_table, static_data);
 
         ASTNode stmtblock_thens = root.children.at(4);
         auto thens = visit_stmtblock(
             stmtblock_thens,
             curr_proc,
             symbol_table,
+            module_table,
             static_data
         );
 
@@ -105,6 +115,7 @@ std::shared_ptr<Code> visit_stmt(
             stmtblock_elses,
             curr_proc,
             symbol_table,
+            module_table,
             static_data
         );
 
@@ -124,13 +135,15 @@ std::shared_ptr<Code> visit_stmt(
     } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::IF, Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN, NonTerminal::stmtblock}) {
         // extract if statements
         ASTNode expr = root.children.at(2);
-        TypedExpr comp = visit_expr(expr, false, symbol_table, static_data);
+        TypedExpr comp =
+            visit_expr(expr, false, symbol_table, module_table, static_data);
 
         ASTNode stmtblock_thens = root.children.at(4);
         auto thens = visit_stmtblock(
             stmtblock_thens,
             curr_proc,
             symbol_table,
+            module_table,
             static_data
         );
 
@@ -149,11 +162,17 @@ std::shared_ptr<Code> visit_stmt(
     } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::WHILE, Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN, NonTerminal::stmtblock}) {
         // extract while loops
         ASTNode expr = root.children.at(2);
-        TypedExpr comp = visit_expr(expr, false, symbol_table, static_data);
+        TypedExpr comp =
+            visit_expr(expr, false, symbol_table, module_table, static_data);
 
         ASTNode stmtblock = root.children.at(4);
-        auto stmts =
-            visit_stmtblock(stmtblock, curr_proc, symbol_table, static_data);
+        auto stmts = visit_stmtblock(
+            stmtblock,
+            curr_proc,
+            symbol_table,
+            module_table,
+            static_data
+        );
 
         if ((*comp.nl_type) != NLTypeBool()) {
             throw TypeMismatchError(
@@ -170,8 +189,13 @@ std::shared_ptr<Code> visit_stmt(
     } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::RET, NonTerminal::expr, Terminal::SEMI}) {
         // extract return statements
         ASTNode expr_node = root.children.at(1);
-        TypedExpr expr =
-            visit_expr(expr_node, false, symbol_table, static_data);
+        TypedExpr expr = visit_expr(
+            expr_node,
+            false,
+            symbol_table,
+            module_table,
+            static_data
+        );
 
         if ((*curr_proc->ret_type) != (*expr.nl_type)) {
             throw TypeMismatchError(
@@ -196,6 +220,7 @@ std::shared_ptr<Code> visit_stmts(
     ASTNode root,
     std::shared_ptr<TypedProcedure> curr_proc,
     SymbolTable& symbol_table,
+    ModuleTable& module_table,
     std::vector<std::shared_ptr<Code>>& static_data
 ) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::stmts);
@@ -205,17 +230,33 @@ std::shared_ptr<Code> visit_stmts(
     if (prod == std::vector<State> {NonTerminal::stmts, NonTerminal::stmt}) {
         // extract singular statement
         ASTNode stmt = root.children.at(0);
-        result = visit_stmt(stmt, curr_proc, symbol_table, static_data);
+        result = visit_stmt(
+            stmt,
+            curr_proc,
+            symbol_table,
+            module_table,
+            static_data
+        );
     } else if (prod == std::vector<State> {NonTerminal::stmts, NonTerminal::stmt, NonTerminal::stmts}) {
         // extract code statement
         ASTNode stmt = root.children.at(0);
-        std::shared_ptr<Code> code =
-            visit_stmt(stmt, curr_proc, symbol_table, static_data);
+        std::shared_ptr<Code> code = visit_stmt(
+            stmt,
+            curr_proc,
+            symbol_table,
+            module_table,
+            static_data
+        );
 
         // extract rest of statements
         ASTNode stmts = root.children.at(1);
-        std::shared_ptr<Code> rest_of_code =
-            visit_stmts(stmts, curr_proc, symbol_table, static_data);
+        std::shared_ptr<Code> rest_of_code = visit_stmts(
+            stmts,
+            curr_proc,
+            symbol_table,
+            module_table,
+            static_data
+        );
         result = make_block({code, rest_of_code});
     } else {
         std::cerr << "Invalid production found while processing stmts."
@@ -231,6 +272,7 @@ std::shared_ptr<Code> visit_stmtblock(
     ASTNode root,
     std::shared_ptr<TypedProcedure> curr_proc,
     SymbolTable& symbol_table,
+    ModuleTable& module_table,
     std::vector<std::shared_ptr<Code>>& static_data
 ) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::stmtblock);
@@ -252,6 +294,7 @@ std::shared_ptr<Code> visit_stmtblock(
             stmts_node,
             curr_proc,
             symbol_table_scoped,
+            module_table,
             static_data
         );
 
