@@ -1,8 +1,6 @@
 
 #include "write_file.h"
 
-#include <__fwd/fstream.h>
-#include <__fwd/ios.h>
 #include <stdint.h>
 #include <fstream>
 #include <iostream>

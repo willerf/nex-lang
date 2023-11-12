@@ -1,7 +1,6 @@
 
 #pragma once
 
-#include <__fwd/ostream.h>
 #include <stddef.h>
 #include <ostream>
 #include <string>
