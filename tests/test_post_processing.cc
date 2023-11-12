@@ -23,8 +23,10 @@
 #include "elim_scopes.h"
 #include "elim_vars_proc.h"
 #include "entry_exit.h"
+#include "extract_symbols.h"
 #include "flatten.h"
 #include "grammar.h"
+#include "module_table.h"
 #include "nex_lang.h"
 #include "parse_earley.h"
 #include "post_processing.h"
@@ -52,8 +54,11 @@ std::vector<std::shared_ptr<Code>> compile_test(std::string input) {
         exit(1);
     }
 
+    ModuleTable module_table;
+    extract_symbols(ast_node.value(), module_table);
+
     std::vector<std::shared_ptr<Code>> static_data;
-    auto typed_ids = generate(ast_node.value(), static_data);
+    auto typed_ids = generate(ast_node.value(), static_data, module_table);
     std::vector<std::shared_ptr<Procedure>> procedures;
     for (auto typed_id : typed_ids) {
         if (auto typed_proc =
@@ -140,6 +145,7 @@ std::vector<std::shared_ptr<Code>> compile_test(std::string input) {
 
 TEST_CASE("Test code gen", "[post_processing]") {
     std::string input =
+        "module main;"
         "fn main(x: i32, y: i32) -> i32 {"
         "   let result: i32 = x + y;"
         "   return result;"
@@ -153,6 +159,7 @@ TEST_CASE("Test code gen", "[post_processing]") {
 
 TEST_CASE("Test two functions", "[post_processing]") {
     std::string input =
+        "module main;"
         "fn add(x: i32, y: i32) -> i32 {"
         "   return x + y;"
         "}"
@@ -168,6 +175,7 @@ TEST_CASE("Test two functions", "[post_processing]") {
 
 TEST_CASE("Test max func", "[post_processing]") {
     std::string input =
+        "module main;"
         "fn max(x: i32, y: i32) -> i32 {"
         "   let result: i32 = 0;"
         "   if (x > y) {"

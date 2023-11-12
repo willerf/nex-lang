@@ -1,5 +1,5 @@
 
-#include "visit_s.h"
+#include "extract_s.h"
 
 #include <stdlib.h>
 
@@ -8,18 +8,13 @@
 #include <variant>
 
 #include "ast_node.h"
+#include "extract_fns.h"
 #include "state.h"
-#include "visit_fns.h"
 
 struct Code;
 
-std::vector<std::shared_ptr<TypedProcedure>> visit_s(
-    ASTNode root,
-    ModuleTable& module_table,
-    std::vector<std::shared_ptr<Code>>& static_data
-) {
+void extract_s(ASTNode root, ModuleTable& module_table) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::s);
-    std::vector<std::shared_ptr<TypedProcedure>> result;
 
     std::vector<State> prod = root.get_production();
     if (prod
@@ -36,15 +31,15 @@ std::vector<std::shared_ptr<TypedProcedure>> visit_s(
         ASTNode module = root.children.at(2);
         std::string name = module.lexeme;
 
-        SymbolTable symbol_table = module_table.at(name);
+        SymbolTable symbol_table;
 
         ASTNode fns = root.children.at(4);
-        result = visit_fns(fns, symbol_table, static_data);
+        extract_fns(fns, symbol_table);
+
+        module_table[name] = symbol_table;
     } else {
-        std::cerr << "Invalid production found while processing s."
+        std::cerr << "Invalid production found while extracting s."
                   << std::endl;
         exit(1);
     };
-
-    return result;
 }

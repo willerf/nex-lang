@@ -10,6 +10,7 @@ static std::string file_name = "test_compile.bin";
 
 TEST_CASE("Test compile simple program", "[compile]") {
     std::string input =
+        "module main;"
         "fn power(base: i32, exponent: i32) -> i32 {"
         "if (exponent == 1) {"
         "    return base;"

@@ -12,6 +12,7 @@ TEST_CASE("Test parsing lang", "[parser]") {
     Grammar grammar = make_grammar();
 
     std::string input =
+        "module main;"
         "fn max(x: i32, y: i32) -> i32 {"
         "   let result: i32 = 0;"
         "   if (x > y) {"

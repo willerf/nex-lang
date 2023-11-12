@@ -1,4 +1,4 @@
-s BOF fns EOF
+s BOFS MODULE ID SEMI fns EOFS
 fns fn fns
 fns fn
 fn FN ID LPAREN optparams RPAREN ARROW type stmtblock

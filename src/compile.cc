@@ -20,6 +20,7 @@
 #include "elim_scopes.h"
 #include "elim_vars_proc.h"
 #include "entry_exit.h"
+#include "extract_symbols.h"
 #include "flatten.h"
 #include "grammar.h"
 #include "nex_lang.h"
@@ -45,8 +46,11 @@ std::vector<std::shared_ptr<Code>> compile(std::string input) {
         exit(1);
     }
 
+    ModuleTable module_table;
+    extract_symbols(ast_node.value(), module_table);
+
     std::vector<std::shared_ptr<Code>> static_data;
-    auto typed_ids = generate(ast_node.value(), static_data);
+    auto typed_ids = generate(ast_node.value(), static_data, module_table);
     std::vector<std::shared_ptr<Procedure>> procedures;
     for (auto typed_id : typed_ids) {
         if (auto typed_proc =

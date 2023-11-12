@@ -31,6 +31,9 @@ add_library(compiler_lib STATIC
     src/nex_lang/post_processing/visit_stmts.cc
     src/nex_lang/post_processing/visit_type.cc
     src/nex_lang/post_processing/visit_vardef.cc
+    src/nex_lang/post_processing/extract_symbols.cc
+    src/nex_lang/post_processing/extract_s.cc
+    src/nex_lang/post_processing/extract_fns.cc
     src/nex_lang/symbols/typed_procedure.cc
     src/nex_lang/symbols/typed_variable.cc
     src/nex_lang/types/nl_type.cc

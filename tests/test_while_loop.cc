@@ -10,6 +10,7 @@ static std::string file_name = "test_while_loop.bin";
 
 TEST_CASE("Test plus.", "[loops]") {
     std::string input =
+        "module main;"
         "fn main(x: i32, y: i32) -> i32 {"
         "    let z: i32 = 0;"
         "    while (z < x) {"

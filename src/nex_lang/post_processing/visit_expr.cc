@@ -148,7 +148,7 @@ TypedExpr visit_expr(
                 std::vector<TypedExpr> typed_args =
                     visit_optargs(optargs, symbol_table, static_data);
 
-                if (typed_args.size() != typed_procedure->param_types.size()) {
+                if (typed_args.size() != typed_procedure->params.size()) {
                     throw CompileError(
                         "Mismatched number of parameters for function call.",
                         id.line_no
@@ -157,7 +157,7 @@ TypedExpr visit_expr(
 
                 for (size_t i = 0; i < typed_args.size(); ++i) {
                     if ((*typed_args.at(i).nl_type)
-                        != (*typed_procedure->param_types.at(i))) {
+                        != (*typed_procedure->params.at(i)->nl_type)) {
                         throw CompileError(
                             "Type mismatch of parameters for function call.",
                             id.line_no

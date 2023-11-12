@@ -163,6 +163,7 @@ DFA make_dfa() {
 }
 
 static std::map<std::string, Terminal> keywords = {
+    {"module", Terminal::MODULE},
     {"fn", Terminal::FN},
     {"let", Terminal::LET},
     {"if", Terminal::IF},
@@ -260,7 +261,13 @@ std::vector<Token> scan(std::string_view input) {
 
 static std::map<NonTerminal, std::vector<Production>> productions = {
     {NonTerminal::s,
-     {{NonTerminal::s, {Terminal::BOFS, NonTerminal::fns, Terminal::EOFS}}}},
+     {{NonTerminal::s,
+       {Terminal::BOFS,
+        Terminal::MODULE,
+        Terminal::ID,
+        Terminal::SEMI,
+        NonTerminal::fns,
+        Terminal::EOFS}}}},
     {NonTerminal::fns,
      {{NonTerminal::fns, {NonTerminal::fn, NonTerminal::fns}},
       {NonTerminal::fns, {NonTerminal::fn}}}},
@@ -420,6 +427,7 @@ static std::set<Terminal> terminals = {
     Terminal::AMPERSAND,   Terminal::WHILE,  Terminal::BOOL,
     Terminal::TRUE,        Terminal::FALSE,  Terminal::STRLITERAL,
     Terminal::CHARLITERAL, Terminal::CHAR,   Terminal::AS,
+    Terminal::MODULE,
 };
 
 static std::set<NonTerminal> non_terminals = {
