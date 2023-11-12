@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include <memory>
+
 #include "chunk.h"
 #include "code.h"
 #include "procedure.h"

@@ -1,7 +1,11 @@
 
-#include <bitset>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_vector.hpp>
+#include <stdint.h>
+#include <bitset>
+#include <memory>
+#include <string>
+#include <vector>
 
 #include "beq_label.h"
 #include "bne_label.h"
@@ -12,6 +16,9 @@
 #include "use_label.h"
 #include "utils.h"
 #include "word.h"
+#include "catch2/matchers/catch_matchers.hpp"
+
+struct Code;
 
 TEST_CASE("Simple test use label", "[labels]") {
     auto label = std::make_shared<Label>("label1");

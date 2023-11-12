@@ -1,7 +1,13 @@
 
+#include <memory>
+#include <vector>
+
 #include "assembly.h"
 #include "block.h"
 #include "print.h"
+#include "reg.h"
+
+struct Code;
 
 int main() {
     Print print_v;

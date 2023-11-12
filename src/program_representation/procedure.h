@@ -3,10 +3,15 @@
 
 #include <memory>
 #include <vector>
+#include <string>
 
 #include "code.h"
 #include "label.h"
 #include "variable.h"
+
+struct Code;
+struct Label;
+struct Variable;
 
 struct Procedure {
     std::string name;

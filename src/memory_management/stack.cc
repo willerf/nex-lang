@@ -1,6 +1,8 @@
 
 #include "stack.h"
 
+#include <vector>
+
 #include "assembly.h"
 #include "block.h"
 #include "reg.h"

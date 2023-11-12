@@ -1,6 +1,8 @@
 
 #pragma once
 
+#include <memory>
+
 #include "code_visit.h"
 #include "label.h"
 

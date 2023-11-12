@@ -1,8 +1,13 @@
 
 #include "visit_expr.h"
 
+#include <stdint.h>
+#include <stdlib.h>
 #include <cassert>
 #include <set>
+#include <iostream>
+#include <string>
+#include <variant>
 
 #include "assembly.h"
 #include "bin_op.h"
@@ -21,6 +26,16 @@
 #include "visit_args.h"
 #include "visit_type.h"
 #include "word.h"
+#include "ast_node.h"
+#include "compile_error.h"
+#include "label.h"
+#include "nl_type.h"
+#include "reg.h"
+#include "state.h"
+#include "typed_procedure.h"
+#include "typed_variable.h"
+
+struct Code;
 
 static std::set<NonTerminal> expr_non_terminals = {
     NonTerminal::expr,

@@ -1,8 +1,15 @@
 
+#include <stdint.h>
+#include <memory>
+#include <string>
+#include <vector>
+
 #include "assembly.h"
-#include "block.h"
 #include "word.h"
 #include "write_file.h"
+#include "reg.h"
+
+struct Code;
 
 const uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
 

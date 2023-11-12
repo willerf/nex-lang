@@ -2,6 +2,7 @@
 #pragma once
 
 #include <functional>
+#include <memory>
 
 #include "assembly.h"
 #include "block.h"

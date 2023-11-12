@@ -1,10 +1,14 @@
 
 #include "elim_if_stmts.h"
 
+#include <vector>
+
 #include "beq_label.h"
 #include "bin_op.h"
 #include "define_label.h"
-#include "if_stmt.h"
+#include "block.h"
+#include "label.h"
+#include "reg.h"
 
 std::shared_ptr<Code> ElimIfStmts::visit(std::shared_ptr<Code> code) {
     return code;

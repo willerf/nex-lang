@@ -1,11 +1,6 @@
 
 #include "if_stmt.h"
 
-#include "assembly.h"
-#include "beq_label.h"
-#include "block.h"
-#include "bne_label.h"
-
 IfStmt::IfStmt(
     std::shared_ptr<Code> e1,
     std::shared_ptr<Code> comp,

@@ -1,14 +1,25 @@
 
 #include "visit_fns.h"
 
+#include <stdlib.h>
 #include <cassert>
 #include <iostream>
+#include <string>
+#include <variant>
 
 #include "nl_type_none.h"
 #include "scope.h"
 #include "visit_params.h"
 #include "visit_stmts.h"
 #include "visit_type.h"
+#include "ast_node.h"
+#include "procedure.h"
+#include "state.h"
+#include "typed_variable.h"
+
+struct Code;
+struct NLType;
+struct Variable;
 
 std::vector<std::shared_ptr<TypedProcedure>> visit_fns(
     ASTNode root,

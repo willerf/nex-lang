@@ -1,14 +1,19 @@
 
 #include "parse_earley.h"
 
-#include <algorithm>
-#include <iostream>
+#include <stdint.h>
 #include <span>
-#include <tuple>
 #include <vector>
+#include <map>
+#include <set>
+#include <string>
+#include <variant>
 
 #include "memo_map.h"
 #include "parsing_error.h"
+#include "grammar.h"
+#include "state.h"
+#include "token.h"
 
 struct CompleteEarleyItem {
     int64_t rule;

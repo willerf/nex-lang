@@ -1,10 +1,18 @@
 #include "nex_lang.h"
 
-#include <cassert>
+#include <_ctype.h>
+#include <stdlib.h>
 #include <iostream>
-#include <sstream>
+#include <functional>
+#include <map>
+#include <optional>
+#include <set>
+#include <string>
+#include <string_view>
+#include <variant>
 
 #include "scanning.h"
+#include "state.h"
 
 static std::map<char, Terminal> one_char_symbols = {
     {' ', Terminal::SPACE},     {'\t', Terminal::TAB},

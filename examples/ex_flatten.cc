@@ -1,8 +1,13 @@
 
+#include <memory>
+#include <vector>
+
 #include "block.h"
 #include "flatten.h"
 #include "print.h"
 #include "word.h"
+
+struct Code;
 
 int main() {
     Flatten flatten;

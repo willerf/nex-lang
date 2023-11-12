@@ -2,8 +2,14 @@
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_vector.hpp>
+#include <string>
+#include <string_view>
+#include <vector>
 
 #include "nex_lang.h"
+#include "catch2/matchers/catch_matchers.hpp"
+#include "state.h"
+#include "token.h"
 
 TEST_CASE("Test scanning keywords", "[lang]") {
     std::vector<Token> tokens;

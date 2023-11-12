@@ -1,15 +1,20 @@
 
 #include "elim_labels.h"
 
+#include <stdint.h>
+#include <stdlib.h>
 #include <map>
+#include <iostream>
+#include <string>
 
 #include "assembly.h"
 #include "beq_label.h"
 #include "bne_label.h"
 #include "define_label.h"
-#include "label.h"
 #include "use_label.h"
 #include "word.h"
+
+struct Label;
 
 template<uint32_t N>
 uint32_t signed_sub(uint32_t a, uint32_t b) {

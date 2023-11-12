@@ -1,6 +1,9 @@
 
 #pragma once
 
+#include <stddef.h>
+#include <string>
+
 #include "compile_error.h"
 
 class TypeMismatchError: public CompileError {

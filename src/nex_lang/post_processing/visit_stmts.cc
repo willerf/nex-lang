@@ -1,7 +1,11 @@
 
 #include "visit_stmts.h"
 
+#include <stdlib.h>
 #include <cassert>
+#include <iostream>
+#include <string>
+#include <variant>
 
 #include "assembly.h"
 #include "if_stmt.h"
@@ -15,6 +19,14 @@
 #include "visit_expr.h"
 #include "visit_vardef.h"
 #include "while_loop.h"
+#include "ast_node.h"
+#include "block.h"
+#include "nl_type.h"
+#include "reg.h"
+#include "state.h"
+#include "typed_variable.h"
+
+struct Variable;
 
 std::shared_ptr<Code> visit_stmt(
     ASTNode root,

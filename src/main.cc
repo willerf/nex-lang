@@ -1,9 +1,13 @@
 
+#include <__fwd/fstream.h>
+#include <__fwd/sstream.h>
+#include <stdlib.h>
 #include <cassert>
 #include <cstring>
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <string>
 
 #include "compile.h"
 #include "compile_error.h"

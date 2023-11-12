@@ -2,9 +2,16 @@
 
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_vector.hpp>
+#include <string>
+#include <string_view>
+#include <vector>
 
 #include "nex_lang.h"
 #include "scanning.h"
+#include "catch2/matchers/catch_matchers.hpp"
+#include "dfa.h"
+#include "state.h"
+#include "token.h"
 
 TEST_CASE("Test scanning various symbols", "[scanning]") {
     DFA dfa = make_dfa();

@@ -1,10 +1,16 @@
 
 #include "visit_args.h"
 
+#include <stdlib.h>
 #include <cassert>
 #include <iostream>
+#include <variant>
 
 #include "visit_expr.h"
+#include "ast_node.h"
+#include "state.h"
+
+struct Code;
 
 std::vector<TypedExpr> visit_args(
     ASTNode root,

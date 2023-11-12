@@ -1,8 +1,12 @@
 
 #pragma once
 
+#include <memory>
+
 #include "label.h"
 #include "visitor.h"
+#include "code.h"
+#include "ret_stmt.h"
 
 class ElimRetStmts: public Visitor<std::shared_ptr<Code>> {
     std::shared_ptr<Label> proc_end;

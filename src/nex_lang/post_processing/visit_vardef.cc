@@ -1,11 +1,20 @@
 
 #include "visit_vardef.h"
 
+#include <stdlib.h>
 #include <cassert>
 #include <iostream>
+#include <string>
+#include <variant>
+#include <vector>
 
 #include "duplicate_symbol_error.h"
 #include "visit_type.h"
+#include "ast_node.h"
+#include "state.h"
+#include "variable.h"
+
+struct NLType;
 
 std::shared_ptr<TypedVariable>
 visit_vardef(ASTNode root, SymbolTable& symbol_table) {

@@ -1,12 +1,15 @@
 
 #include "chunk.h"
 
-#include <algorithm>
+#include <stdlib.h>
 #include <iostream>
 
 #include "assembly.h"
 #include "block.h"
 #include "word.h"
+#include "reg.h"
+
+struct Variable;
 
 Chunk::Chunk(std::vector<std::shared_ptr<Variable>> variables) :
     variables {variables},

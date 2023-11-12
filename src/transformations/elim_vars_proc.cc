@@ -1,8 +1,14 @@
 
 #include "elim_vars_proc.h"
 
+#include <stdlib.h>
+#include <algorithm>
+#include <iostream>
+#include <vector>
+
 #include "block.h"
 #include "var_access.h"
+#include "reg.h"
 
 ElimVarsProc::ElimVarsProc(
     std::shared_ptr<Chunk> frame,

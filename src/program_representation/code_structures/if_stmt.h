@@ -2,11 +2,14 @@
 #pragma once
 
 #include <functional>
+#include <memory>
+#include <vector>
 
 #include "assembly.h"
 #include "block.h"
 #include "code_visit.h"
 #include "label.h"
+#include "code.h"
 
 struct IfStmt: CodeVisit<IfStmt> {
     std::shared_ptr<Code> e1;

@@ -1,12 +1,13 @@
 
 #include "entry_exit.h"
 
+#include <vector>
+
 #include "assembly.h"
 #include "block.h"
 #include "define_label.h"
 #include "reg.h"
 #include "stack.h"
-#include "variable.h"
 
 std::shared_ptr<Code>
 add_entry_exit(std::shared_ptr<Procedure> proc, std::shared_ptr<Chunk> frame) {

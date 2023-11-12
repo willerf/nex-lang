@@ -1,10 +1,16 @@
 
 #include "visit_s.h"
 
+#include <stdlib.h>
 #include <cassert>
 #include <iostream>
+#include <variant>
 
 #include "visit_fns.h"
+#include "ast_node.h"
+#include "state.h"
+
+struct Code;
 
 std::vector<std::shared_ptr<TypedProcedure>> visit_s(
     ASTNode root,

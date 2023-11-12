@@ -2,11 +2,16 @@
 #pragma once
 
 #include <map>
+#include <memory>
 
 #include "call.h"
 #include "chunk.h"
 #include "procedure.h"
 #include "visitor.h"
+#include "block.h"
+#include "code.h"
+
+class Chunk;
 
 class ElimCalls: public Visitor<std::shared_ptr<Code>> {
     std::shared_ptr<Procedure> current_procedure;

@@ -1,10 +1,14 @@
 
 #include "visit_params.h"
 
+#include <stdlib.h>
 #include <cassert>
 #include <iostream>
+#include <variant>
 
 #include "visit_vardef.h"
+#include "ast_node.h"
+#include "state.h"
 
 std::vector<std::shared_ptr<TypedVariable>>
 visit_params(ASTNode root, SymbolTable& symbol_table) {

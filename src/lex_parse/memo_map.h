@@ -1,9 +1,11 @@
 
 #pragma once
 
+#include <stdint.h>
 #include <optional>
 #include <span>
 #include <unordered_map>
+#include <vector>
 
 #include "ast_node.h"
 #include "state.h"

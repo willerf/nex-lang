@@ -1,10 +1,11 @@
 
 #include "elim_ret_stmts.h"
 
+#include <vector>
+
 #include "beq_label.h"
 #include "block.h"
 #include "reg.h"
-#include "ret_stmt.h"
 
 ElimRetStmts::ElimRetStmts(std::shared_ptr<Label> proc_end) :
     proc_end {proc_end} {}

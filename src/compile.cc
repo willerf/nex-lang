@@ -1,15 +1,16 @@
 
 #include "compile.h"
 
+#include <stdint.h>
+#include <stdlib.h>
 #include <iostream>
+#include <map>
+#include <optional>
+#include <span>
 
 #include "assembly.h"
-#include "beq_label.h"
-#include "bin_op.h"
 #include "block.h"
-#include "bne_label.h"
 #include "chunk.h"
-#include "define_label.h"
 #include "elim_calls.h"
 #include "elim_if_stmts.h"
 #include "elim_labels.h"
@@ -18,22 +19,19 @@
 #include "elim_vars_proc.h"
 #include "entry_exit.h"
 #include "flatten.h"
-#include "if_stmt.h"
-#include "label.h"
 #include "nex_lang.h"
-#include "operators.h"
 #include "parse_earley.h"
 #include "post_processing.h"
-#include "print.h"
 #include "procedure.h"
 #include "pseudo_assembly.h"
 #include "reg.h"
-#include "stack.h"
-#include "use_label.h"
-#include "var_access.h"
-#include "variable.h"
-#include "while_loop.h"
 #include "word.h"
+#include "call.h"
+#include "grammar.h"
+
+struct TypedProcedure;
+struct Variable;
+
 static uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
 
 std::vector<std::shared_ptr<Code>> compile(std::string input) {

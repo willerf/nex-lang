@@ -3,16 +3,11 @@
 
 #include <bitset>
 #include <iostream>
+#include <string>
+#include <typeinfo>
+#include <vector>
 
-#include "beq_label.h"
-#include "block.h"
-#include "bne_label.h"
-#include "define_label.h"
-#include "if_stmt.h"
-#include "scope.h"
-#include "use_label.h"
-#include "var_access.h"
-#include "word.h"
+#include "reg.h"
 
 void Print::visit(std::shared_ptr<Code> code) {
     auto& c = *code.get();

@@ -1,10 +1,17 @@
 
 #include "utils.h"
 
+#include <__fwd/fstream.h>
+#include <__fwd/sstream.h>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <cstdlib>
+
+#include "word.h"
+
+struct Code;
 
 std::vector<uint32_t> word_to_uint(std::vector<std::shared_ptr<Code>> program) {
     std::vector<uint32_t> result;

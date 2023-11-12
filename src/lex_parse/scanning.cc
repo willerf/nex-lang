@@ -1,9 +1,17 @@
 
 #include "scanning.h"
 
-#include <iostream>
+#include <stddef.h>
+#include <functional>
+#include <optional>
+#include <set>
+#include <string>
+#include <string_view>
+#include <utility>
 
 #include "scanning_error.h"
+#include "dfa.h"
+#include "state.h"
 
 Token scan_one(std::string_view input, DFA& dfa, size_t line_no) {
     Terminal curr_state = dfa.init_state;

@@ -1,7 +1,11 @@
 
-#include <bitset>
 #include <catch2/catch_test_macros.hpp>
 #include <catch2/matchers/catch_matchers_vector.hpp>
+#include <stdint.h>
+#include <bitset>
+#include <memory>
+#include <string>
+#include <vector>
 
 #include "block.h"
 #include "chunk.h"
@@ -11,7 +15,7 @@
 #include "utils.h"
 #include "var_access.h"
 #include "variable.h"
-#include "word.h"
+#include "catch2/matchers/catch_matchers.hpp"
 
 TEST_CASE("Simple test read write variable", "[vars]") {
     auto var1 = std::make_shared<Variable>("var1");

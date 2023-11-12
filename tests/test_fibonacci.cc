@@ -1,33 +1,33 @@
 
 #include <catch2/catch_test_macros.hpp>
-#include <catch2/matchers/catch_matchers_vector.hpp>
+#include <stdint.h>
+#include <initializer_list>
+#include <memory>
+#include <string>
+#include <vector>
 
 #include "assembly.h"
-#include "beq_label.h"
 #include "bin_op.h"
 #include "block.h"
-#include "bne_label.h"
 #include "chunk.h"
-#include "define_label.h"
 #include "elim_if_stmts.h"
 #include "elim_labels.h"
 #include "elim_scopes.h"
 #include "elim_vars.h"
 #include "flatten.h"
 #include "if_stmt.h"
-#include "label.h"
 #include "operators.h"
-#include "print.h"
 #include "pseudo_assembly.h"
 #include "reg.h"
 #include "stack.h"
-#include "use_label.h"
 #include "utils.h"
-#include "var_access.h"
 #include "variable.h"
 #include "while_loop.h"
 #include "word.h"
 #include "write_file.h"
+#include "scope.h"
+
+struct Code;
 
 static uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
 static std::string file_name("test_fibonacci.bin");

@@ -1,8 +1,12 @@
 
 #pragma once
 
+#include <memory>
+#include <vector>
+
 #include "code_visit.h"
 #include "procedure.h"
+#include "code.h"
 
 struct Call: CodeVisit<Call> {
     std::shared_ptr<Procedure> procedure;

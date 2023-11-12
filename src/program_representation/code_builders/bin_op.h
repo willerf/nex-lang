@@ -1,4 +1,6 @@
 
+#include <memory>
+
 #include "assembly.h"
 #include "block.h"
 #include "code.h"
