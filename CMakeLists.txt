@@ -1,7 +1,8 @@
 
 cmake_minimum_required(VERSION 3.21)
-project(cpp-compiler-v2)
+project(nex-lang)
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_library(compiler_lib STATIC
@@ -90,6 +91,9 @@ target_include_directories(compiler_lib PUBLIC
     src/utils
 )
 
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    target_compile_options(compiler_lib PRIVATE -Wall -Wextra -Werror -Wpedantic -Wimplicit-function-declaration -Wno-sign-compare)
+endif()
 
 add_executable(cnl src/main.cc)
 target_link_libraries(cnl compiler_lib)

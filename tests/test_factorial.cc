@@ -48,6 +48,7 @@ uint32_t sample_factorial(uint32_t n) {
 }
 
 uint32_t sample_main(uint32_t input1, uint32_t input2) {
+    (void)input2;
     return sample_factorial(input1);
 }
 
