@@ -1,6 +1,5 @@
 #include "nex_lang.h"
 
-#include <_ctype.h>
 #include <stdlib.h>
 
 #include <functional>
