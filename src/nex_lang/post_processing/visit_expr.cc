@@ -48,8 +48,7 @@ static std::set<NonTerminal> expr_non_terminals = {
     NonTerminal::exprp6,
     NonTerminal::exprp7,
     NonTerminal::exprp8,
-    NonTerminal::exprp9
-};
+    NonTerminal::exprp9};
 
 TypedExpr visit_expr(
     ASTNode root,
@@ -74,8 +73,7 @@ TypedExpr visit_expr(
                     )) {
                 result = TypedExpr {
                     typed_var->variable->to_expr(read_address),
-                    typed_var->nl_type
-                };
+                    typed_var->nl_type};
             } else {
                 throw SymbolNotFoundError(name, id.line_no);
             }
@@ -86,8 +84,7 @@ TypedExpr visit_expr(
         ASTNode num = root.children.at(0);
         result = TypedExpr {
             int_literal(stoi(num.lexeme)),
-            std::make_shared<NLTypeI32>()
-        };
+            std::make_shared<NLTypeI32>()};
     } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::TRUE}) {
         ASTNode expr = root.children.at(0);
         result = TypedExpr {int_literal(1), std::make_shared<NLTypeBool>()};
@@ -103,8 +100,7 @@ TypedExpr visit_expr(
                     )) {
                 result = TypedExpr {
                     typed_var->variable->to_expr(true),
-                    std::make_shared<NLTypePtr>(typed_var->nl_type)
-                };
+                    std::make_shared<NLTypePtr>(typed_var->nl_type)};
             } else {
                 throw SymbolNotFoundError(name, id.line_no);
             }
@@ -117,8 +113,7 @@ TypedExpr visit_expr(
         if (letter_str.length() == 3) {
             result = TypedExpr {
                 int_literal(static_cast<uint32_t>(letter_str[1])),
-                std::make_shared<NLTypeChar>()
-            };
+                std::make_shared<NLTypeChar>()};
         } else {
             std::cerr << "Character literal must be one character."
                       << std::endl;
@@ -137,8 +132,7 @@ TypedExpr visit_expr(
         static_data.push_back(make_block(code_str));
         result = TypedExpr {
             make_block({make_lis(Reg::Result), make_use(label)}),
-            std::make_shared<NLTypePtr>(std::make_shared<NLTypeChar>())
-        };
+            std::make_shared<NLTypePtr>(std::make_shared<NLTypeChar>())};
     } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN}) {
         ASTNode expr = root.children.at(1);
         result = visit_expr(expr, read_address, symbol_table, static_data);
@@ -177,8 +171,7 @@ TypedExpr visit_expr(
                 }
                 result = TypedExpr {
                     make_call(typed_procedure->procedure, args),
-                    typed_procedure->ret_type
-                };
+                    typed_procedure->ret_type};
             } else {
                 throw SymbolNotFoundError(name, id.line_no);
             }
@@ -218,8 +211,7 @@ TypedExpr visit_expr(
                 }
                 result = TypedExpr {
                     make_block({expr_code.code, op::not_bool()}),
-                    expr_code.nl_type
-                };
+                    expr_code.nl_type};
                 break;
             case Terminal::STAR:
                 if (auto expr_type =
@@ -295,80 +287,67 @@ TypedExpr visit_expr(
             case Terminal::OR:
                 result = TypedExpr {
                     bin_op(lhs_code, op::or_bool(), rhs_code),
-                    result_type
-                };
+                    result_type};
                 break;
             case Terminal::AND:
                 result = TypedExpr {
                     bin_op(lhs_code, op::and_bool(), rhs_code),
-                    result_type
-                };
+                    result_type};
                 break;
             case Terminal::PLUS:
                 result = TypedExpr {
                     bin_op(lhs_code, op::plus(), rhs_code),
-                    result_type
-                };
+                    result_type};
                 break;
             case Terminal::MINUS:
                 result = TypedExpr {
                     bin_op(lhs_code, op::minus(), rhs_code),
-                    result_type
-                };
+                    result_type};
                 break;
             case Terminal::STAR:
                 result = TypedExpr {
                     bin_op(lhs_code, op::times(), rhs_code),
-                    result_type
-                };
+                    result_type};
                 break;
             case Terminal::SLASH:
                 result = TypedExpr {
                     bin_op(lhs_code, op::divide(), rhs_code),
-                    result_type
-                };
+                    result_type};
                 break;
             case Terminal::PCT:
                 result = TypedExpr {
                     bin_op(lhs_code, op::remainder(), rhs_code),
-                    result_type
-                };
+                    result_type};
                 break;
             case Terminal::EQ:
                 result = TypedExpr {
                     bin_op(lhs_code, op::eq_cmp(), rhs_code),
-                    result_type
-                };
+                    result_type};
                 break;
             case Terminal::NE:
                 result = TypedExpr {
                     bin_op(lhs_code, op::ne_cmp(), rhs_code),
-                    result_type
-                };
+                    result_type};
                 break;
             case Terminal::LT:
                 result = TypedExpr {
                     bin_op(lhs_code, op::lt_cmp(), rhs_code),
-                    result_type
-                };
+                    result_type};
                 break;
             case Terminal::GT:
                 result = TypedExpr {
                     bin_op(lhs_code, op::gt_cmp(), rhs_code),
-                    result_type
-                };
+                    result_type};
                 break;
             case Terminal::LE:
                 result = TypedExpr {
                     bin_op(lhs_code, op::le_cmp(), rhs_code),
-                    result_type
-                };
+                    result_type};
                 break;
             case Terminal::GE:
                 result = TypedExpr {
                     bin_op(lhs_code, op::ge_cmp(), rhs_code),
-                    result_type
-                };
+                    result_type};
                 break;
             default:
                 std::cerr

@@ -54,7 +54,7 @@ std::shared_ptr<Code> ElimCalls::visit(std::shared_ptr<Call> call) {
     auto arg = arguments.begin();
     auto tmp1 = tmp_vars.begin();
     while (arg != arguments.end() && tmp1 != tmp_vars.end()) {
-        assign_to_tmps.push_back(assign(*tmp1, *arg));
+        assign_to_tmps.push_back(assign(*tmp1, (*arg)->accept(*this)));
         arg++;
         tmp1++;
     }

@@ -28,8 +28,7 @@ visit_vardef(ASTNode root, SymbolTable& symbol_table) {
             NonTerminal::vardef,
             Terminal::ID,
             Terminal::COLON,
-            NonTerminal::type
-        }) {
+            NonTerminal::type}) {
         // extract variable definition
         ASTNode id = root.children.at(0);
         std::string name = id.lexeme;

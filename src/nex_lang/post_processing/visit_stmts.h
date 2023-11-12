@@ -24,3 +24,10 @@ std::shared_ptr<Code> visit_stmts(
     SymbolTable& symbol_table,
     std::vector<std::shared_ptr<Code>>& static_data
 );
+
+std::shared_ptr<Code> visit_stmtblock(
+    ASTNode root,
+    std::shared_ptr<TypedProcedure> curr_proc,
+    SymbolTable& symbol_table,
+    std::vector<std::shared_ptr<Code>>& static_data
+);

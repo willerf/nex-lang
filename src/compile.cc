@@ -96,8 +96,10 @@ std::vector<std::shared_ptr<Code>> compile(std::string input) {
         proc->code = proc->code->accept(elim_scopes);
         auto local_vars = elim_scopes.get();
 
-        std::vector<std::shared_ptr<Variable>> all_local_vars =
-            {proc->param_ptr, proc->dynamic_link, proc->saved_pc};
+        std::vector<std::shared_ptr<Variable>> all_local_vars = {
+            proc->param_ptr,
+            proc->dynamic_link,
+            proc->saved_pc};
         all_local_vars
             .insert(all_local_vars.end(), local_vars.begin(), local_vars.end());
         std::shared_ptr<Chunk> local_vars_chunk =

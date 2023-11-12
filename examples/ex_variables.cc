@@ -44,8 +44,7 @@ int main() {
             stack::pop(),
             make_lis(Reg::TargetPC),
             make_word(TERMINATION_PC),
-            make_jr(Reg::TargetPC)
-        });
+            make_jr(Reg::TargetPC)});
 
     Print print_v;
     Flatten flatten;

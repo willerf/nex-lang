@@ -258,7 +258,6 @@ TEST_CASE("Simple test bne/beq adjacent", "[labels]") {
             4,
             (uint32_t)instr3.to_ulong(),
             (uint32_t)instr4.to_ulong(),
-            5
-        })
+            5})
     );
 }

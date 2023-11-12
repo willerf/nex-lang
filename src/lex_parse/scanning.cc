@@ -35,8 +35,7 @@ Token scan_one(std::string_view input, DFA& dfa, size_t line_no) {
             if (last_accepting) {
                 return Token {
                     last_accepting.value().first,
-                    std::string(last_accepting.value().second)
-                };
+                    std::string(last_accepting.value().second)};
             } else {
                 throw ScanningError(line_no);
             }
@@ -45,8 +44,7 @@ Token scan_one(std::string_view input, DFA& dfa, size_t line_no) {
     if (last_accepting) {
         return Token {
             last_accepting.value().first,
-            std::string(last_accepting.value().second)
-        };
+            std::string(last_accepting.value().second)};
     } else {
         throw ScanningError(line_no);
     }

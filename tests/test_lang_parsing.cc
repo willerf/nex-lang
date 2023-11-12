@@ -6,7 +6,7 @@
 
 #include "grammar.h"
 #include "nex_lang.h"
-#include "parse_cyk.h"
+#include "parse_earley.h"
 
 TEST_CASE("Test parsing lang", "[parser]") {
     Grammar grammar = make_grammar();
@@ -26,7 +26,7 @@ TEST_CASE("Test parsing lang", "[parser]") {
         "   let z: i32 = max(5, 12);"
         "}";
     auto tokens = scan(input);
-    auto ast_node = parse_cyk(tokens, grammar);
+    auto ast_node = parse_earley(tokens, grammar);
 
     // std::cout << ast_node->to_string(0) << std::endl;
 }

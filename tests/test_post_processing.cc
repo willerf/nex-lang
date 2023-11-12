@@ -26,7 +26,7 @@
 #include "flatten.h"
 #include "grammar.h"
 #include "nex_lang.h"
-#include "parse_cyk.h"
+#include "parse_earley.h"
 #include "post_processing.h"
 #include "procedure.h"
 #include "pseudo_assembly.h"
@@ -45,7 +45,7 @@ static std::string file_name("test_max.bin");
 std::vector<std::shared_ptr<Code>> compile_test(std::string input) {
     Grammar grammar = make_grammar();
     auto tokens = scan(input);
-    auto ast_node = parse_cyk(tokens, grammar);
+    auto ast_node = parse_earley(tokens, grammar);
 
     if (!ast_node) {
         std::cerr << "Failed to parse!" << std::endl;
@@ -103,8 +103,10 @@ std::vector<std::shared_ptr<Code>> compile_test(std::string input) {
         proc->code = proc->code->accept(elim_scopes);
         auto local_vars = elim_scopes.get();
 
-        std::vector<std::shared_ptr<Variable>> all_local_vars =
-            {proc->param_ptr, proc->dynamic_link, proc->saved_pc};
+        std::vector<std::shared_ptr<Variable>> all_local_vars = {
+            proc->param_ptr,
+            proc->dynamic_link,
+            proc->saved_pc};
         all_local_vars
             .insert(all_local_vars.end(), local_vars.begin(), local_vars.end());
         std::shared_ptr<Chunk> local_vars_chunk =

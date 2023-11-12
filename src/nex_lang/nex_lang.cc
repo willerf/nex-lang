@@ -204,8 +204,7 @@ std::vector<Token> scan(std::string_view input) {
         Terminal::STRLITERAL,
         Terminal::CHARLITERAL,
         Terminal::TRUE,
-        Terminal::FALSE
-    };
+        Terminal::FALSE};
     std::set<Terminal> sep_set2 = {
         Terminal::EQ,
         Terminal::NE,
@@ -216,8 +215,7 @@ std::vector<Token> scan(std::string_view input) {
         Terminal::OR,
         Terminal::AND,
         Terminal::ASSIGN,
-        Terminal::ARROW
-    };
+        Terminal::ARROW};
 
     bool prev_set1 = false;
     bool prev_set2 = false;
@@ -249,8 +247,7 @@ std::vector<Token> scan(std::string_view input) {
             Terminal::NEWLINE,
             Terminal::CARRIAGERETURN,
             Terminal::TAB,
-            Terminal::COMMENT
-        };
+            Terminal::COMMENT};
         if (!remove_symbols.count(token.kind)) {
             result.push_back(token);
         }
@@ -277,18 +274,14 @@ static std::map<NonTerminal, std::vector<Production>> productions = {
         Terminal::RPAREN,
         Terminal::ARROW,
         NonTerminal::type,
-        Terminal::LBRACE,
-        NonTerminal::stmts,
-        Terminal::RBRACE}},
+        NonTerminal::stmtblock}},
       {NonTerminal::fn,
        {Terminal::FN,
         Terminal::ID,
         Terminal::LPAREN,
         NonTerminal::optparams,
         Terminal::RPAREN,
-        Terminal::LBRACE,
-        NonTerminal::stmts,
-        Terminal::RBRACE}}}},
+        NonTerminal::stmtblock}}}},
     {NonTerminal::optparams,
      {{NonTerminal::optparams, {NonTerminal::params}},
       {NonTerminal::optparams, {}}}},
@@ -297,8 +290,8 @@ static std::map<NonTerminal, std::vector<Production>> productions = {
        {NonTerminal::vardef, Terminal::COMMA, NonTerminal::params}},
       {NonTerminal::params, {NonTerminal::vardef}}}},
     {NonTerminal::vardef,
-     {{NonTerminal::vardef, {Terminal::ID, Terminal::COLON, NonTerminal::type}}}
-    },
+     {{NonTerminal::vardef,
+       {Terminal::ID, Terminal::COLON, NonTerminal::type}}}},
     {NonTerminal::type,
      {{NonTerminal::type, {Terminal::I32}},
       {NonTerminal::type, {Terminal::BOOL}},
@@ -306,6 +299,9 @@ static std::map<NonTerminal, std::vector<Production>> productions = {
       {NonTerminal::type, {Terminal::STAR, NonTerminal::type}},
       {NonTerminal::type,
        {Terminal::LPAREN, NonTerminal::type, Terminal::RPAREN}}}},
+    {NonTerminal::stmtblock,
+     {{NonTerminal::stmtblock,
+       {Terminal::LBRACE, NonTerminal::stmts, Terminal::RBRACE}}}},
     {NonTerminal::stmts,
      {{NonTerminal::stmts, {NonTerminal::stmt, NonTerminal::stmts}},
       {NonTerminal::stmts, {NonTerminal::stmt}}}},
@@ -317,37 +313,31 @@ static std::map<NonTerminal, std::vector<Production>> productions = {
         NonTerminal::expr,
         Terminal::SEMI}},
       {NonTerminal::stmt,
-       {NonTerminal::expr, Terminal::ASSIGN, NonTerminal::expr, Terminal::SEMI}
-      },
+       {NonTerminal::expr,
+        Terminal::ASSIGN,
+        NonTerminal::expr,
+        Terminal::SEMI}},
       {NonTerminal::stmt, {NonTerminal::expr, Terminal::SEMI}},
       {NonTerminal::stmt,
        {Terminal::IF,
         Terminal::LPAREN,
         NonTerminal::expr,
         Terminal::RPAREN,
-        Terminal::LBRACE,
-        NonTerminal::stmts,
-        Terminal::RBRACE,
+        NonTerminal::stmtblock,
         Terminal::ELSE,
-        Terminal::LBRACE,
-        NonTerminal::stmts,
-        Terminal::RBRACE}},
+        NonTerminal::stmtblock}},
       {NonTerminal::stmt,
        {Terminal::IF,
         Terminal::LPAREN,
         NonTerminal::expr,
         Terminal::RPAREN,
-        Terminal::LBRACE,
-        NonTerminal::stmts,
-        Terminal::RBRACE}},
+        NonTerminal::stmtblock}},
       {NonTerminal::stmt,
        {Terminal::WHILE,
         Terminal::LPAREN,
         NonTerminal::expr,
         Terminal::RPAREN,
-        Terminal::LBRACE,
-        NonTerminal::stmts,
-        Terminal::RBRACE}},
+        NonTerminal::stmtblock}},
       {NonTerminal::stmt, {Terminal::RET, NonTerminal::expr, Terminal::SEMI}}}},
     {NonTerminal::expr, {{NonTerminal::expr, {NonTerminal::exprp1}}}},
     {NonTerminal::exprp1,
@@ -405,15 +395,16 @@ static std::map<NonTerminal, std::vector<Production>> productions = {
       {NonTerminal::exprp9,
        {Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN}},
       {NonTerminal::exprp9,
-       {Terminal::ID, Terminal::LPAREN, NonTerminal::optargs, Terminal::RPAREN}}
-     }},
+       {Terminal::ID,
+        Terminal::LPAREN,
+        NonTerminal::optargs,
+        Terminal::RPAREN}}}},
     {NonTerminal::optargs,
      {{NonTerminal::optargs, {NonTerminal::args}}, {NonTerminal::optargs, {}}}},
     {NonTerminal::args,
      {{NonTerminal::args,
        {NonTerminal::expr, Terminal::COMMA, NonTerminal::args}},
-      {NonTerminal::args, {NonTerminal::expr}}}}
-};
+      {NonTerminal::args, {NonTerminal::expr}}}}};
 
 static std::set<Terminal> terminals = {
     Terminal::BOFS,        Terminal::EOFS,   Terminal::FN,
@@ -440,6 +431,7 @@ static std::set<NonTerminal> non_terminals = {
     NonTerminal::exprp3,    NonTerminal::exprp4,  NonTerminal::exprp5,
     NonTerminal::exprp6,    NonTerminal::exprp7,  NonTerminal::exprp8,
     NonTerminal::exprp9,    NonTerminal::optargs, NonTerminal::args,
+    NonTerminal::stmtblock,
 };
 
 Grammar make_grammar() {

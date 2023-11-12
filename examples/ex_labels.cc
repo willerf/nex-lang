@@ -35,8 +35,7 @@ int main() {
         std::make_shared<BeqLabel>(Reg::Result, Reg::Scratch, label),
         std::make_shared<UseLabel>(label),
         make_word(500),
-        std::make_shared<BneLabel>(Reg::Result, Reg::Scratch, label)
-    };
+        std::make_shared<BneLabel>(Reg::Result, Reg::Scratch, label)};
 
     Print print_v;
 

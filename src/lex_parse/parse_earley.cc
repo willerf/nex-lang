@@ -60,8 +60,7 @@ static std::optional<std::vector<ASTNode>> search_sets(
                     input[from].kind,
                     input[from].lexeme,
                     {},
-                    input[from].line_no
-                }};
+                    input[from].line_no}};
                 result.insert(result.end(), sub_tree->begin(), sub_tree->end());
                 return result;
             }
@@ -82,8 +81,7 @@ static std::optional<std::vector<ASTNode>> search_sets(
             memo_map[MemoKey {prod.rhs, from, length}] = sub_tree;
             if (sub_tree) {
                 return std::vector<ASTNode> {
-                    ASTNode {lhs.front(), "", sub_tree.value()}
-                };
+                    ASTNode {lhs.front(), "", sub_tree.value()}};
             }
         }
     } else {
@@ -117,8 +115,7 @@ static std::optional<std::vector<ASTNode>> search_sets(
                     memo_map[MemoKey {
                         lhs.subspan(1),
                         item.end,
-                        length - (item.end - from)
-                    }] = sub_tree2;
+                        length - (item.end - from)}] = sub_tree2;
                     if (sub_tree2) {
                         std::vector<ASTNode> result = sub_tree1.value();
                         result.insert(
@@ -158,11 +155,11 @@ std::optional<ASTNode> parse_earley(std::span<Token> input, Grammar& grammar) {
             earley_sets[0].push_back(EarleyItem {i, 0, 0});
         }
     }
-
+    bool valid_parse = true;
     int64_t x = 0;
-    while (x < earley_sets.size()) {
+    while (valid_parse && x < earley_sets.size()) {
         int64_t y = 0;
-        while (y < earley_sets.at(x).size()) {
+        while (valid_parse && y < earley_sets.at(x).size()) {
             EarleyItem item = earley_sets.at(x).at(y);
             Production prod = productions.at(item.rule);
             if (item.next == prod.rhs.size()) {
@@ -179,8 +176,7 @@ std::optional<ASTNode> parse_earley(std::span<Token> input, Grammar& grammar) {
                         EarleyItem new_entry {
                             old.rule,
                             old.start,
-                            old.next + 1
-                        };
+                            old.next + 1};
                         bool repeat = false;
                         for (int64_t j = 0; j < earley_sets.at(x).size(); j++) {
                             if (earley_sets.at(x).at(j) == new_entry) {
@@ -222,45 +218,46 @@ std::optional<ASTNode> parse_earley(std::span<Token> input, Grammar& grammar) {
                     }
                 }
             } else {
-                return std::nullopt;
+                valid_parse = false;
             }
             ++y;
         }
         ++x;
     }
+    if (valid_parse) {
+        std::vector<std::vector<CompleteEarleyItem>> complete_sets;
+        for (int64_t i = 0; i < earley_sets.size(); ++i) {
+            complete_sets.push_back({});
+        }
 
-    std::vector<std::vector<CompleteEarleyItem>> complete_sets;
-    for (int64_t i = 0; i < earley_sets.size(); ++i) {
-        complete_sets.push_back({});
-    }
+        for (int64_t i = 0; i < earley_sets.size(); ++i) {
+            std::vector<EarleyItem> earley_set = earley_sets.at(i);
 
-    for (int64_t i = 0; i < earley_sets.size(); ++i) {
-        std::vector<EarleyItem> earley_set = earley_sets.at(i);
-
-        for (int64_t j = 0; j < earley_set.size(); ++j) {
-            EarleyItem item = earley_set.at(j);
-            if (item.next == productions.at(item.rule).rhs.size()) {
-                complete_sets[item.start].push_back(
-                    CompleteEarleyItem {item.rule, i}
-                );
+            for (int64_t j = 0; j < earley_set.size(); ++j) {
+                EarleyItem item = earley_set.at(j);
+                if (item.next == productions.at(item.rule).rhs.size()) {
+                    complete_sets[item.start].push_back(
+                        CompleteEarleyItem {item.rule, i}
+                    );
+                }
             }
         }
-    }
 
-    MemoMap memo_map;
-    std::vector<State> lhs = {grammar.start};
-    std::optional<std::vector<ASTNode>> result = search_sets(
-        lhs,
-        0,
-        input.size(),
-        input,
-        productions,
-        complete_sets,
-        grammar,
-        memo_map
-    );
-    if (result && result->size()) {
-        return result->front();
+        MemoMap memo_map;
+        std::vector<State> lhs = {grammar.start};
+        std::optional<std::vector<ASTNode>> result = search_sets(
+            lhs,
+            0,
+            input.size(),
+            input,
+            productions,
+            complete_sets,
+            grammar,
+            memo_map
+        );
+        if (result && result->size()) {
+            return result->front();
+        }
     }
     if (x > 0 && x <= input.size()) {
         throw ParsingError(input[x - 1].line_no);

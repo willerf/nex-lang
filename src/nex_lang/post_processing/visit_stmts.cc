@@ -46,8 +46,7 @@ std::shared_ptr<Code> visit_stmt(
             NonTerminal::vardef,
             Terminal::ASSIGN,
             NonTerminal::expr,
-            Terminal::SEMI
-        }) {
+            Terminal::SEMI}) {
         // extract variable declaration and assignment
         ASTNode vardef = root.children.at(1);
         auto typed_var = visit_vardef(vardef, symbol_table);
@@ -88,48 +87,26 @@ std::shared_ptr<Code> visit_stmt(
         ASTNode expr = root.children.at(0);
         TypedExpr code = visit_expr(expr, false, symbol_table, static_data);
         result = code.code;
-    } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::IF, Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN, Terminal::LBRACE, NonTerminal::stmts, Terminal::RBRACE, Terminal::ELSE, Terminal::LBRACE, NonTerminal::stmts, Terminal::RBRACE}) {
-        // extract if statements
+    } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::IF, Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN, NonTerminal::stmtblock, Terminal::ELSE, NonTerminal::stmtblock}) {
+        // extract if else statements
         ASTNode expr = root.children.at(2);
         TypedExpr comp = visit_expr(expr, false, symbol_table, static_data);
 
-        ASTNode thens_stmts = root.children.at(5);
-        SymbolTable symbol_table_thens = symbol_table;
-        auto thens = visit_stmts(
-            thens_stmts,
+        ASTNode stmtblock_thens = root.children.at(4);
+        auto thens = visit_stmtblock(
+            stmtblock_thens,
             curr_proc,
-            symbol_table_thens,
+            symbol_table,
             static_data
         );
 
-        // grab scoped variables
-        std::vector<std::shared_ptr<Variable>> thens_vars;
-        for (auto typed_id :
-             symbol_table_sub(symbol_table_thens, symbol_table)) {
-            if (auto typed_variable =
-                    std::dynamic_pointer_cast<TypedVariable>(typed_id)) {
-                thens_vars.push_back(typed_variable->variable);
-            }
-        }
-
-        ASTNode elses_stmts = root.children.at(9);
-        SymbolTable symbol_table_elses = symbol_table;
-        auto elses = visit_stmts(
-            elses_stmts,
+        ASTNode stmtblock_elses = root.children.at(6);
+        auto elses = visit_stmtblock(
+            stmtblock_elses,
             curr_proc,
-            symbol_table_elses,
+            symbol_table,
             static_data
         );
-
-        // grab scoped variables
-        std::vector<std::shared_ptr<Variable>> elses_vars;
-        for (auto typed_id :
-             symbol_table_sub(symbol_table_elses, symbol_table)) {
-            if (auto typed_variable =
-                    std::dynamic_pointer_cast<TypedVariable>(typed_id)) {
-                elses_vars.push_back(typed_variable->variable);
-            }
-        }
 
         if ((*comp.nl_type) != NLTypeBool()) {
             throw TypeMismatchError(
@@ -141,32 +118,21 @@ std::shared_ptr<Code> visit_stmt(
             comp.code,
             op::ne_cmp(),
             make_add(Reg::Result, Reg::Zero, Reg::Zero),
-            make_scope(thens_vars, thens),
-            make_scope(elses_vars, elses)
+            thens,
+            elses
         );
-    } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::IF, Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN, Terminal::LBRACE, NonTerminal::stmts, Terminal::RBRACE}) {
+    } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::IF, Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN, NonTerminal::stmtblock}) {
         // extract if statements
         ASTNode expr = root.children.at(2);
         TypedExpr comp = visit_expr(expr, false, symbol_table, static_data);
 
-        ASTNode thens_stmts = root.children.at(5);
-        SymbolTable symbol_table_thens = symbol_table;
-        auto thens = visit_stmts(
-            thens_stmts,
+        ASTNode stmtblock_thens = root.children.at(4);
+        auto thens = visit_stmtblock(
+            stmtblock_thens,
             curr_proc,
-            symbol_table_thens,
+            symbol_table,
             static_data
         );
-
-        // grab scoped variables
-        std::vector<std::shared_ptr<Variable>> thens_vars;
-        for (auto typed_id :
-             symbol_table_sub(symbol_table_thens, symbol_table)) {
-            if (auto typed_variable =
-                    std::dynamic_pointer_cast<TypedVariable>(typed_id)) {
-                thens_vars.push_back(typed_variable->variable);
-            }
-        }
 
         if ((*comp.nl_type) != NLTypeBool()) {
             throw TypeMismatchError(
@@ -178,15 +144,16 @@ std::shared_ptr<Code> visit_stmt(
             comp.code,
             op::ne_cmp(),
             make_add(Reg::Result, Reg::Zero, Reg::Zero),
-            make_scope(thens_vars, thens)
+            thens
         );
-    } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::WHILE, Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN, Terminal::LBRACE, NonTerminal::stmts, Terminal::RBRACE}) {
+    } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::WHILE, Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN, NonTerminal::stmtblock}) {
         // extract while loops
         ASTNode expr = root.children.at(2);
         TypedExpr comp = visit_expr(expr, false, symbol_table, static_data);
 
-        ASTNode stmts = root.children.at(5);
-        auto code = visit_stmts(stmts, curr_proc, symbol_table, static_data);
+        ASTNode stmtblock = root.children.at(4);
+        auto stmts =
+            visit_stmtblock(stmtblock, curr_proc, symbol_table, static_data);
 
         if ((*comp.nl_type) != NLTypeBool()) {
             throw TypeMismatchError(
@@ -198,7 +165,7 @@ std::shared_ptr<Code> visit_stmt(
             comp.code,
             op::ne_cmp(),
             make_add(Reg::Result, Reg::Zero, Reg::Zero),
-            code
+            stmts
         );
     } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::RET, NonTerminal::expr, Terminal::SEMI}) {
         // extract return statements
@@ -252,6 +219,54 @@ std::shared_ptr<Code> visit_stmts(
         result = make_block({code, rest_of_code});
     } else {
         std::cerr << "Invalid production found while processing stmts."
+                  << std::endl;
+        exit(1);
+    }
+
+    assert(result);
+    return result;
+}
+
+std::shared_ptr<Code> visit_stmtblock(
+    ASTNode root,
+    std::shared_ptr<TypedProcedure> curr_proc,
+    SymbolTable& symbol_table,
+    std::vector<std::shared_ptr<Code>>& static_data
+) {
+    assert(std::get<NonTerminal>(root.state) == NonTerminal::stmtblock);
+    std::shared_ptr<Code> result = nullptr;
+
+    std::vector<State> prod = root.get_production();
+    if (prod
+        == std::vector<State> {
+            NonTerminal::stmtblock,
+            Terminal::LBRACE,
+            NonTerminal::stmts,
+            Terminal::RBRACE}) {
+        // extract statements
+
+        ASTNode stmts_node = root.children.at(1);
+
+        SymbolTable symbol_table_scoped = symbol_table;
+        auto stmts = visit_stmts(
+            stmts_node,
+            curr_proc,
+            symbol_table_scoped,
+            static_data
+        );
+
+        // grab scoped variables
+        std::vector<std::shared_ptr<Variable>> scoped_vars;
+        for (auto typed_id :
+             symbol_table_sub(symbol_table_scoped, symbol_table)) {
+            if (auto typed_variable =
+                    std::dynamic_pointer_cast<TypedVariable>(typed_id)) {
+                scoped_vars.push_back(typed_variable->variable);
+            }
+        }
+        result = make_scope(scoped_vars, stmts);
+    } else {
+        std::cerr << "Invalid production found while processing stmtblock."
                   << std::endl;
         exit(1);
     }

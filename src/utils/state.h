@@ -66,6 +66,7 @@ enum class NonTerminal {
     params,
     vardef,
     type,
+    stmtblock,
     stmts,
     stmt,
     expr,

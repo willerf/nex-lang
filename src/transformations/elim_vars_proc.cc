@@ -62,9 +62,11 @@ std::shared_ptr<Code> ElimVarsProc::visit(std::shared_ptr<VarAccess> var_access
         if (var_access->var_access_type == VarAccessType::Read) {
             return make_block(
                 {load_param_ptr,
-                 param_chunk
-                     ->load(Reg::Scratch, var_access->reg, var_access->variable)
-                }
+                 param_chunk->load(
+                     Reg::Scratch,
+                     var_access->reg,
+                     var_access->variable
+                 )}
             );
         } else if (var_access->var_access_type == VarAccessType::Write) {
             return make_block(

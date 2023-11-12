@@ -73,9 +73,7 @@ std::shared_ptr<TypedProcedure> visit_fn(
             Terminal::RPAREN,
             Terminal::ARROW,
             NonTerminal::type,
-            Terminal::LBRACE,
-            NonTerminal::stmts,
-            Terminal::RBRACE
+            NonTerminal::stmtblock,
         }) {
         result = std::make_shared<TypedProcedure>();
 
@@ -108,25 +106,16 @@ std::shared_ptr<TypedProcedure> visit_fn(
         auto nl_type = visit_type(ret_type);
         result->ret_type = nl_type;
 
-        // make clone of symbol table to scope local vars
-        SymbolTable symbol_table_locals = symbol_table_params;
+        ASTNode stmtblock = root.children.at(7);
+        auto code = visit_stmtblock(
+            stmtblock,
+            result,
+            symbol_table_params,
+            static_data
+        );
 
-        // extract list of statements of procedure
-        ASTNode stmts = root.children.at(8);
-        std::shared_ptr<Code> code =
-            visit_stmts(stmts, result, symbol_table_locals, static_data);
-
-        // only include local variables in variable chunk
-        std::vector<std::shared_ptr<Variable>> vars;
-        for (auto typed_id :
-             symbol_table_sub(symbol_table_locals, symbol_table_params)) {
-            if (auto typed_variable =
-                    std::dynamic_pointer_cast<TypedVariable>(typed_id)) {
-                vars.push_back(typed_variable->variable);
-            }
-        }
-        result->procedure->code = make_scope(vars, code);
-    } else if (prod == std::vector<State> {NonTerminal::fn, Terminal::FN, Terminal::ID, Terminal::LPAREN, NonTerminal::optparams, Terminal::RPAREN, Terminal::LBRACE, NonTerminal::stmts, Terminal::RBRACE}) {
+        result->procedure->code = code;
+    } else if (prod == std::vector<State> {NonTerminal::fn, Terminal::FN, Terminal::ID, Terminal::LPAREN, NonTerminal::optparams, Terminal::RPAREN, NonTerminal::stmtblock}) {
         result = std::make_shared<TypedProcedure>();
 
         // extract function name
@@ -156,24 +145,15 @@ std::shared_ptr<TypedProcedure> visit_fn(
         // return type of none
         result->ret_type = std::make_shared<NLTypeNone>();
 
-        // make clone of symbol table to scope local vars
-        SymbolTable symbol_table_locals = symbol_table_params;
+        ASTNode stmtblock = root.children.at(5);
+        auto code = visit_stmtblock(
+            stmtblock,
+            result,
+            symbol_table_params,
+            static_data
+        );
 
-        // extract list of statements of procedure
-        ASTNode stmts = root.children.at(6);
-        std::shared_ptr<Code> code =
-            visit_stmts(stmts, result, symbol_table_locals, static_data);
-
-        // only include local variables in variable chunk
-        std::vector<std::shared_ptr<Variable>> vars;
-        for (auto typed_id :
-             symbol_table_sub(symbol_table_locals, symbol_table_params)) {
-            if (auto typed_variable =
-                    std::dynamic_pointer_cast<TypedVariable>(typed_id)) {
-                vars.push_back(typed_variable->variable);
-            }
-        }
-        result->procedure->code = make_scope(vars, code);
+        result->procedure->code = code;
     } else {
         std::cerr << "Invalid production found while processing fn."
                   << std::endl;

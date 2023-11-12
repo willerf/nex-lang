@@ -56,7 +56,6 @@ TEST_CASE("Simple test read write variable", "[vars]") {
         program4,
         Catch::Matchers::Equals(std::vector<uint32_t> {
             (uint32_t)instr1.to_ulong(),
-            (uint32_t)instr2.to_ulong()
-        })
+            (uint32_t)instr2.to_ulong()})
     );
 }

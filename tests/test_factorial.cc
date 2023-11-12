@@ -100,8 +100,7 @@ TEST_CASE("Test factorial program", "[programs]") {
 
     std::vector<std::shared_ptr<Procedure>> procedures = {
         main_proc,
-        factorial_proc
-    };
+        factorial_proc};
 
     auto start_proc = std::make_shared<Procedure>(
         "start_proc",
@@ -126,8 +125,10 @@ TEST_CASE("Test factorial program", "[programs]") {
         proc->code = proc->code->accept(elim_scopes);
         auto local_vars = elim_scopes.get();
 
-        std::vector<std::shared_ptr<Variable>> all_local_vars =
-            {proc->param_ptr, proc->dynamic_link, proc->saved_pc};
+        std::vector<std::shared_ptr<Variable>> all_local_vars = {
+            proc->param_ptr,
+            proc->dynamic_link,
+            proc->saved_pc};
         all_local_vars
             .insert(all_local_vars.end(), local_vars.begin(), local_vars.end());
         std::shared_ptr<Chunk> local_vars_chunk =
