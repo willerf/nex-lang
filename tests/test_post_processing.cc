@@ -1,45 +1,10 @@
 
 
-#include <stdint.h>
-#include <stdlib.h>
-
 #include <catch2/catch_test_macros.hpp>
-#include <iostream>
-#include <map>
-#include <memory>
-#include <optional>
-#include <span>
 #include <string>
-#include <vector>
 
-#include "assembly.h"
-#include "block.h"
-#include "call.h"
-#include "chunk.h"
-#include "elim_calls.h"
-#include "elim_if_stmts.h"
-#include "elim_labels.h"
-#include "elim_ret_stmts.h"
-#include "elim_scopes.h"
-#include "elim_vars_proc.h"
-#include "entry_exit.h"
-#include "extract_symbols.h"
-#include "flatten.h"
-#include "grammar.h"
-#include "module_table.h"
-#include "nex_lang.h"
-#include "parse_earley.h"
-#include "post_processing.h"
-#include "procedure.h"
-#include "pseudo_assembly.h"
-#include "reg.h"
 #include "utils.h"
-#include "word.h"
 #include "write_file.h"
-
-struct Code;
-struct TypedProcedure;
-struct Variable;
 
 static std::string file_name("test_max.bin");
 

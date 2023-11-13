@@ -1,8 +1,6 @@
 
 #include "post_processing.h"
 
-#include <string>
-
 #include "ast_node.h"
 #include "module_table.h"
 #include "visit_s.h"

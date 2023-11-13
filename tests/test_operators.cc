@@ -2,7 +2,6 @@
 #include <catch2/catch_test_macros.hpp>
 #include <string>
 
-#include "compile.h"
 #include "utils.h"
 #include "write_file.h"
 

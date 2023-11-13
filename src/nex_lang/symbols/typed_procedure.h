@@ -7,6 +7,8 @@
 #include "typed_id.h"
 #include "typed_variable.h"
 
+struct TypedVariable;
+
 struct TypedProcedure: TypedID {
     std::shared_ptr<Procedure> procedure;
     std::shared_ptr<NLType> ret_type;

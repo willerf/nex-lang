@@ -6,6 +6,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <map>
 #include <set>
 #include <string>
 #include <variant>
@@ -15,7 +16,6 @@
 #include "bin_op.h"
 #include "block.h"
 #include "call.h"
-#include "compile_error.h"
 #include "define_label.h"
 #include "label.h"
 #include "nl_type.h"

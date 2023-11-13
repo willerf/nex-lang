@@ -4,8 +4,6 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-#include <cassert>
-#include <cstring>
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -13,6 +11,7 @@
 #include <span>
 #include <sstream>
 #include <string>
+#include <utility>
 
 #include "assembly.h"
 #include "ast_node.h"
@@ -30,6 +29,7 @@
 #include "extract_symbols.h"
 #include "flatten.h"
 #include "grammar.h"
+#include "module_table.h"
 #include "nex_lang.h"
 #include "parse_earley.h"
 #include "post_processing.h"

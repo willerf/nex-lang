@@ -5,21 +5,21 @@
 
 #include <cassert>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <variant>
+#include <vector>
 
 #include "ast_node.h"
 #include "nl_type_none.h"
 #include "procedure.h"
-#include "scope.h"
 #include "state.h"
-#include "typed_variable.h"
+#include "typed_procedure.h"
 #include "visit_params.h"
 #include "visit_type.h"
 
-struct Code;
-struct NLType;
 struct Variable;
+struct TypedVariable;
 
 void extract_fns(ASTNode root, SymbolTable& symbol_table) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::fns);

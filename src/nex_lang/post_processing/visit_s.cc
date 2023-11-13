@@ -5,10 +5,12 @@
 
 #include <cassert>
 #include <iostream>
+#include <string>
 #include <variant>
 
 #include "ast_node.h"
 #include "state.h"
+#include "symbol_table.h"
 #include "visit_fns.h"
 
 struct Code;

@@ -4,6 +4,9 @@
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
+#include <map>
+#include <optional>
+#include <span>
 #include <sstream>
 #include <string>
 
@@ -28,11 +31,10 @@
 #include "procedure.h"
 #include "pseudo_assembly.h"
 #include "reg.h"
-#include "utils.h"
 #include "word.h"
-#include "write_file.h"
 
-struct Code;
+struct TypedProcedure;
+struct Variable;
 
 static uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
 

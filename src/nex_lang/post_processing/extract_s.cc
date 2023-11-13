@@ -5,13 +5,15 @@
 
 #include <cassert>
 #include <iostream>
+#include <map>
+#include <string>
 #include <variant>
+#include <vector>
 
 #include "ast_node.h"
 #include "extract_fns.h"
 #include "state.h"
-
-struct Code;
+#include "symbol_table.h"
 
 void extract_s(ASTNode root, ModuleTable& module_table) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::s);

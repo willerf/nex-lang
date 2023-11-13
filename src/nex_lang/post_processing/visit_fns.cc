@@ -9,18 +9,10 @@
 #include <variant>
 
 #include "ast_node.h"
-#include "nl_type_none.h"
-#include "procedure.h"
-#include "scope.h"
 #include "state.h"
-#include "typed_variable.h"
-#include "visit_params.h"
 #include "visit_stmts.h"
-#include "visit_type.h"
 
 struct Code;
-struct NLType;
-struct Variable;
 
 std::vector<std::shared_ptr<TypedProcedure>> visit_fns(
     ASTNode root,
