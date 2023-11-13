@@ -160,7 +160,7 @@ TypedExpr visit_expr(
                 );
 
                 if (typed_args.size() != typed_procedure->params.size()) {
-                    throw CompileError(
+                    throw TypeMismatchError(
                         "Mismatched number of parameters for function call.",
                         id.line_no
                     );
@@ -169,7 +169,7 @@ TypedExpr visit_expr(
                 for (size_t i = 0; i < typed_args.size(); ++i) {
                     if ((*typed_args.at(i).nl_type)
                         != (*typed_procedure->params.at(i)->nl_type)) {
-                        throw CompileError(
+                        throw TypeMismatchError(
                             "Type mismatch of parameters for function call.",
                             id.line_no
                         );
@@ -213,7 +213,7 @@ TypedExpr visit_expr(
                     );
 
                     if (typed_args.size() != typed_procedure->params.size()) {
-                        throw CompileError(
+                        throw TypeMismatchError(
                             "Mismatched number of parameters for function call.",
                             fn_node.line_no
                         );
@@ -222,7 +222,7 @@ TypedExpr visit_expr(
                     for (size_t i = 0; i < typed_args.size(); ++i) {
                         if ((*typed_args.at(i).nl_type)
                             != (*typed_procedure->params.at(i)->nl_type)) {
-                            throw CompileError(
+                            throw TypeMismatchError(
                                 "Type mismatch of parameters for function call.",
                                 fn_node.line_no
                             );

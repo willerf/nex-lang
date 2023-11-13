@@ -94,67 +94,30 @@ compile(std::vector<std::string> input_file_paths) {
             auto tokens = scan(input);
             auto opt_ast_node = parse_earley(tokens, grammar);
             if (!opt_ast_node) {
-                std::cerr << "Failed to parse!" << std::endl;
+                std::cerr << "Failed to parse." << std::endl;
                 exit(1);
             }
             ASTNode ast_node = opt_ast_node.value();
             extract_symbols(ast_node, module_table);
             modules.push_back({input_file_path, ast_node});
         } catch (CompileError& compile_error) {
-            std::cerr << compile_error.what() << std::endl;
-
-            size_t line_error = compile_error.get_line_no();
-            size_t line_no = 1;
-            std::string line;
-            while (getline(buffer, line)) {
-                if (line_no == line_error) {
-                    line.erase(0, line.find_first_not_of(" \n\r\t"));
-                    std::cerr << "Line " << line_error << ": " << line
-                              << std::endl;
-                }
-                ++line_no;
-            }
+            compile_error.input_file_path = input_file_path;
+            throw;
         }
     }
 
     std::vector<std::shared_ptr<Procedure>> procedures;
     std::vector<std::shared_ptr<Code>> static_data;
     for (auto& [input_file_path, ast_node] : modules) {
-        std::vector<std::shared_ptr<TypedProcedure>> typed_ids;
+        std::vector<std::shared_ptr<TypedProcedure>> typed_procs;
         try {
-            typed_ids = generate(ast_node, static_data, module_table);
+            typed_procs = generate(ast_node, static_data, module_table);
         } catch (CompileError& compile_error) {
-            std::cerr << compile_error.what() << std::endl;
-
-            std::ifstream file {input_file_path};
-            if (!file) {
-                std::cerr << "Invalid file path: " << input_file_path
-                          << std::endl;
-                exit(1);
-            }
-            std::stringstream buffer;
-            buffer << file.rdbuf();
-
-            size_t line_error = compile_error.get_line_no();
-            size_t line_no = 1;
-            std::string line;
-            while (getline(buffer, line)) {
-                if (line_no == line_error) {
-                    line.erase(0, line.find_first_not_of(" \n\r\t"));
-                    std::cerr << "Line " << line_error << ": " << line
-                              << std::endl;
-                }
-                ++line_no;
-            }
+            compile_error.input_file_path = input_file_path;
+            throw;
         }
-        for (auto typed_id : typed_ids) {
-            if (auto typed_proc =
-                    std::dynamic_pointer_cast<TypedProcedure>(typed_id)) {
-                procedures.push_back(typed_proc->procedure);
-            } else {
-                std::cerr << "TODO!" << std::endl;
-                exit(1);
-            }
+        for (auto typed_proc : typed_procs) {
+            procedures.push_back(typed_proc->procedure);
         }
     }
 

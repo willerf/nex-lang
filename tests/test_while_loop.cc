@@ -10,7 +10,7 @@ static std::string file_name = "test_while_loop.bin";
 
 TEST_CASE("Test plus.", "[loops]") {
     std::string input =
-        "module main;"
+        "mod main;"
         "fn main(x: i32, y: i32) -> i32 {"
         "    let z: i32 = 0;"
         "    while (z < x) {"
@@ -19,7 +19,7 @@ TEST_CASE("Test plus.", "[loops]") {
         "    return z;"
         "}";
 
-    auto program = compile(input);
+    auto program = compile_test(input);
     write_file(file_name, program);
 
     REQUIRE(stoi(emulate(file_name, 10, 0)) == 10);

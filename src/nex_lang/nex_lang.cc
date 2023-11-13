@@ -163,7 +163,7 @@ DFA make_dfa() {
 }
 
 static std::map<std::string, Terminal> keywords = {
-    {"module", Terminal::MODULE},
+    {"mod", Terminal::MODULE},
     {"fn", Terminal::FN},
     {"let", Terminal::LET},
     {"if", Terminal::IF},

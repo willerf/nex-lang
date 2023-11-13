@@ -27,8 +27,33 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    auto program = compile(input_file_paths);
-    write_file(output_file_path, program);
+    try {
+        auto program = compile(input_file_paths);
+        write_file(output_file_path, program);
+    } catch (CompileError& compile_error) {
+        std::cerr << compile_error.what() << std::endl;
+
+        std::ifstream file {compile_error.input_file_path};
+        if (!file) {
+            std::cerr << "Invalid file path: " << compile_error.input_file_path
+                      << std::endl;
+            exit(1);
+        }
+        std::stringstream buffer;
+        buffer << file.rdbuf();
+        std::string input = buffer.str();
+
+        size_t line_error = compile_error.get_line_no();
+        size_t line_no = 1;
+        std::string line;
+        while (getline(buffer, line)) {
+            if (line_no == line_error) {
+                line.erase(0, line.find_first_not_of(" \n\r\t"));
+                std::cerr << "Line " << line_error << ": " << line << std::endl;
+            }
+            ++line_no;
+        }
+    }
 
     return 0;
 }
