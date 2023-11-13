@@ -93,7 +93,6 @@ std::shared_ptr<TypedProcedure> visit_fn(
         // make clone of symbol table to scope params
         SymbolTable symbol_table_params = symbol_table;
         for (auto typed_var : result->params) {
-            std::cout << typed_var->variable->name << std::endl;
             symbol_table_params[typed_var->variable->name] = typed_var;
         }
 
@@ -126,7 +125,6 @@ std::shared_ptr<TypedProcedure> visit_fn(
         // make clone of symbol table to scope params
         SymbolTable symbol_table_params = symbol_table;
         for (auto typed_var : result->params) {
-            std::cout << typed_var->variable->name << std::endl;
             symbol_table_params[typed_var->variable->name] = typed_var;
         }
 

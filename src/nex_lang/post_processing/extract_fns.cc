@@ -80,7 +80,6 @@ void extract_fn(ASTNode root, SymbolTable& symbol_table) {
 
         std::vector<std::shared_ptr<Variable>> params;
         for (auto typed_variable : typed_params) {
-            std::cout << typed_variable->variable->name << std::endl;
             params.push_back(typed_variable->variable);
         }
         result->procedure = std::make_shared<Procedure>(name, params);
@@ -111,7 +110,6 @@ void extract_fn(ASTNode root, SymbolTable& symbol_table) {
 
         std::vector<std::shared_ptr<Variable>> params;
         for (auto typed_variable : typed_params) {
-            std::cout << typed_variable->variable->name << std::endl;
             params.push_back(typed_variable->variable);
         }
         result->procedure = std::make_shared<Procedure>(name, params);
