@@ -93,6 +93,7 @@ std::shared_ptr<TypedProcedure> visit_fn(
         // make clone of symbol table to scope params
         SymbolTable symbol_table_params = symbol_table;
         for (auto typed_var : result->params) {
+            std::cout << typed_var->variable->name << std::endl;
             symbol_table_params[typed_var->variable->name] = typed_var;
         }
 
@@ -113,12 +114,19 @@ std::shared_ptr<TypedProcedure> visit_fn(
         ASTNode id = root.children.at(1);
         std::string name = id.lexeme;
 
-        // add identifier to symbol table
-        symbol_table[name] = result;
+        if (auto typed_proc =
+                std::dynamic_pointer_cast<TypedProcedure>(symbol_table.at(name)
+                )) {
+            result = typed_proc;
+        } else {
+            std::cerr << "Missing name from symbol extraction." << std::endl;
+            exit(1);
+        }
 
         // make clone of symbol table to scope params
         SymbolTable symbol_table_params = symbol_table;
         for (auto typed_var : result->params) {
+            std::cout << typed_var->variable->name << std::endl;
             symbol_table_params[typed_var->variable->name] = typed_var;
         }
 

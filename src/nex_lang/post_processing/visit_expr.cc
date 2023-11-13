@@ -189,6 +189,61 @@ TypedExpr visit_expr(
         } else {
             throw SymbolNotFoundError(name, id.line_no);
         }
+
+    } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::ID, Terminal::COLON, Terminal::COLON, Terminal::ID, Terminal::LPAREN, NonTerminal::optargs, Terminal::RPAREN}) {
+        ASTNode module_node = root.children.at(0);
+        std::string module_name = module_node.lexeme;
+
+        ASTNode fn_node = root.children.at(3);
+        std::string fn_name = fn_node.lexeme;
+
+        if (module_table.count(module_name)) {
+            auto module_symbol_table = module_table[module_name];
+            if (module_symbol_table.count(fn_name)) {
+                if (auto typed_procedure =
+                        std::dynamic_pointer_cast<TypedProcedure>(
+                            module_symbol_table[fn_name]
+                        )) {
+                    ASTNode optargs = root.children.at(5);
+                    std::vector<TypedExpr> typed_args = visit_optargs(
+                        optargs,
+                        symbol_table,
+                        module_table,
+                        static_data
+                    );
+
+                    if (typed_args.size() != typed_procedure->params.size()) {
+                        throw CompileError(
+                            "Mismatched number of parameters for function call.",
+                            fn_node.line_no
+                        );
+                    }
+
+                    for (size_t i = 0; i < typed_args.size(); ++i) {
+                        if ((*typed_args.at(i).nl_type)
+                            != (*typed_procedure->params.at(i)->nl_type)) {
+                            throw CompileError(
+                                "Type mismatch of parameters for function call.",
+                                fn_node.line_no
+                            );
+                        }
+                    }
+
+                    std::vector<std::shared_ptr<Code>> args;
+                    for (auto typed_arg : typed_args) {
+                        args.push_back(typed_arg.code);
+                    }
+                    result = TypedExpr {
+                        make_call(typed_procedure->procedure, args),
+                        typed_procedure->ret_type};
+                } else {
+                    throw SymbolNotFoundError(fn_name, fn_node.line_no);
+                }
+            } else {
+                throw SymbolNotFoundError(fn_name, fn_node.line_no);
+            }
+        }
+
     } else if (prod == std::vector<State> {NonTerminal::exprp8, NonTerminal::exprp8, Terminal::AS, NonTerminal::type}) {
         ASTNode expr = root.children.at(0);
         TypedExpr expr_code = visit_expr(
