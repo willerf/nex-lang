@@ -26,6 +26,7 @@ add_library(compiler_lib STATIC
     src/nex_lang/post_processing/visit_args.cc
     src/nex_lang/post_processing/visit_expr.cc
     src/nex_lang/post_processing/visit_fns.cc
+    src/nex_lang/post_processing/visit_imports.cc
     src/nex_lang/post_processing/visit_params.cc
     src/nex_lang/post_processing/visit_s.cc
     src/nex_lang/post_processing/visit_stmts.cc

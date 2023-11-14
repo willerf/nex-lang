@@ -12,6 +12,7 @@
 #include "state.h"
 #include "symbol_table.h"
 #include "visit_fns.h"
+#include "visit_imports.h"
 
 struct Code;
 
@@ -28,19 +29,21 @@ std::vector<std::shared_ptr<TypedProcedure>> visit_s(
         == std::vector<State> {
             NonTerminal::s,
             Terminal::BOFS,
-            Terminal::MODULE,
-            Terminal::ID,
-            Terminal::SEMI,
+            NonTerminal::module,
+            NonTerminal::imports,
             NonTerminal::fns,
             Terminal::EOFS}) {
         // extract functions of program
 
-        ASTNode module = root.children.at(2);
-        std::string name = module.lexeme;
+        ASTNode module = root.children.at(1);
+        std::string name = module.children.at(1).lexeme;
 
         SymbolTable symbol_table = module_table.at(name);
 
-        ASTNode fns = root.children.at(4);
+        ASTNode imports = root.children.at(2);
+        visit_imports(imports, symbol_table, module_table);
+
+        ASTNode fns = root.children.at(3);
         result = visit_fns(fns, symbol_table, module_table, static_data);
     } else {
         std::cerr << "Invalid production found while processing s."

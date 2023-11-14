@@ -1,4 +1,8 @@
-s BOFS MODULE ID SEMI fns EOFS
+s BOFS module imports fns EOFS
+module MODULE ID SEMI
+imports import imports
+imports
+import IMPORT ID SEMI
 fns fn fns
 fns fn
 fn FN ID LPAREN optparams RPAREN ARROW type stmtblock
@@ -57,7 +61,6 @@ exprp9 STRLITERAL
 exprp9 CHARLITERAL 
 exprp9 LPAREN expr RPAREN
 exprp9 ID LPAREN optargs RPAREN
-exprp9 ID COLON COLON ID LPAREN optargs RPAREN
 optargs args
 optargs
 args expr COMMA args

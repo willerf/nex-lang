@@ -23,19 +23,18 @@ void extract_s(ASTNode root, ModuleTable& module_table) {
         == std::vector<State> {
             NonTerminal::s,
             Terminal::BOFS,
-            Terminal::MODULE,
-            Terminal::ID,
-            Terminal::SEMI,
+            NonTerminal::module,
+            NonTerminal::imports,
             NonTerminal::fns,
             Terminal::EOFS}) {
         // extract functions of program
 
-        ASTNode module = root.children.at(2);
-        std::string name = module.lexeme;
+        ASTNode module = root.children.at(1);
+        std::string name = module.children.at(1).lexeme;
 
         SymbolTable symbol_table;
 
-        ASTNode fns = root.children.at(4);
+        ASTNode fns = root.children.at(3);
         extract_fns(fns, symbol_table);
 
         module_table[name] = symbol_table;

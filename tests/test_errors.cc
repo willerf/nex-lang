@@ -41,7 +41,7 @@ TEST_CASE("Test missing symbol error 2.", "[errors]") {
 
 TEST_CASE("Test missing symbol error 3.", "[errors]") {
     std::string input =
-        "mod a; fn main(x: i32, y: i32) -> i32 { return a::get(); }";
+        "mod a; fn main(x: i32, y: i32) -> i32 { return get(); }";
     REQUIRE_THROWS_AS(compile_test(input), SymbolNotFoundError);
 }
 

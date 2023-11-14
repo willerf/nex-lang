@@ -1,11 +1,13 @@
 
 mod main;
 
+import print;
+
 fn main(x: i32, y: i32) -> i32 {
     
-    print::println("Hello World!");
+    println("Hello World!");
     let word: *char = "Hello World Again!";
-    print::println(word);
+    println(word);
 
     return 0;
 }

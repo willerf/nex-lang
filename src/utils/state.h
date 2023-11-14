@@ -7,6 +7,7 @@ enum class Terminal {
     BOFS,
     EOFS,
     MODULE,
+    IMPORT,
     FN,
     ID,
     LPAREN,
@@ -61,6 +62,9 @@ enum class Terminal {
 
 enum class NonTerminal {
     s,
+    module,
+    imports,
+    import,
     fns,
     fn,
     optparams,
