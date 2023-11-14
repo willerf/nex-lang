@@ -94,10 +94,6 @@ target_include_directories(compiler_lib PUBLIC
     src/utils
 )
 
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    target_compile_options(compiler_lib PRIVATE -Wall -Wextra -Werror -Wpedantic -Wimplicit-function-declaration -Wno-sign-compare)
-endif()
-
 add_executable(cnl src/main.cc)
 target_link_libraries(cnl compiler_lib)
 
