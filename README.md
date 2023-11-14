@@ -16,6 +16,8 @@ NexLang is a custom systems programming language focused on providing strong con
 
 #### Example Print Implementation
 ```rs
+mod print;
+
 fn printchar(letter: char) {
     let print_addr: *char = (0 - 65524) as (*char);
     (*print_addr) = letter;
@@ -40,6 +42,8 @@ fn main(x: i32, y: i32) -> i32 {
 ```
 #### Example Power Implementation
 ```rs
+mod main;
+
 fn power(base: i32, exponent: i32) -> i32 {
     if (exponent == 1) {
         return base;
