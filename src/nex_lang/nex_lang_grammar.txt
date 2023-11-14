@@ -1,4 +1,4 @@
-s BOF fns EOF
+s BOFS MODULE ID SEMI fns EOFS
 fns fn fns
 fns fn
 fn FN ID LPAREN optparams RPAREN ARROW type stmtblock
@@ -57,6 +57,7 @@ exprp9 STRLITERAL
 exprp9 CHARLITERAL 
 exprp9 LPAREN expr RPAREN
 exprp9 ID LPAREN optargs RPAREN
+exprp9 ID COLON COLON ID LPAREN optargs RPAREN
 optargs args
 optargs
 args expr COMMA args

@@ -2,7 +2,6 @@
 #include <catch2/catch_test_macros.hpp>
 #include <string>
 
-#include "compile.h"
 #include "utils.h"
 #include "write_file.h"
 
@@ -10,11 +9,12 @@ static std::string file_name = "test_compile.bin";
 
 TEST_CASE("Test plus.", "[operators]") {
     std::string input =
+        "mod main;"
         "fn main(x: i32, y: i32) -> i32 {"
         "    return x + y;"
         "}";
 
-    auto program = compile(input);
+    auto program = compile_test(input);
     write_file(file_name, program);
 
     REQUIRE(stoi(emulate(file_name, 3, 5)) == 3 + 5);
@@ -26,11 +26,12 @@ TEST_CASE("Test plus.", "[operators]") {
 
 TEST_CASE("Test minus.", "[operators]") {
     std::string input =
+        "mod main;"
         "fn main(x: i32, y: i32) -> i32 {"
         "    return x - y;"
         "}";
 
-    auto program = compile(input);
+    auto program = compile_test(input);
     write_file(file_name, program);
 
     REQUIRE(stoi(emulate(file_name, 3, 5)) == 3 - 5);
@@ -42,11 +43,12 @@ TEST_CASE("Test minus.", "[operators]") {
 
 TEST_CASE("Test times.", "[operators]") {
     std::string input =
+        "mod main;"
         "fn main(x: i32, y: i32) -> i32 {"
         "    return x * y;"
         "}";
 
-    auto program = compile(input);
+    auto program = compile_test(input);
     write_file(file_name, program);
 
     REQUIRE(stoi(emulate(file_name, 3, 5)) == 3 * 5);
@@ -58,11 +60,12 @@ TEST_CASE("Test times.", "[operators]") {
 
 TEST_CASE("Test divide.", "[operators]") {
     std::string input =
+        "mod main;"
         "fn main(x: i32, y: i32) -> i32 {"
         "    return x / y;"
         "}";
 
-    auto program = compile(input);
+    auto program = compile_test(input);
     write_file(file_name, program);
 
     REQUIRE(stoi(emulate(file_name, 3, 5)) == 3 / 5);
@@ -74,11 +77,12 @@ TEST_CASE("Test divide.", "[operators]") {
 
 TEST_CASE("Test mod.", "[operators]") {
     std::string input =
+        "mod main;"
         "fn main(x: i32, y: i32) -> i32 {"
         "    return x % y;"
         "}";
 
-    auto program = compile(input);
+    auto program = compile_test(input);
     write_file(file_name, program);
 
     REQUIRE(stoi(emulate(file_name, 3, 5)) == 3 % 5);
@@ -90,11 +94,12 @@ TEST_CASE("Test mod.", "[operators]") {
 
 TEST_CASE("Test equal.", "[operators]") {
     std::string input =
+        "mod main;"
         "fn main(x: i32, y: i32) -> bool {"
         "    return x == y;"
         "}";
 
-    auto program = compile(input);
+    auto program = compile_test(input);
     write_file(file_name, program);
 
     REQUIRE(stoi(emulate(file_name, 4, 5)) == (4 == 5));
@@ -107,11 +112,12 @@ TEST_CASE("Test equal.", "[operators]") {
 
 TEST_CASE("Test not equal.", "[operators]") {
     std::string input =
+        "mod main;"
         "fn main(x: i32, y: i32) -> bool {"
         "    return x != y;"
         "}";
 
-    auto program = compile(input);
+    auto program = compile_test(input);
     write_file(file_name, program);
 
     REQUIRE(stoi(emulate(file_name, 4, 5)) == (4 != 5));
@@ -124,11 +130,12 @@ TEST_CASE("Test not equal.", "[operators]") {
 
 TEST_CASE("Test greater than.", "[operators]") {
     std::string input =
+        "mod main;"
         "fn main(x: i32, y: i32) -> bool {"
         "    return x > y;"
         "}";
 
-    auto program = compile(input);
+    auto program = compile_test(input);
     write_file(file_name, program);
 
     REQUIRE(stoi(emulate(file_name, 4, 5)) == (4 > 5));
@@ -141,11 +148,12 @@ TEST_CASE("Test greater than.", "[operators]") {
 
 TEST_CASE("Test greater than or equal to.", "[operators]") {
     std::string input =
+        "mod main;"
         "fn main(x: i32, y: i32) -> bool {"
         "    return x >= y;"
         "}";
 
-    auto program = compile(input);
+    auto program = compile_test(input);
     write_file(file_name, program);
 
     REQUIRE(stoi(emulate(file_name, 4, 5)) == (4 >= 5));
@@ -158,11 +166,12 @@ TEST_CASE("Test greater than or equal to.", "[operators]") {
 
 TEST_CASE("Test less than.", "[operators]") {
     std::string input =
+        "mod main;"
         "fn main(x: i32, y: i32) -> bool {"
         "    return x < y;"
         "}";
 
-    auto program = compile(input);
+    auto program = compile_test(input);
     write_file(file_name, program);
 
     REQUIRE(stoi(emulate(file_name, 4, 5)) == (4 < 5));
@@ -175,11 +184,12 @@ TEST_CASE("Test less than.", "[operators]") {
 
 TEST_CASE("Test less than or equal to.", "[operators]") {
     std::string input =
+        "mod main;"
         "fn main(x: i32, y: i32) -> bool {"
         "    return x <= y;"
         "}";
 
-    auto program = compile(input);
+    auto program = compile_test(input);
     write_file(file_name, program);
 
     REQUIRE(stoi(emulate(file_name, 4, 5)) == (4 <= 5));
@@ -192,11 +202,12 @@ TEST_CASE("Test less than or equal to.", "[operators]") {
 
 TEST_CASE("Test and.", "[operators]") {
     std::string input =
+        "mod main;"
         "fn main(x: bool, y: bool) -> bool {"
         "    return x && y;"
         "}";
 
-    auto program = compile(input);
+    auto program = compile_test(input);
     write_file(file_name, program);
 
     REQUIRE(stoi(emulate(file_name, 0, 0)) == (0 && 0));
@@ -210,11 +221,12 @@ TEST_CASE("Test and.", "[operators]") {
 
 TEST_CASE("Test or.", "[operators]") {
     std::string input =
+        "mod main;"
         "fn main(x: bool, y: bool) -> bool {"
         "    return x || y;"
         "}";
 
-    auto program = compile(input);
+    auto program = compile_test(input);
     write_file(file_name, program);
 
     REQUIRE(stoi(emulate(file_name, 0, 0)) == (0 || 0));
@@ -228,11 +240,12 @@ TEST_CASE("Test or.", "[operators]") {
 
 TEST_CASE("Test not.", "[operators]") {
     std::string input =
+        "mod main;"
         "fn main(x: bool, y: bool) -> bool {"
         "    return !x;"
         "}";
 
-    auto program = compile(input);
+    auto program = compile_test(input);
     write_file(file_name, program);
 
     REQUIRE(stoi(emulate(file_name, 0, 0)) == (!0));
@@ -243,6 +256,7 @@ TEST_CASE("Test not.", "[operators]") {
 
 TEST_CASE("Test ampersand and star.", "[operators]") {
     std::string input =
+        "mod main;"
         "fn test_func(x: *i32, y: i32) -> i32 {"
         "    return *x;"
         "}"
@@ -250,7 +264,7 @@ TEST_CASE("Test ampersand and star.", "[operators]") {
         "    return test_func(&x, y);"
         "}";
 
-    auto program = compile(input);
+    auto program = compile_test(input);
     write_file(file_name, program);
 
     REQUIRE(stoi(emulate(file_name, 15, 0)) == 15);

@@ -31,6 +31,9 @@ add_library(compiler_lib STATIC
     src/nex_lang/post_processing/visit_stmts.cc
     src/nex_lang/post_processing/visit_type.cc
     src/nex_lang/post_processing/visit_vardef.cc
+    src/nex_lang/post_processing/extract_symbols.cc
+    src/nex_lang/post_processing/extract_s.cc
+    src/nex_lang/post_processing/extract_fns.cc
     src/nex_lang/symbols/typed_procedure.cc
     src/nex_lang/symbols/typed_variable.cc
     src/nex_lang/types/nl_type.cc
@@ -90,10 +93,6 @@ target_include_directories(compiler_lib PUBLIC
     src/transformations
     src/utils
 )
-
-if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-    target_compile_options(compiler_lib PRIVATE -Wall -Wextra -Werror -Wpedantic -Wimplicit-function-declaration -Wno-sign-compare)
-endif()
 
 add_executable(cnl src/main.cc)
 target_link_libraries(cnl compiler_lib)

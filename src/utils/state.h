@@ -6,6 +6,7 @@
 enum class Terminal {
     BOFS,
     EOFS,
+    MODULE,
     FN,
     ID,
     LPAREN,

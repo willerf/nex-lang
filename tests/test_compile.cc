@@ -2,7 +2,6 @@
 #include <catch2/catch_test_macros.hpp>
 #include <string>
 
-#include "compile.h"
 #include "utils.h"
 #include "write_file.h"
 
@@ -10,6 +9,7 @@ static std::string file_name = "test_compile.bin";
 
 TEST_CASE("Test compile simple program", "[compile]") {
     std::string input =
+        "mod main;"
         "fn power(base: i32, exponent: i32) -> i32 {"
         "if (exponent == 1) {"
         "    return base;"
@@ -23,7 +23,7 @@ TEST_CASE("Test compile simple program", "[compile]") {
         "    return power(x, y);"
         "}";
 
-    auto program = compile(input);
+    auto program = compile_test(input);
     write_file(file_name, program);
 
     REQUIRE(stoi(emulate(file_name, 1, 10)) == 1);

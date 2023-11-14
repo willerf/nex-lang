@@ -6,6 +6,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <map>
 #include <set>
 #include <string>
 #include <variant>
@@ -15,7 +16,6 @@
 #include "bin_op.h"
 #include "block.h"
 #include "call.h"
-#include "compile_error.h"
 #include "define_label.h"
 #include "label.h"
 #include "nl_type.h"
@@ -54,6 +54,7 @@ TypedExpr visit_expr(
     ASTNode root,
     bool read_address,
     SymbolTable& symbol_table,
+    ModuleTable& module_table,
     std::vector<std::shared_ptr<Code>>& static_data
 ) {
     assert(
@@ -135,7 +136,13 @@ TypedExpr visit_expr(
             std::make_shared<NLTypePtr>(std::make_shared<NLTypeChar>())};
     } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN}) {
         ASTNode expr = root.children.at(1);
-        result = visit_expr(expr, read_address, symbol_table, static_data);
+        result = visit_expr(
+            expr,
+            read_address,
+            symbol_table,
+            module_table,
+            static_data
+        );
     } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::ID, Terminal::LPAREN, NonTerminal::optargs, Terminal::RPAREN}) {
         ASTNode id = root.children.at(0);
         std::string name = id.lexeme;
@@ -145,11 +152,15 @@ TypedExpr visit_expr(
                     std::dynamic_pointer_cast<TypedProcedure>(symbol_table[name]
                     )) {
                 ASTNode optargs = root.children.at(2);
-                std::vector<TypedExpr> typed_args =
-                    visit_optargs(optargs, symbol_table, static_data);
+                std::vector<TypedExpr> typed_args = visit_optargs(
+                    optargs,
+                    symbol_table,
+                    module_table,
+                    static_data
+                );
 
-                if (typed_args.size() != typed_procedure->param_types.size()) {
-                    throw CompileError(
+                if (typed_args.size() != typed_procedure->params.size()) {
+                    throw TypeMismatchError(
                         "Mismatched number of parameters for function call.",
                         id.line_no
                     );
@@ -157,8 +168,8 @@ TypedExpr visit_expr(
 
                 for (size_t i = 0; i < typed_args.size(); ++i) {
                     if ((*typed_args.at(i).nl_type)
-                        != (*typed_procedure->param_types.at(i))) {
-                        throw CompileError(
+                        != (*typed_procedure->params.at(i)->nl_type)) {
+                        throw TypeMismatchError(
                             "Type mismatch of parameters for function call.",
                             id.line_no
                         );
@@ -178,10 +189,70 @@ TypedExpr visit_expr(
         } else {
             throw SymbolNotFoundError(name, id.line_no);
         }
+
+    } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::ID, Terminal::COLON, Terminal::COLON, Terminal::ID, Terminal::LPAREN, NonTerminal::optargs, Terminal::RPAREN}) {
+        ASTNode module_node = root.children.at(0);
+        std::string module_name = module_node.lexeme;
+
+        ASTNode fn_node = root.children.at(3);
+        std::string fn_name = fn_node.lexeme;
+
+        if (module_table.count(module_name)) {
+            auto module_symbol_table = module_table[module_name];
+            if (module_symbol_table.count(fn_name)) {
+                if (auto typed_procedure =
+                        std::dynamic_pointer_cast<TypedProcedure>(
+                            module_symbol_table[fn_name]
+                        )) {
+                    ASTNode optargs = root.children.at(5);
+                    std::vector<TypedExpr> typed_args = visit_optargs(
+                        optargs,
+                        symbol_table,
+                        module_table,
+                        static_data
+                    );
+
+                    if (typed_args.size() != typed_procedure->params.size()) {
+                        throw TypeMismatchError(
+                            "Mismatched number of parameters for function call.",
+                            fn_node.line_no
+                        );
+                    }
+
+                    for (size_t i = 0; i < typed_args.size(); ++i) {
+                        if ((*typed_args.at(i).nl_type)
+                            != (*typed_procedure->params.at(i)->nl_type)) {
+                            throw TypeMismatchError(
+                                "Type mismatch of parameters for function call.",
+                                fn_node.line_no
+                            );
+                        }
+                    }
+
+                    std::vector<std::shared_ptr<Code>> args;
+                    for (auto typed_arg : typed_args) {
+                        args.push_back(typed_arg.code);
+                    }
+                    result = TypedExpr {
+                        make_call(typed_procedure->procedure, args),
+                        typed_procedure->ret_type};
+                } else {
+                    throw SymbolNotFoundError(fn_name, fn_node.line_no);
+                }
+            } else {
+                throw SymbolNotFoundError(fn_name, fn_node.line_no);
+            }
+        }
+
     } else if (prod == std::vector<State> {NonTerminal::exprp8, NonTerminal::exprp8, Terminal::AS, NonTerminal::type}) {
         ASTNode expr = root.children.at(0);
-        TypedExpr expr_code =
-            visit_expr(expr, read_address, symbol_table, static_data);
+        TypedExpr expr_code = visit_expr(
+            expr,
+            read_address,
+            symbol_table,
+            module_table,
+            static_data
+        );
 
         ASTNode type_node = root.children.at(2);
         std::shared_ptr<NLType> nl_type = visit_type(type_node);
@@ -191,7 +262,13 @@ TypedExpr visit_expr(
     else if (root.children.size() == 1 && std::holds_alternative<NonTerminal>(root.children.at(0).state) && expr_non_terminals.count(std::get<NonTerminal>(root.children.at(0).state))) {
         // recursively call into next operator precedence layer
         ASTNode expr = root.children.at(0);
-        result = visit_expr(expr, read_address, symbol_table, static_data);
+        result = visit_expr(
+            expr,
+            read_address,
+            symbol_table,
+            module_table,
+            static_data
+        );
     }
     else if (root.children.size() == 2 && std::holds_alternative<Terminal>(root.children.at(0).state) && std::holds_alternative<NonTerminal>(root.children.at(1).state) && expr_non_terminals.count(std::get<NonTerminal>(root.children.at(1).state))) {
         // extract unary operator
@@ -199,8 +276,13 @@ TypedExpr visit_expr(
         ASTNode expr = root.children.at(1);
 
         Terminal unary_op = std::get<Terminal>(lhs_op.state);
-        TypedExpr expr_code =
-            visit_expr(expr, read_address, symbol_table, static_data);
+        TypedExpr expr_code = visit_expr(
+            expr,
+            read_address,
+            symbol_table,
+            module_table,
+            static_data
+        );
         switch (unary_op) {
             case Terminal::NOT:
                 if ((*expr_code.nl_type) != NLTypeBool()) {
@@ -239,11 +321,21 @@ TypedExpr visit_expr(
         ASTNode mid = root.children.at(1);
         ASTNode rhs = root.children.at(2);
 
-        TypedExpr typed_lhs_code =
-            visit_expr(lhs, read_address, symbol_table, static_data);
+        TypedExpr typed_lhs_code = visit_expr(
+            lhs,
+            read_address,
+            symbol_table,
+            module_table,
+            static_data
+        );
         Terminal mid_op = std::get<Terminal>(mid.state);
-        TypedExpr typed_rhs_code =
-            visit_expr(rhs, read_address, symbol_table, static_data);
+        TypedExpr typed_rhs_code = visit_expr(
+            rhs,
+            read_address,
+            symbol_table,
+            module_table,
+            static_data
+        );
 
         std::shared_ptr<Code> lhs_code = typed_lhs_code.code;
         std::shared_ptr<Code> rhs_code = typed_rhs_code.code;

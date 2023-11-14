@@ -7,4 +7,5 @@
 
 #include "code.h"
 
-std::vector<std::shared_ptr<Code>> compile(std::string input);
+std::vector<std::shared_ptr<Code>>
+compile(std::vector<std::string> input_file_paths);

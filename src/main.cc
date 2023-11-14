@@ -7,13 +7,14 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
 
 #include "compile.h"
 #include "compile_error.h"
 #include "write_file.h"
 
 int main(int argc, char* argv[]) {
-    std::string input_file_path;
+    std::vector<std::string> input_file_paths;
     std::string output_file_path = "a.out";
     size_t i = 1;
     while (i < argc) {
@@ -22,24 +23,26 @@ int main(int argc, char* argv[]) {
             output_file_path = argv[i + 1];
             i += 2;
         } else {
-            input_file_path = argv[i];
+            input_file_paths.push_back(argv[i]);
             i += 1;
         }
     }
-    std::ifstream file {input_file_path};
-    if (!file) {
-        std::cerr << "Invalid file path: " << input_file_path << std::endl;
-        exit(1);
-    }
-    std::stringstream buffer;
-    buffer << file.rdbuf();
-    std::string input = buffer.str();
 
     try {
-        auto program = compile(input);
+        auto program = compile(input_file_paths);
         write_file(output_file_path, program);
     } catch (CompileError& compile_error) {
         std::cerr << compile_error.what() << std::endl;
+
+        std::ifstream file {compile_error.input_file_path};
+        if (!file) {
+            std::cerr << "Invalid file path: " << compile_error.input_file_path
+                      << std::endl;
+            exit(1);
+        }
+        std::stringstream buffer;
+        buffer << file.rdbuf();
+        std::string input = buffer.str();
 
         size_t line_error = compile_error.get_line_no();
         size_t line_no = 1;
@@ -52,5 +55,6 @@ int main(int argc, char* argv[]) {
             ++line_no;
         }
     }
+
     return 0;
 }
