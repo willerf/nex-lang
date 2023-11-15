@@ -34,13 +34,15 @@ std::shared_ptr<Code> assign_to_address(
          expr,
          make_sw(Reg::Result, offset, Reg::Scratch2)}
     );*/
-    std::shared_ptr<Variable> var = std::make_shared<Variable>("assign to addr");
-    return make_scope({var}, {
-        assign(var, addr),
-        expr,
-        make_read(Reg::Scratch, var),
-        make_sw(Reg::Result, offset, Reg::Scratch)
-    });
+    std::shared_ptr<Variable> var =
+        std::make_shared<Variable>("assign to addr");
+    return make_scope(
+        {var},
+        {assign(var, addr),
+         expr,
+         make_read(Reg::Scratch, var),
+         make_sw(Reg::Result, offset, Reg::Scratch)}
+    );
 }
 
 std::shared_ptr<Code> deref(std::shared_ptr<Code> expr, uint32_t offset) {

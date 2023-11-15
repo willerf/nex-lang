@@ -12,6 +12,7 @@
 #include "assembly.h"
 #include "ast_node.h"
 #include "block.h"
+#include "call.h"
 #include "if_stmt.h"
 #include "nl_type.h"
 #include "nl_type_bool.h"
@@ -29,7 +30,6 @@
 #include "visit_expr.h"
 #include "visit_vardef.h"
 #include "while_loop.h"
-#include "call.h"
 
 struct Variable;
 
@@ -221,12 +221,19 @@ std::shared_ptr<Code> visit_stmt(
             static_data
         );
 
-        std::shared_ptr<NLTypePtr> nl_type_ptr = std::dynamic_pointer_cast<NLTypePtr>(expr.nl_type);
+        std::shared_ptr<NLTypePtr> nl_type_ptr =
+            std::dynamic_pointer_cast<NLTypePtr>(expr.nl_type);
         if (!nl_type_ptr) {
-            throw TypeMismatchError("Cannot delete non-pointer type.", root.children.at(0).line_no);
+            throw TypeMismatchError(
+                "Cannot delete non-pointer type.",
+                root.children.at(0).line_no
+            );
         }
 
-        std::shared_ptr<TypedProcedure> typed_proc = std::dynamic_pointer_cast<TypedProcedure>(module_table.at("heap").at("heap_free"));
+        std::shared_ptr<TypedProcedure> typed_proc =
+            std::dynamic_pointer_cast<TypedProcedure>(
+                module_table.at("heap").at("heap_free")
+            );
         assert(typed_proc);
 
         result = make_call(typed_proc->procedure, {expr.code});

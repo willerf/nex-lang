@@ -1,9 +1,9 @@
 
 #pragma once
 
+#include "module_table.h"
 #include "symbol_table.h"
 #include "typed_expr.h"
-#include "module_table.h"
 
 struct ASTNode;
 struct Code;
@@ -15,4 +15,3 @@ TypedExpr visit_typeinit(
     ModuleTable& module_table,
     std::vector<std::shared_ptr<Code>>& static_data
 );
-

@@ -84,11 +84,13 @@ compile(std::vector<std::string> input_file_paths) {
     std::vector<std::pair<std::string, ASTNode>> modules;
     ModuleTable module_table;
 
-
-    std::shared_ptr<Label> heap_start_label = std::make_shared<Label>("heap start");
-    std::shared_ptr<Code> heap_start = make_block({make_lis(Reg::Result), make_use(heap_start_label)});
+    std::shared_ptr<Label> heap_start_label =
+        std::make_shared<Label>("heap start");
+    std::shared_ptr<Code> heap_start =
+        make_block({make_lis(Reg::Result), make_use(heap_start_label)});
     std::shared_ptr<Code> heap_end = int_literal(8096);
-    std::shared_ptr<TypedProcedure> heap_allocate = make_heap_allocate(heap_start, heap_end);
+    std::shared_ptr<TypedProcedure> heap_allocate =
+        make_heap_allocate(heap_start, heap_end);
     std::shared_ptr<TypedProcedure> heap_free = make_heap_free(heap_start);
     SymbolTable heap_module;
     heap_module["heap_allocate"] = heap_allocate;
@@ -135,7 +137,7 @@ compile(std::vector<std::string> input_file_paths) {
             procedures.push_back(typed_proc->procedure);
         }
     }
-    
+
     procedures.push_back(heap_allocate->procedure);
     procedures.push_back(heap_free->procedure);
 
@@ -166,7 +168,6 @@ compile(std::vector<std::string> input_file_paths) {
     );
     procedures.insert(procedures.begin(), start_proc);
 
-
     for (auto proc : procedures) {
         compile_procedure(proc, param_chunks);
     }
@@ -175,7 +176,11 @@ compile(std::vector<std::string> input_file_paths) {
         all_code.push_back(proc->code);
     }
 
-    auto program = make_block({make_block(all_code), make_block(static_data), make_define(heap_start_label)});
+    auto program = make_block(
+        {make_block(all_code),
+         make_block(static_data),
+         make_define(heap_start_label)}
+    );
 
     Flatten flatten;
     program->accept(flatten);

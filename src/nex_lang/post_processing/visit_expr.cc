@@ -193,7 +193,13 @@ TypedExpr visit_expr(
 
     } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::NEW, NonTerminal::typeinit}) {
         ASTNode typeinit = root.children.at(1);
-        return visit_typeinit(typeinit, read_address, symbol_table, module_table, static_data);
+        return visit_typeinit(
+            typeinit,
+            read_address,
+            symbol_table,
+            module_table,
+            static_data
+        );
     } else if (prod == std::vector<State> {NonTerminal::exprp8, NonTerminal::exprp8, Terminal::AS, NonTerminal::type}) {
         ASTNode expr = root.children.at(0);
         TypedExpr expr_code = visit_expr(
