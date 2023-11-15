@@ -20,6 +20,7 @@ add_library(compiler_lib STATIC
     src/lex_parse/scanning.cc
     src/memory_management/chunk.cc
     src/memory_management/stack.cc
+    src/memory_management/heap.cc
     src/nex_lang/nex_lang.cc
     src/nex_lang/post_processing/post_processing.cc
     src/nex_lang/post_processing/symbol_table.cc
@@ -31,6 +32,7 @@ add_library(compiler_lib STATIC
     src/nex_lang/post_processing/visit_s.cc
     src/nex_lang/post_processing/visit_stmts.cc
     src/nex_lang/post_processing/visit_type.cc
+    src/nex_lang/post_processing/visit_typeinit.cc
     src/nex_lang/post_processing/visit_vardef.cc
     src/nex_lang/post_processing/extract_symbols.cc
     src/nex_lang/post_processing/extract_s.cc

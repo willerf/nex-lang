@@ -34,6 +34,7 @@
 #include "use_label.h"
 #include "visit_args.h"
 #include "visit_type.h"
+#include "visit_typeinit.h"
 #include "word.h"
 
 struct Code;
@@ -189,6 +190,10 @@ TypedExpr visit_expr(
         } else {
             throw SymbolNotFoundError(name, id.line_no);
         }
+
+    } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::NEW, NonTerminal::typeinit}) {
+        ASTNode typeinit = root.children.at(1);
+        return visit_typeinit(typeinit, read_address, symbol_table, module_table, static_data);
     } else if (prod == std::vector<State> {NonTerminal::exprp8, NonTerminal::exprp8, Terminal::AS, NonTerminal::type}) {
         ASTNode expr = root.children.at(0);
         TypedExpr expr_code = visit_expr(

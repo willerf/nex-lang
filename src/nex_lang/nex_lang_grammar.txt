@@ -15,6 +15,7 @@ vardef ID COLON type
 type I32
 type BOOL
 type CHAR
+type NONE
 type STAR type
 type LPAREN type RPAREN
 stmtblock LBRACE stmts RBRACE
@@ -27,6 +28,7 @@ stmt IF LPAREN expr RPAREN stmtblock ELSE stmtblock
 stmt IF LPAREN expr RPAREN stmtblock 
 stmt WHILE LPAREN expr RPAREN stmtblock
 stmt RET expr SEMI
+stmt DELETE expr SEMI
 expr exprp1
 exprp1 exprp2
 exprp1 exprp1 OR exprp2
@@ -61,7 +63,10 @@ exprp9 STRLITERAL
 exprp9 CHARLITERAL 
 exprp9 LPAREN expr RPAREN
 exprp9 ID LPAREN optargs RPAREN
+exprp9 NEW typeinit
 optargs args
 optargs
 args expr COMMA args
 args expr
+typeinit type
+typeinit type LBRACKET expr RBRACKET

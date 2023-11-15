@@ -5,6 +5,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <memory>
 #include <string>
 #include <variant>
 
@@ -14,6 +15,8 @@
 #include "if_stmt.h"
 #include "nl_type.h"
 #include "nl_type_bool.h"
+#include "nl_type_none.h"
+#include "nl_type_ptr.h"
 #include "operators.h"
 #include "pseudo_assembly.h"
 #include "reg.h"
@@ -26,6 +29,7 @@
 #include "visit_expr.h"
 #include "visit_vardef.h"
 #include "while_loop.h"
+#include "call.h"
 
 struct Variable;
 
@@ -63,7 +67,7 @@ std::shared_ptr<Code> visit_stmt(
 
         if ((*typed_var->nl_type) != (*expr.nl_type)) {
             throw TypeMismatchError(
-                "Cannot assign expression of type'" + expr.nl_type->to_string()
+                "Cannot assign expression of type '" + expr.nl_type->to_string()
                     + "' to left hand side of type '"
                     + typed_var->nl_type->to_string() + "'.",
                 root.children.at(2).line_no
@@ -82,7 +86,7 @@ std::shared_ptr<Code> visit_stmt(
 
         if ((*mem_address.nl_type) != (*code.nl_type)) {
             throw TypeMismatchError(
-                "Cannot assign expression of type'" + code.nl_type->to_string()
+                "Cannot assign expression of type '" + code.nl_type->to_string()
                     + "' to left hand side of type '"
                     + mem_address.nl_type->to_string() + "'.",
                 root.children.at(1).line_no
@@ -206,6 +210,26 @@ std::shared_ptr<Code> visit_stmt(
             );
         }
         result = std::make_shared<RetStmt>(expr.code);
+    } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::DELETE, NonTerminal::expr, Terminal::SEMI}) {
+        // extract return statements
+        ASTNode expr_node = root.children.at(1);
+        TypedExpr expr = visit_expr(
+            expr_node,
+            false,
+            symbol_table,
+            module_table,
+            static_data
+        );
+
+        std::shared_ptr<NLTypePtr> nl_type_ptr = std::dynamic_pointer_cast<NLTypePtr>(expr.nl_type);
+        if (!nl_type_ptr) {
+            throw TypeMismatchError("Cannot delete non-pointer type.", root.children.at(0).line_no);
+        }
+
+        std::shared_ptr<TypedProcedure> typed_proc = std::dynamic_pointer_cast<TypedProcedure>(module_table.at("heap").at("heap_free"));
+        assert(typed_proc);
+
+        result = make_call(typed_proc->procedure, {expr.code});
     } else {
         std::cerr << "Invalid production found while processing stmt."
                   << std::endl;
