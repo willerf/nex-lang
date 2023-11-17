@@ -22,10 +22,8 @@ std::shared_ptr<Code> init_heap(std::shared_ptr<Code> heap_start) {
     );
 }
 
-std::shared_ptr<TypedProcedure> make_heap_allocate(
-    std::shared_ptr<Code> heap_start,
-    std::shared_ptr<Code> heap_end
-) {
+std::shared_ptr<TypedProcedure>
+make_heap_allocate(std::shared_ptr<Code> heap_start) {
     std::shared_ptr<Variable> num_bytes =
         std::make_shared<Variable>("num bytes to heap allocate");
     std::shared_ptr<Variable> result =

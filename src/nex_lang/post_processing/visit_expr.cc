@@ -210,7 +210,7 @@ TypedExpr visit_expr(
                 ASTNode expr_node = root.children.at(2);
                 TypedExpr expr = visit_expr(
                     expr_node,
-                    read_address,
+                    false,
                     symbol_table,
                     module_table,
                     static_data

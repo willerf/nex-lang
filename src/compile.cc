@@ -88,9 +88,8 @@ compile(std::vector<std::string> input_file_paths) {
         std::make_shared<Label>("heap start");
     std::shared_ptr<Code> heap_start =
         make_block({make_lis(Reg::Result), make_use(heap_start_label)});
-    std::shared_ptr<Code> heap_end = int_literal(8096);
     std::shared_ptr<TypedProcedure> heap_allocate =
-        make_heap_allocate(heap_start, heap_end);
+        make_heap_allocate(heap_start);
     std::shared_ptr<TypedProcedure> heap_free = make_heap_free(heap_start);
     SymbolTable heap_module;
     heap_module["heap_allocate"] = heap_allocate;
