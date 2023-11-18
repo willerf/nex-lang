@@ -1,6 +1,9 @@
 
 #pragma once
 
+#include <memory>
+#include <vector>
+
 #include "module_table.h"
 #include "symbol_table.h"
 #include "typed_expr.h"

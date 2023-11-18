@@ -5,7 +5,6 @@
 #include <fstream>
 #include <iostream>
 #include <map>
-#include <optional>
 #include <span>
 #include <sstream>
 #include <string>
@@ -23,7 +22,6 @@
 #include "entry_exit.h"
 #include "extract_symbols.h"
 #include "flatten.h"
-#include "grammar.h"
 #include "module_table.h"
 #include "nex_lang_parsing.h"
 #include "nex_lang_scanning.h"

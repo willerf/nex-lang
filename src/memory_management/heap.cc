@@ -1,22 +1,27 @@
 
 #include "heap.h"
 
+#include <stdint.h>
+
+#include <vector>
+
 #include "assembly.h"
 #include "beq_label.h"
 #include "bin_op.h"
 #include "block.h"
 #include "define_label.h"
 #include "if_stmt.h"
+#include "label.h"
 #include "nl_type_i32.h"
 #include "nl_type_none.h"
 #include "operators.h"
+#include "procedure.h"
 #include "pseudo_assembly.h"
 #include "reg.h"
 #include "scope.h"
-#include "symbol_table.h"
-#include "use_label.h"
+#include "typed_variable.h"
 #include "var_access.h"
-#include "while_loop.h"
+#include "variable.h"
 
 std::shared_ptr<Code> init_heap(std::shared_ptr<Code> heap_start) {
     return make_block(

@@ -5,6 +5,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <map>
 #include <memory>
 #include <string>
 #include <variant>
@@ -16,7 +17,6 @@
 #include "if_stmt.h"
 #include "nl_type.h"
 #include "nl_type_bool.h"
-#include "nl_type_none.h"
 #include "nl_type_ptr.h"
 #include "operators.h"
 #include "pseudo_assembly.h"

@@ -9,7 +9,6 @@
 #include <set>
 #include <string>
 #include <string_view>
-#include <variant>
 
 #include "scanning.h"
 #include "state.h"

@@ -1,46 +1,18 @@
 
-#include <stdint.h>
-#include <stdlib.h>
-
-#include <fstream>
-#include <iostream>
 #include <map>
-#include <optional>
-#include <span>
-#include <sstream>
-#include <string>
-#include <utility>
+#include <memory>
+#include <vector>
 
-#include "assembly.h"
-#include "ast_node.h"
-#include "block.h"
-#include "call.h"
 #include "chunk.h"
-#include "compile.h"
-#include "compile_error.h"
-#include "define_label.h"
 #include "elim_calls.h"
 #include "elim_if_stmts.h"
-#include "elim_labels.h"
 #include "elim_ret_stmts.h"
 #include "elim_scopes.h"
 #include "elim_vars_proc.h"
 #include "entry_exit.h"
-#include "extract_symbols.h"
-#include "flatten.h"
-#include "grammar.h"
-#include "heap.h"
-#include "module_table.h"
-#include "parse_earley.h"
-#include "post_processing.h"
-#include "procedure.h"
-#include "pseudo_assembly.h"
-#include "reg.h"
-#include "use_label.h"
-#include "word.h"
 
-struct TypedProcedure;
 struct Variable;
+struct Procedure;
 
 void compile_procedure(
     std::shared_ptr<Procedure> proc,

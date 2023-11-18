@@ -1,20 +1,15 @@
 #include "nex_lang_parsing.h"
 
-#include <stdlib.h>
-
-#include <functional>
-#include <iostream>
 #include <map>
 #include <optional>
-#include <set>
-#include <string>
-#include <string_view>
 #include <variant>
+#include <vector>
 
 #include "compile_error.h"
 #include "parse_earley.h"
-#include "scanning.h"
 #include "state.h"
+
+struct Token;
 
 static const std::map<NonTerminal, std::vector<Production>> productions = {
     {NonTerminal::s,

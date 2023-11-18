@@ -1,8 +1,17 @@
 
 #include "visit_imports.h"
 
+#include <stdlib.h>
+
 #include <cassert>
 #include <iostream>
+#include <memory>
+#include <string>
+#include <variant>
+#include <vector>
+
+#include "ast_node.h"
+#include "state.h"
 
 void visit_imports(
     ASTNode root,

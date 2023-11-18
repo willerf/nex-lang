@@ -5,6 +5,8 @@
 #include "module_table.h"
 #include "symbol_table.h"
 
+struct ASTNode;
+
 void visit_imports(
     ASTNode root,
     SymbolTable& symbol_table,

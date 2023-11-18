@@ -2,7 +2,9 @@
 #pragma once
 
 #include <memory>
+#include <string>
 
+#include "code.h"
 #include "symbol_table.h"
 #include "typed_procedure.h"
 

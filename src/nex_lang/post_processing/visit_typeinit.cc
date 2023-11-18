@@ -1,17 +1,26 @@
 
 #include "visit_typeinit.h"
 
+#include <stdlib.h>
+
 #include <cassert>
 #include <iostream>
+#include <map>
+#include <string>
+#include <variant>
 
 #include "ast_node.h"
 #include "bin_op.h"
+#include "block.h"
 #include "call.h"
+#include "nl_type.h"
 #include "nl_type_i32.h"
 #include "nl_type_ptr.h"
 #include "operators.h"
 #include "pseudo_assembly.h"
+#include "state.h"
 #include "type_mismatch_error.h"
+#include "typed_procedure.h"
 #include "visit_expr.h"
 #include "visit_type.h"
 

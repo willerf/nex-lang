@@ -4,7 +4,6 @@
 #include <span>
 #include <string>
 
-#include "grammar.h"
 #include "nex_lang_parsing.h"
 #include "nex_lang_scanning.h"
 

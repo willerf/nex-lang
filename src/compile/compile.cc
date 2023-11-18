@@ -7,7 +7,6 @@
 #include <fstream>
 #include <iostream>
 #include <map>
-#include <optional>
 #include <span>
 #include <sstream>
 #include <string>
@@ -21,29 +20,23 @@
 #include "compile_error.h"
 #include "compile_procedure.h"
 #include "define_label.h"
-#include "elim_calls.h"
-#include "elim_if_stmts.h"
 #include "elim_labels.h"
-#include "elim_ret_stmts.h"
-#include "elim_scopes.h"
-#include "elim_vars_proc.h"
-#include "entry_exit.h"
 #include "extract_symbols.h"
 #include "flatten.h"
-#include "grammar.h"
 #include "heap.h"
+#include "label.h"
 #include "module_table.h"
 #include "nex_lang_parsing.h"
 #include "nex_lang_scanning.h"
-#include "parse_earley.h"
 #include "post_processing.h"
 #include "procedure.h"
 #include "pseudo_assembly.h"
 #include "reg.h"
+#include "symbol_table.h"
+#include "typed_procedure.h"
 #include "use_label.h"
 #include "word.h"
 
-struct TypedProcedure;
 struct Variable;
 
 static uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
