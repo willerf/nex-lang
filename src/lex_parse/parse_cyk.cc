@@ -19,10 +19,10 @@ static std::optional<std::vector<ASTNode>> recur(
     int64_t from,
     int64_t length,
     std::span<Token>& input,
-    Grammar& grammar,
+    const Grammar& grammar,
     MemoMap& memo_map
 ) {
-    if (memo_map.count(MemoKey {lhs, from, length})) {
+    if (memo_map.contains(MemoKey {lhs, from, length})) {
         return memo_map[MemoKey {lhs, from, length}];
     }
     memo_map[MemoKey {lhs, from, length}] = std::nullopt;
@@ -33,7 +33,7 @@ static std::optional<std::vector<ASTNode>> recur(
         } else {
             return std::vector<ASTNode> {};
         }
-    } else if (std::holds_alternative<Terminal>(lhs.front()) && grammar.terminals.count(std::get<Terminal>(lhs.front()))) {
+    } else if (std::holds_alternative<Terminal>(lhs.front())) {
         if (input[from].kind == std::get<Terminal>(lhs.front())) {
             auto sub_tree = recur(
                 lhs.subspan(1),
@@ -51,8 +51,8 @@ static std::optional<std::vector<ASTNode>> recur(
                 return result;
             }
         }
-    } else if (lhs.size() == 1 && std::holds_alternative<NonTerminal>(lhs.front()) && grammar.non_terminals.count(std::get<NonTerminal>(lhs.front()))) {
-        for (auto& prod :
+    } else if (lhs.size() == 1 && std::holds_alternative<NonTerminal>(lhs.front())) {
+        for (auto prod :
              grammar.productions.at(std::get<NonTerminal>(lhs.front()))) {
             auto sub_tree =
                 recur(prod.rhs, from, length, input, grammar, memo_map);
@@ -93,7 +93,8 @@ static std::optional<std::vector<ASTNode>> recur(
     return std::nullopt;
 }
 
-std::optional<ASTNode> parse_cyk(std::span<Token> input, Grammar& grammar) {
+std::optional<ASTNode>
+parse_cyk(std::span<Token> input, const Grammar& grammar) {
     MemoMap memo_map;
     std::vector<State> lhs = {grammar.start};
     std::optional<std::vector<ASTNode>> result =

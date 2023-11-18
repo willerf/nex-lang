@@ -1,6 +1,4 @@
 
-#include "compile.h"
-
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -18,6 +16,7 @@
 #include "block.h"
 #include "call.h"
 #include "chunk.h"
+#include "compile.h"
 #include "compile_error.h"
 #include "define_label.h"
 #include "elim_calls.h"
@@ -32,7 +31,6 @@
 #include "grammar.h"
 #include "heap.h"
 #include "module_table.h"
-#include "nex_lang.h"
 #include "parse_earley.h"
 #include "post_processing.h"
 #include "procedure.h"
@@ -76,4 +74,3 @@ void compile_procedure(
     ElimVarsProc elim_vars_proc(local_vars_chunk, param_chunk, proc->param_ptr);
     proc->code = proc->code->accept(elim_vars_proc);
 }
-

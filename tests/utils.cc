@@ -25,8 +25,8 @@
 #include "flatten.h"
 #include "grammar.h"
 #include "module_table.h"
-#include "nex_lang.h"
-#include "parse_earley.h"
+#include "nex_lang_parsing.h"
+#include "nex_lang_scanning.h"
 #include "post_processing.h"
 #include "procedure.h"
 #include "pseudo_assembly.h"
@@ -67,20 +67,14 @@ std::string emulate(std::string file_name, int32_t input1, int32_t input2) {
 }
 
 std::vector<std::shared_ptr<Code>> compile_test(std::string input) {
-    Grammar grammar = make_grammar();
     auto tokens = scan(input);
-    auto ast_node = parse_earley(tokens, grammar);
-
-    if (!ast_node) {
-        std::cerr << "Failed to parse!" << std::endl;
-        exit(1);
-    }
+    auto ast_node = parse(tokens);
 
     ModuleTable module_table;
-    extract_symbols(ast_node.value(), module_table);
+    extract_symbols(ast_node, module_table);
 
     std::vector<std::shared_ptr<Code>> static_data;
-    auto typed_ids = generate(ast_node.value(), static_data, module_table);
+    auto typed_ids = generate(ast_node, static_data, module_table);
     std::vector<std::shared_ptr<Procedure>> procedures;
     for (auto typed_id : typed_ids) {
         if (auto typed_proc =

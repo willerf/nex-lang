@@ -9,6 +9,10 @@ std::string state::to_string(Terminal terminal) {
             return "BOFS";
         case Terminal::EOFS:
             return "EOFS";
+        case Terminal::MODULE:
+            return "MODULE";
+        case Terminal::IMPORT:
+            return "IMPORT";
         case Terminal::FN:
             return "FN";
         case Terminal::ID:
@@ -23,18 +27,32 @@ std::string state::to_string(Terminal terminal) {
             return "LBRACE";
         case Terminal::RBRACE:
             return "RBRACE";
+        case Terminal::LBRACKET:
+            return "LBRACKET";
+        case Terminal::RBRACKET:
+            return "RBRACKET";
         case Terminal::COMMA:
             return "COMMA";
         case Terminal::COLON:
             return "COLON";
         case Terminal::AS:
             return "AS";
+        case Terminal::NEW:
+            return "NEW";
+        case Terminal::DELETE:
+            return "DELETE";
         case Terminal::I32:
             return "I32";
         case Terminal::BOOL:
             return "BOOL";
         case Terminal::CHAR:
             return "CHAR";
+        case Terminal::NONE:
+            return "NONE";
+        case Terminal::TRUE:
+            return "TRUE";
+        case Terminal::FALSE:
+            return "FALSE";
         case Terminal::LET:
             return "LET";
         case Terminal::ASSIGN:
@@ -83,16 +101,22 @@ std::string state::to_string(Terminal terminal) {
             return "NOT";
         case Terminal::NUM:
             return "NUM";
-        case Terminal::CHARLITERAL:
-            return "CHARLITERAL";
+        case Terminal::STRLITERALNF:
+            return "STRLITERALNF";
+        case Terminal::CHARLITERALNF:
+            return "CHARLITERALNF";
         case Terminal::STRLITERAL:
             return "STRLITERAL";
+        case Terminal::CHARLITERAL:
+            return "CHARLITERAL";
+        case Terminal::ZERO:
+            return "ZERO";
         case Terminal::SPACE:
             return "SPACE";
-        case Terminal::NEWLINE:
-            return "NEWLINE";
         case Terminal::CARRIAGERETURN:
             return "CARRIAGERETURN";
+        case Terminal::NEWLINE:
+            return "NEWLINE";
         case Terminal::TAB:
             return "TAB";
         case Terminal::COMMENT:
@@ -108,6 +132,12 @@ std::string state::to_string(NonTerminal non_terminal) {
     switch (non_terminal) {
         case NonTerminal::s:
             return "s";
+        case NonTerminal::module:
+            return "module";
+        case NonTerminal::imports:
+            return "imports";
+        case NonTerminal::import:
+            return "import";
         case NonTerminal::fns:
             return "fns";
         case NonTerminal::fn:
@@ -120,6 +150,8 @@ std::string state::to_string(NonTerminal non_terminal) {
             return "vardef";
         case NonTerminal::type:
             return "type";
+        case NonTerminal::stmtblock:
+            return "stmtblock";
         case NonTerminal::stmts:
             return "stmts";
         case NonTerminal::stmt:
@@ -144,6 +176,8 @@ std::string state::to_string(NonTerminal non_terminal) {
             return "exprp8";
         case NonTerminal::exprp9:
             return "exprp9";
+        case NonTerminal::typeinit:
+            return "typeinit";
         case NonTerminal::optargs:
             return "optargs";
         case NonTerminal::args:

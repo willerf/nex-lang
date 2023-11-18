@@ -33,7 +33,8 @@
 #include "grammar.h"
 #include "heap.h"
 #include "module_table.h"
-#include "nex_lang.h"
+#include "nex_lang_parsing.h"
+#include "nex_lang_scanning.h"
 #include "parse_earley.h"
 #include "post_processing.h"
 #include "procedure.h"
@@ -77,14 +78,8 @@ compile(std::vector<std::string> input_file_paths) {
         buffer << file.rdbuf();
         std::string input = buffer.str();
         try {
-            Grammar grammar = make_grammar();
             auto tokens = scan(input);
-            auto opt_ast_node = parse_earley(tokens, grammar);
-            if (!opt_ast_node) {
-                std::cerr << "Failed to parse." << std::endl;
-                exit(1);
-            }
-            ASTNode ast_node = opt_ast_node.value();
+            auto ast_node = parse(tokens);
             extract_symbols(ast_node, module_table);
             modules.push_back({input_file_path, ast_node});
         } catch (CompileError& compile_error) {
@@ -163,4 +158,3 @@ compile(std::vector<std::string> input_file_paths) {
     auto program3 = elim_labels(program2);
     return program3;
 }
-

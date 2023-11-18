@@ -12,4 +12,5 @@
 struct Grammar;
 struct Token;
 
-std::optional<ASTNode> parse_cyk(std::span<Token> input, Grammar& grammar);
+std::optional<ASTNode>
+parse_cyk(std::span<Token> input, const Grammar& grammar);

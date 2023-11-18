@@ -8,13 +8,13 @@
 
 #include "catch2/matchers/catch_matchers.hpp"
 #include "dfa.h"
-#include "nex_lang.h"
+#include "nex_lang_scanning.h"
 #include "scanning.h"
 #include "state.h"
 #include "token.h"
 
 TEST_CASE("Test scanning various symbols", "[scanning]") {
-    DFA dfa = make_dfa();
+    DFA dfa = make_nex_lang_dfa();
     std::vector<Token> tokens;
 
     tokens = maximal_munch_scan("->", dfa);
@@ -26,7 +26,7 @@ TEST_CASE("Test scanning various symbols", "[scanning]") {
 }
 
 TEST_CASE("Test scanning numbers", "[scanning]") {
-    DFA dfa = make_dfa();
+    DFA dfa = make_nex_lang_dfa();
     std::vector<Token> tokens;
 
     tokens = maximal_munch_scan("1 2 3 15 n72 0 51243 2", dfa);

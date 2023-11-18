@@ -5,12 +5,10 @@
 #include <string>
 
 #include "grammar.h"
-#include "nex_lang.h"
-#include "parse_earley.h"
+#include "nex_lang_parsing.h"
+#include "nex_lang_scanning.h"
 
 TEST_CASE("Test parsing lang", "[parser]") {
-    Grammar grammar = make_grammar();
-
     std::string input =
         "mod main;"
         "fn max(x: i32, y: i32) -> i32 {"
@@ -27,7 +25,5 @@ TEST_CASE("Test parsing lang", "[parser]") {
         "   let z: i32 = max(5, 12);"
         "}";
     auto tokens = scan(input);
-    auto ast_node = parse_earley(tokens, grammar);
-
-    // std::cout << ast_node->to_string(0) << std::endl;
+    auto ast_node = parse(tokens);
 }

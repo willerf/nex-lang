@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "catch2/matchers/catch_matchers.hpp"
-#include "nex_lang.h"
+#include "nex_lang_scanning.h"
 #include "state.h"
 #include "token.h"
 

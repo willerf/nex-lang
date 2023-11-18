@@ -22,7 +22,8 @@ add_library(compiler_lib STATIC
     src/memory_management/chunk.cc
     src/memory_management/stack.cc
     src/memory_management/heap.cc
-    src/nex_lang/nex_lang.cc
+    src/nex_lang/nex_lang_scanning.cc
+    src/nex_lang/nex_lang_parsing.cc
     src/nex_lang/post_processing/post_processing.cc
     src/nex_lang/post_processing/symbol_table.cc
     src/nex_lang/post_processing/visit_args.cc

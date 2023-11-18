@@ -28,10 +28,10 @@ static std::optional<std::vector<ASTNode>> search_sets(
     std::span<Token>& input,
     std::vector<Production>& productions,
     std::vector<std::vector<CompleteEarleyItem>>& complete_sets,
-    Grammar& grammar,
+    const Grammar& grammar,
     MemoMap& memo_map
 ) {
-    if (memo_map.count(MemoKey {lhs, from, length})) {
+    if (memo_map.contains(MemoKey {lhs, from, length})) {
         return memo_map[MemoKey {lhs, from, length}];
     }
     memo_map[MemoKey {lhs, from, length}] = std::nullopt;
@@ -42,7 +42,7 @@ static std::optional<std::vector<ASTNode>> search_sets(
         } else {
             return std::vector<ASTNode> {};
         }
-    } else if (std::holds_alternative<Terminal>(lhs.front()) && grammar.terminals.count(std::get<Terminal>(lhs.front()))) {
+    } else if (std::holds_alternative<Terminal>(lhs.front())) {
         if (input[from].kind == std::get<Terminal>(lhs.front())) {
             auto sub_tree = search_sets(
                 lhs.subspan(1),
@@ -65,8 +65,8 @@ static std::optional<std::vector<ASTNode>> search_sets(
                 return result;
             }
         }
-    } else if (lhs.size() == 1 && std::holds_alternative<NonTerminal>(lhs.front()) && grammar.non_terminals.count(std::get<NonTerminal>(lhs.front()))) {
-        for (auto& prod :
+    } else if (lhs.size() == 1 && std::holds_alternative<NonTerminal>(lhs.front())) {
+        for (auto prod :
              grammar.productions.at(std::get<NonTerminal>(lhs.front()))) {
             auto sub_tree = search_sets(
                 prod.rhs,
@@ -139,7 +139,8 @@ struct EarleyItem {
     bool operator==(const EarleyItem&) const = default;
 };
 
-std::optional<ASTNode> parse_earley(std::span<Token> input, Grammar& grammar) {
+std::optional<ASTNode>
+parse_earley(std::span<Token> input, const Grammar& grammar) {
     std::vector<std::vector<EarleyItem>> earley_sets;
     earley_sets.push_back({});
 
@@ -188,8 +189,8 @@ std::optional<ASTNode> parse_earley(std::span<Token> input, Grammar& grammar) {
                         }
                     }
                 }
-            }
-            else if (std::holds_alternative<Terminal>(prod.rhs.at(item.next)) && grammar.terminals.count(std::get<Terminal>(prod.rhs.at(item.next)))) {
+            } else if (std::holds_alternative<Terminal>(prod.rhs.at(item.next)
+                       )) {
                 if (x < input.size()
                     && std::get<Terminal>(prod.rhs.at(item.next))
                         == input[x].kind) {
@@ -200,8 +201,8 @@ std::optional<ASTNode> parse_earley(std::span<Token> input, Grammar& grammar) {
                         EarleyItem {item.rule, item.start, item.next + 1}
                     );
                 }
-            }
-            else if (std::holds_alternative<NonTerminal>(prod.rhs.at(item.next)) && grammar.non_terminals.count(std::get<NonTerminal>(prod.rhs.at(item.next)))) {
+            } else if (std::holds_alternative<NonTerminal>(prod.rhs.at(item.next
+                       ))) {
                 for (int64_t i = 0; i < productions.size(); ++i) {
                     if (std::get<NonTerminal>(prod.rhs.at(item.next))
                         == productions.at(i).lhs) {

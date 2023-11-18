@@ -6,6 +6,5 @@
 #include "grammar.h"
 #include "token.h"
 
-DFA make_dfa();
+DFA make_nex_lang_dfa();
 std::vector<Token> scan(std::string_view input);
-Grammar make_grammar();
