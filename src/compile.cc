@@ -19,6 +19,7 @@
 #include "call.h"
 #include "chunk.h"
 #include "compile_error.h"
+#include "define_label.h"
 #include "elim_calls.h"
 #include "elim_if_stmts.h"
 #include "elim_labels.h"
@@ -29,6 +30,7 @@
 #include "extract_symbols.h"
 #include "flatten.h"
 #include "grammar.h"
+#include "heap.h"
 #include "module_table.h"
 #include "nex_lang.h"
 #include "parse_earley.h"
@@ -36,6 +38,7 @@
 #include "procedure.h"
 #include "pseudo_assembly.h"
 #include "reg.h"
+#include "use_label.h"
 #include "word.h"
 
 struct TypedProcedure;
@@ -80,6 +83,19 @@ std::vector<std::shared_ptr<Code>>
 compile(std::vector<std::string> input_file_paths) {
     std::vector<std::pair<std::string, ASTNode>> modules;
     ModuleTable module_table;
+
+    std::shared_ptr<Label> heap_start_label =
+        std::make_shared<Label>("heap start");
+    std::shared_ptr<Code> heap_start =
+        make_block({make_lis(Reg::Result), make_use(heap_start_label)});
+    std::shared_ptr<TypedProcedure> heap_allocate =
+        make_heap_allocate(heap_start);
+    std::shared_ptr<TypedProcedure> heap_free = make_heap_free(heap_start);
+    SymbolTable heap_module;
+    heap_module["heap_allocate"] = heap_allocate;
+    heap_module["heap_free"] = heap_free;
+    module_table["heap"] = heap_module;
+
     for (std::string input_file_path : input_file_paths) {
         std::ifstream file {input_file_path};
         if (!file) {
@@ -121,6 +137,9 @@ compile(std::vector<std::string> input_file_paths) {
         }
     }
 
+    procedures.push_back(heap_allocate->procedure);
+    procedures.push_back(heap_free->procedure);
+
     std::vector<std::shared_ptr<Code>> all_code;
 
     std::shared_ptr<Procedure> main_proc;
@@ -140,7 +159,8 @@ compile(std::vector<std::string> input_file_paths) {
         std::vector<std::shared_ptr<Variable>> {}
     );
     start_proc->code = make_block(
-        {make_call(main_proc, {to_expr(Reg::Input1), to_expr(Reg::Input2)}),
+        {init_heap(heap_start),
+         make_call(main_proc, {to_expr(Reg::Input1), to_expr(Reg::Input2)}),
          make_lis(Reg::TargetPC),
          make_word(TERMINATION_PC),
          make_jr(Reg::TargetPC)}
@@ -155,7 +175,11 @@ compile(std::vector<std::string> input_file_paths) {
         all_code.push_back(proc->code);
     }
 
-    auto program = make_block({make_block(all_code), make_block(static_data)});
+    auto program = make_block(
+        {make_block(all_code),
+         make_block(static_data),
+         make_define(heap_start_label)}
+    );
 
     Flatten flatten;
     program->accept(flatten);

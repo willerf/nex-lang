@@ -42,3 +42,15 @@ fn printnum(num: i32) {
         }
     }
 }
+
+fn printarr(arr: *i32) {
+    // let size: i32 = *((arr as i32 - 4) as *i32);
+    let size: i32 = arr[0-1];
+    let len: i32 = size / 4;
+    let i: i32 = 0;
+    while (i < len) {
+        printnum(arr[i]);
+        printchar(' ');
+        i = i + 1;
+    }
+}

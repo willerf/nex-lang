@@ -26,7 +26,8 @@ static std::map<char, Terminal> one_char_symbols = {
     {'{', Terminal::LBRACE},    {'}', Terminal::RBRACE},
     {',', Terminal::COMMA},     {';', Terminal::SEMI},
     {':', Terminal::COLON},     {'|', Terminal::PIPE},
-    {'&', Terminal::AMPERSAND},
+    {'&', Terminal::AMPERSAND}, {'[', Terminal::LBRACKET},
+    {']', Terminal::RBRACKET},
 };
 
 static std::map<std::string, Terminal> two_char_symbols = {
@@ -128,7 +129,7 @@ static std::optional<Terminal> transition_func(Terminal curr_state, char c) {
 
 DFA make_dfa() {
     std::string alphabet_str =
-        "<>=+-_*/%(){},;:!&| \t\n\r\'\"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        "<>=+-_*/%(){}[],;:!&| \t\n\r\'\"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     std::set<char> alphabet(alphabet_str.begin(), alphabet_str.end());
     Terminal init_state = Terminal::START;
 
@@ -175,8 +176,11 @@ static std::map<std::string, Terminal> keywords = {
     {"i32", Terminal::I32},
     {"bool", Terminal::BOOL},
     {"char", Terminal::CHAR},
+    {"none", Terminal::CHAR},
     {"true", Terminal::TRUE},
     {"false", Terminal::FALSE},
+    {"new", Terminal::NEW},
+    {"delete", Terminal::DELETE},
 };
 
 std::vector<Token> scan(std::string_view input) {
@@ -200,6 +204,7 @@ std::vector<Token> scan(std::string_view input) {
         Terminal::I32,
         Terminal::BOOL,
         Terminal::CHAR,
+        Terminal::NONE,
         Terminal::ID,
         Terminal::NUM,
         Terminal::STRLITERAL,
@@ -309,6 +314,7 @@ static std::map<NonTerminal, std::vector<Production>> productions = {
      {{NonTerminal::type, {Terminal::I32}},
       {NonTerminal::type, {Terminal::BOOL}},
       {NonTerminal::type, {Terminal::CHAR}},
+      {NonTerminal::type, {Terminal::NONE}},
       {NonTerminal::type, {Terminal::STAR, NonTerminal::type}},
       {NonTerminal::type,
        {Terminal::LPAREN, NonTerminal::type, Terminal::RPAREN}}}},
@@ -351,7 +357,9 @@ static std::map<NonTerminal, std::vector<Production>> productions = {
         NonTerminal::expr,
         Terminal::RPAREN,
         NonTerminal::stmtblock}},
-      {NonTerminal::stmt, {Terminal::RET, NonTerminal::expr, Terminal::SEMI}}}},
+      {NonTerminal::stmt, {Terminal::RET, NonTerminal::expr, Terminal::SEMI}},
+      {NonTerminal::stmt,
+       {Terminal::DELETE, NonTerminal::expr, Terminal::SEMI}}}},
     {NonTerminal::expr, {{NonTerminal::expr, {NonTerminal::exprp1}}}},
     {NonTerminal::exprp1,
      {{NonTerminal::exprp1, {NonTerminal::exprp2}},
@@ -413,42 +421,59 @@ static std::map<NonTerminal, std::vector<Production>> productions = {
            Terminal::LPAREN,
            NonTerminal::optargs,
            Terminal::RPAREN}},
+         {NonTerminal::exprp9, {Terminal::NEW, NonTerminal::typeinit}},
+         {NonTerminal::exprp9,
+          {Terminal::ID,
+           Terminal::LBRACKET,
+           NonTerminal::expr,
+           Terminal::RBRACKET}},
      }},
     {NonTerminal::optargs,
      {{NonTerminal::optargs, {NonTerminal::args}}, {NonTerminal::optargs, {}}}},
     {NonTerminal::args,
      {{NonTerminal::args,
        {NonTerminal::expr, Terminal::COMMA, NonTerminal::args}},
-      {NonTerminal::args, {NonTerminal::expr}}}}};
+      {NonTerminal::args, {NonTerminal::expr}}}},
+    {NonTerminal::typeinit,
+     {
+         {NonTerminal::typeinit, {NonTerminal::type}},
+         {NonTerminal::typeinit,
+          {NonTerminal::type,
+           Terminal::LBRACKET,
+           NonTerminal::expr,
+           Terminal::RBRACKET}},
+     }}};
 
 static std::set<Terminal> terminals = {
-    Terminal::BOFS,        Terminal::EOFS,   Terminal::FN,
-    Terminal::ID,          Terminal::LPAREN, Terminal::RPAREN,
-    Terminal::ARROW,       Terminal::LBRACE, Terminal::RBRACE,
-    Terminal::COMMA,       Terminal::COLON,  Terminal::I32,
-    Terminal::LET,         Terminal::ASSIGN, Terminal::SEMI,
-    Terminal::IF,          Terminal::ELSE,   Terminal::RET,
-    Terminal::OR,          Terminal::AND,    Terminal::EQ,
-    Terminal::NE,          Terminal::LT,     Terminal::GT,
-    Terminal::LE,          Terminal::GE,     Terminal::PLUS,
-    Terminal::MINUS,       Terminal::STAR,   Terminal::SLASH,
-    Terminal::PCT,         Terminal::NOT,    Terminal::NUM,
-    Terminal::AMPERSAND,   Terminal::WHILE,  Terminal::BOOL,
-    Terminal::TRUE,        Terminal::FALSE,  Terminal::STRLITERAL,
-    Terminal::CHARLITERAL, Terminal::CHAR,   Terminal::AS,
-    Terminal::MODULE,      Terminal::IMPORT,
+    Terminal::BOFS,        Terminal::EOFS,     Terminal::FN,
+    Terminal::ID,          Terminal::LPAREN,   Terminal::RPAREN,
+    Terminal::ARROW,       Terminal::LBRACE,   Terminal::RBRACE,
+    Terminal::COMMA,       Terminal::COLON,    Terminal::I32,
+    Terminal::LET,         Terminal::ASSIGN,   Terminal::SEMI,
+    Terminal::IF,          Terminal::ELSE,     Terminal::RET,
+    Terminal::OR,          Terminal::AND,      Terminal::EQ,
+    Terminal::NE,          Terminal::LT,       Terminal::GT,
+    Terminal::LE,          Terminal::GE,       Terminal::PLUS,
+    Terminal::MINUS,       Terminal::STAR,     Terminal::SLASH,
+    Terminal::PCT,         Terminal::NOT,      Terminal::NUM,
+    Terminal::AMPERSAND,   Terminal::WHILE,    Terminal::BOOL,
+    Terminal::TRUE,        Terminal::FALSE,    Terminal::STRLITERAL,
+    Terminal::CHARLITERAL, Terminal::CHAR,     Terminal::AS,
+    Terminal::MODULE,      Terminal::IMPORT,   Terminal::NONE,
+    Terminal::LBRACKET,    Terminal::RBRACKET, Terminal::NEW,
+    Terminal::DELETE,
 };
 
 static std::set<NonTerminal> non_terminals = {
-    NonTerminal::s,         NonTerminal::fns,     NonTerminal::fn,
-    NonTerminal::optparams, NonTerminal::params,  NonTerminal::vardef,
-    NonTerminal::type,      NonTerminal::stmts,   NonTerminal::stmt,
-    NonTerminal::expr,      NonTerminal::exprp1,  NonTerminal::exprp2,
-    NonTerminal::exprp3,    NonTerminal::exprp4,  NonTerminal::exprp5,
-    NonTerminal::exprp6,    NonTerminal::exprp7,  NonTerminal::exprp8,
-    NonTerminal::exprp9,    NonTerminal::optargs, NonTerminal::args,
-    NonTerminal::stmtblock, NonTerminal::module,  NonTerminal::imports,
-    NonTerminal::import,
+    NonTerminal::s,         NonTerminal::fns,      NonTerminal::fn,
+    NonTerminal::optparams, NonTerminal::params,   NonTerminal::vardef,
+    NonTerminal::type,      NonTerminal::stmts,    NonTerminal::stmt,
+    NonTerminal::expr,      NonTerminal::exprp1,   NonTerminal::exprp2,
+    NonTerminal::exprp3,    NonTerminal::exprp4,   NonTerminal::exprp5,
+    NonTerminal::exprp6,    NonTerminal::exprp7,   NonTerminal::exprp8,
+    NonTerminal::exprp9,    NonTerminal::optargs,  NonTerminal::args,
+    NonTerminal::stmtblock, NonTerminal::module,   NonTerminal::imports,
+    NonTerminal::import,    NonTerminal::typeinit,
 };
 
 Grammar make_grammar() {

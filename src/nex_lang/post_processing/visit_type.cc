@@ -12,6 +12,7 @@
 #include "nl_type_bool.h"
 #include "nl_type_char.h"
 #include "nl_type_i32.h"
+#include "nl_type_none.h"
 #include "nl_type_ptr.h"
 #include "state.h"
 
@@ -26,6 +27,8 @@ std::shared_ptr<NLType> visit_type(ASTNode root) {
         result = std::make_shared<NLTypeBool>();
     } else if (prod == std::vector<State> {NonTerminal::type, Terminal::CHAR}) {
         result = std::make_shared<NLTypeChar>();
+    } else if (prod == std::vector<State> {NonTerminal::type, Terminal::NONE}) {
+        result = std::make_shared<NLTypeNone>();
     } else if (prod == std::vector<State> {NonTerminal::type, Terminal::STAR, NonTerminal::type}) {
         ASTNode sub_type = root.children.at(1);
         std::shared_ptr<NLType> sub_nl_type = visit_type(sub_type);

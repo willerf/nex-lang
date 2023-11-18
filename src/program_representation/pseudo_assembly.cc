@@ -6,6 +6,7 @@
 #include "assembly.h"
 #include "block.h"
 #include "reg.h"
+#include "scope.h"
 #include "var_access.h"
 #include "word.h"
 
@@ -27,11 +28,20 @@ std::shared_ptr<Code> assign_to_address(
     std::shared_ptr<Code> expr,
     uint32_t offset
 ) {
-    return make_block(
+    /*return make_block(
         {addr,
          make_add(Reg::Scratch2, Reg::Result, Reg::Zero),
          expr,
          make_sw(Reg::Result, offset, Reg::Scratch2)}
+    );*/
+    std::shared_ptr<Variable> var =
+        std::make_shared<Variable>("assign to addr");
+    return make_scope(
+        {var},
+        {assign(var, addr),
+         expr,
+         make_read(Reg::Scratch, var),
+         make_sw(Reg::Result, offset, Reg::Scratch)}
     );
 }
 

@@ -10,6 +10,7 @@ struct NLType {
     virtual bool equals(const NLType& other) const = 0;
     virtual std::type_index type() const = 0;
     virtual std::string to_string() = 0;
+    virtual uint32_t bytes();
 };
 
 bool operator==(const NLType& lhs, const NLType& rhs);

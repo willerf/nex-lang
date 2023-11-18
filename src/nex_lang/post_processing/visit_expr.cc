@@ -34,6 +34,7 @@
 #include "use_label.h"
 #include "visit_args.h"
 #include "visit_type.h"
+#include "visit_typeinit.h"
 #include "word.h"
 
 struct Code;
@@ -189,6 +190,82 @@ TypedExpr visit_expr(
         } else {
             throw SymbolNotFoundError(name, id.line_no);
         }
+    } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::NEW, NonTerminal::typeinit}) {
+        ASTNode typeinit = root.children.at(1);
+        return visit_typeinit(
+            typeinit,
+            read_address,
+            symbol_table,
+            module_table,
+            static_data
+        );
+    } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::ID, Terminal::LBRACKET, NonTerminal::expr, Terminal::RBRACKET}) {
+        ASTNode id = root.children.at(0);
+        std::string name = id.lexeme;
+
+        if (symbol_table.count(name)) {
+            if (auto typed_var =
+                    std::dynamic_pointer_cast<TypedVariable>(symbol_table[name]
+                    )) {
+                ASTNode expr_node = root.children.at(2);
+                TypedExpr expr = visit_expr(
+                    expr_node,
+                    false,
+                    symbol_table,
+                    module_table,
+                    static_data
+                );
+                if ((*expr.nl_type) == NLTypeI32 {}) {
+                    if (auto nl_type_ptr = std::dynamic_pointer_cast<NLTypePtr>(
+                            typed_var->nl_type
+                        )) {
+                        if (read_address) {
+                            result = TypedExpr {
+                                bin_op(
+                                    typed_var->variable->to_expr(),
+                                    op::plus(),
+                                    bin_op(
+                                        expr.code,
+                                        op::times(),
+                                        int_literal(nl_type_ptr->nl_type->bytes(
+                                        ))
+                                    )
+                                ),
+                                nl_type_ptr->nl_type};
+                        } else {
+                            result = TypedExpr {
+                                deref(bin_op(
+                                    typed_var->variable->to_expr(),
+                                    op::plus(),
+                                    bin_op(
+                                        expr.code,
+                                        op::times(),
+                                        int_literal(nl_type_ptr->nl_type->bytes(
+                                        ))
+                                    )
+                                )),
+                                nl_type_ptr->nl_type};
+                        }
+                    } else {
+                        throw TypeMismatchError(
+                            "Only can index variable of type pointer.",
+                            root.children.at(1).line_no
+                        );
+                    }
+                } else {
+                    throw TypeMismatchError(
+                        "Expression between square brackets must be of type i32.",
+                        root.children.at(1).line_no
+                    );
+                }
+
+            } else {
+                throw SymbolNotFoundError(name, id.line_no);
+            }
+        } else {
+            throw SymbolNotFoundError(name, id.line_no);
+        }
+
     } else if (prod == std::vector<State> {NonTerminal::exprp8, NonTerminal::exprp8, Terminal::AS, NonTerminal::type}) {
         ASTNode expr = root.children.at(0);
         TypedExpr expr_code = visit_expr(
