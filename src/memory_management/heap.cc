@@ -13,6 +13,8 @@
 #include "pseudo_assembly.h"
 #include "reg.h"
 #include "scope.h"
+#include "symbol_table.h"
+#include "use_label.h"
 #include "var_access.h"
 #include "while_loop.h"
 
@@ -124,3 +126,5 @@ std::shared_ptr<TypedProcedure> make_heap_free(std::shared_ptr<Code> heap_start
         std::vector<std::shared_ptr<TypedVariable>> {typed_var}
     );
 }
+
+

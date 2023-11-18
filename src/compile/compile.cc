@@ -19,6 +19,7 @@
 #include "call.h"
 #include "chunk.h"
 #include "compile_error.h"
+#include "compile_procedure.h"
 #include "define_label.h"
 #include "elim_calls.h"
 #include "elim_if_stmts.h"
@@ -46,44 +47,12 @@ struct Variable;
 
 static uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
 
-void compile_procedure(
-    std::shared_ptr<Procedure> proc,
-    std::map<std::shared_ptr<Procedure>, std::shared_ptr<Chunk>> param_chunks
-) {
-    ElimCalls elim_calls {proc, param_chunks};
-    proc->code = proc->code->accept(elim_calls);
-
-    ElimIfStmts elim_if_stmts;
-    proc->code = proc->code->accept(elim_if_stmts);
-
-    ElimRetStmts elim_ret_stmts {proc->end_label};
-    proc->code = proc->code->accept(elim_ret_stmts);
-
-    ElimScopes elim_scopes;
-    proc->code = proc->code->accept(elim_scopes);
-    auto local_vars = elim_scopes.get();
-
-    std::vector<std::shared_ptr<Variable>> all_local_vars = {
-        proc->param_ptr,
-        proc->dynamic_link,
-        proc->saved_pc};
-    all_local_vars
-        .insert(all_local_vars.end(), local_vars.begin(), local_vars.end());
-    std::shared_ptr<Chunk> local_vars_chunk =
-        std::make_shared<Chunk>(all_local_vars);
-
-    proc->code = add_entry_exit(proc, local_vars_chunk);
-
-    auto param_chunk = std::make_shared<Chunk>(proc->parameters);
-    ElimVarsProc elim_vars_proc(local_vars_chunk, param_chunk, proc->param_ptr);
-    proc->code = proc->code->accept(elim_vars_proc);
-}
-
 std::vector<std::shared_ptr<Code>>
 compile(std::vector<std::string> input_file_paths) {
     std::vector<std::pair<std::string, ASTNode>> modules;
     ModuleTable module_table;
 
+    // add in heap as module
     std::shared_ptr<Label> heap_start_label =
         std::make_shared<Label>("heap start");
     std::shared_ptr<Code> heap_start =
@@ -92,10 +61,12 @@ compile(std::vector<std::string> input_file_paths) {
         make_heap_allocate(heap_start);
     std::shared_ptr<TypedProcedure> heap_free = make_heap_free(heap_start);
     SymbolTable heap_module;
-    heap_module["heap_allocate"] = heap_allocate;
-    heap_module["heap_free"] = heap_free;
-    module_table["heap"] = heap_module;
+    heap_module[heap_allocate_id] = heap_allocate;
+    heap_module[heap_free_id] = heap_free;
 
+    module_table[heap_module_id] = heap_module;
+
+    // lex, parse and extract symbols from all provided files
     for (std::string input_file_path : input_file_paths) {
         std::ifstream file {input_file_path};
         if (!file) {
@@ -122,6 +93,7 @@ compile(std::vector<std::string> input_file_paths) {
         }
     }
 
+    // generated intermediete code of all procedures
     std::vector<std::shared_ptr<Procedure>> procedures;
     std::vector<std::shared_ptr<Code>> static_data;
     for (auto& [input_file_path, ast_node] : modules) {
@@ -154,6 +126,7 @@ compile(std::vector<std::string> input_file_paths) {
         param_chunks[proc] = std::make_shared<Chunk>(proc->parameters);
     }
 
+    // add program entry point
     auto start_proc = std::make_shared<Procedure>(
         "start_proc",
         std::vector<std::shared_ptr<Variable>> {}
@@ -167,6 +140,7 @@ compile(std::vector<std::string> input_file_paths) {
     );
     procedures.insert(procedures.begin(), start_proc);
 
+    // compile down intermediete representations into machine code
     for (auto proc : procedures) {
         compile_procedure(proc, param_chunks);
     }
@@ -189,3 +163,4 @@ compile(std::vector<std::string> input_file_paths) {
     auto program3 = elim_labels(program2);
     return program3;
 }
+

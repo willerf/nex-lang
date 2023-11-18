@@ -6,7 +6,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_library(compiler_lib STATIC
-    src/compile.cc
+    src/compile/compile.cc
+    src/compile/compile_procedure.cc
     src/exceptions/compile_error.cc
     src/exceptions/duplicate_symbol_error.cc
     src/exceptions/symbol_not_found_error.cc
@@ -83,6 +84,7 @@ add_library(compiler_lib STATIC
 
 target_include_directories(compiler_lib PUBLIC
     src
+    src/compile
     src/exceptions
     src/lex_parse
     src/memory_management

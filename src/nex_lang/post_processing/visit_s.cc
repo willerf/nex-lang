@@ -9,6 +9,7 @@
 #include <variant>
 
 #include "ast_node.h"
+#include "heap.h"
 #include "state.h"
 #include "symbol_table.h"
 #include "visit_fns.h"
@@ -39,6 +40,11 @@ std::vector<std::shared_ptr<TypedProcedure>> visit_s(
         std::string name = module.children.at(1).lexeme;
 
         SymbolTable symbol_table = module_table.at(name);
+
+        if (module_table.contains(heap_module_id)) {
+            SymbolTable heap_module = module_table.at(heap_module_id);
+            symbol_table.insert(heap_module.begin(), heap_module.end());
+        }
 
         ASTNode imports = root.children.at(2);
         visit_imports(imports, symbol_table, module_table);
