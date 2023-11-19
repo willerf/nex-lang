@@ -34,6 +34,5 @@ target_link_libraries(tests PRIVATE Catch2::Catch2WithMain compiler_lib)
 add_dependencies(tests build_rust_emulator)
 
 set(EMULATOR_PATH ${rust_emulator_SOURCE_DIR}/target/release/mips_emulator)
-set(NL_TESTS_PATH ${CMAKE_CURRENT_SOURCE_DIR}/nl_files)
-target_compile_definitions(tests PRIVATE EMULATOR_PATH="${EMULATOR_PATH}" NL_TESTS_PATH="${NL_TESTS_PATH}")
+target_compile_definitions(tests PRIVATE EMULATOR_PATH="${EMULATOR_PATH}" NL_EXAMPLES_PATH="${NL_EXAMPLES_PATH}")
 

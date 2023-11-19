@@ -103,6 +103,8 @@ target_include_directories(compiler_lib PUBLIC
     src/utils
 )
 
+set(NL_EXAMPLES_PATH ${CMAKE_CURRENT_SOURCE_DIR}/examples)
+
 add_executable(cnl src/main.cc)
 target_link_libraries(cnl compiler_lib)
 

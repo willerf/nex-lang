@@ -12,9 +12,8 @@
 static std::string file_name = "test_modules.bin";
 
 TEST_CASE("Test max.", "[modules]") {
-    const std::string tests_dir(NL_TESTS_PATH);
     std::vector<std::string> input_file_paths = {
-        tests_dir + "/test_max.nl",
+        examples_dir + "/test_max.nl",
     };
     auto program = compile(input_file_paths);
     write_file(file_name, program);
@@ -28,9 +27,8 @@ TEST_CASE("Test max.", "[modules]") {
 }
 
 TEST_CASE("Test min.", "[modules]") {
-    const std::string tests_dir(NL_TESTS_PATH);
     std::vector<std::string> input_file_paths = {
-        tests_dir + "/test_min.nl",
+        examples_dir + "/test_min.nl",
     };
     auto program = compile(input_file_paths);
     write_file(file_name, program);
@@ -44,9 +42,8 @@ TEST_CASE("Test min.", "[modules]") {
 }
 
 TEST_CASE("Test printchar.", "[modules]") {
-    const std::string tests_dir(NL_TESTS_PATH);
     std::vector<std::string> input_file_paths = {
-        tests_dir + "/test_printchar.nl",
+        examples_dir + "/test_printchar.nl",
     };
     auto program = compile(input_file_paths);
     write_file(file_name, program);
@@ -56,9 +53,8 @@ TEST_CASE("Test printchar.", "[modules]") {
 }
 
 TEST_CASE("Test print.", "[modules]") {
-    const std::string tests_dir(NL_TESTS_PATH);
     std::vector<std::string> input_file_paths = {
-        tests_dir + "/test_print.nl",
+        examples_dir + "/test_print.nl",
     };
     auto program = compile(input_file_paths);
     write_file(file_name, program);
@@ -68,9 +64,8 @@ TEST_CASE("Test print.", "[modules]") {
 }
 
 TEST_CASE("Test println.", "[modules]") {
-    const std::string tests_dir(NL_TESTS_PATH);
     std::vector<std::string> input_file_paths = {
-        tests_dir + "/test_println.nl",
+        examples_dir + "/test_println.nl",
     };
     auto program = compile(input_file_paths);
     write_file(file_name, program);
@@ -80,9 +75,8 @@ TEST_CASE("Test println.", "[modules]") {
 }
 
 TEST_CASE("Test printnum.", "[modules]") {
-    const std::string tests_dir(NL_TESTS_PATH);
     std::vector<std::string> input_file_paths = {
-        tests_dir + "/test_printnum.nl",
+        examples_dir + "/test_printnum.nl",
     };
     auto program = compile(input_file_paths);
     write_file(file_name, program);
@@ -97,10 +91,9 @@ TEST_CASE("Test printnum.", "[modules]") {
 }
 
 TEST_CASE("Test fibonacci.", "[modules]") {
-    const std::string tests_dir(NL_TESTS_PATH);
     std::vector<std::string> input_file_paths = {
-        tests_dir + "/test_fibonacci.nl",
-        tests_dir + "/fibonacci_module.nl"};
+        examples_dir + "/test_fibonacci.nl",
+        examples_dir + "/fibonacci_module.nl"};
     auto program = compile(input_file_paths);
     write_file(file_name, program);
 

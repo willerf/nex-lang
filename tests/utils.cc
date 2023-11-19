@@ -34,7 +34,7 @@
 struct TypedProcedure;
 struct Variable;
 
-static uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
+static const uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
 
 std::vector<uint32_t> word_to_uint(std::vector<std::shared_ptr<Code>> program) {
     std::vector<uint32_t> result;
