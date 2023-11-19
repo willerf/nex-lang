@@ -70,7 +70,7 @@ You can also optionally specify an output path using the `-o` flag.
 ```bash
 ./cnl main.nl -o main.bin
 ```
-The emulator is currently located within the dependencies folder. Either move the executable elsewhere or it can be run from the build directory as seen below. In addition to providing a path to the compiled binary, you must also provide two integers which are supplied to the main function of the program.
+The built binary can be run by using the provided emulator located in the build directory. In addition to providing a path to the compiled binary, you must also provide two integers which are supplied to the main function of the program.
 ```bash
-./_deps/rust_emulator-src/target/release/mips_emulator main.bin 3 5
+./emulate main.bin 3 5
 ```

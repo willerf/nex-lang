@@ -24,6 +24,13 @@ if(NOT rust_emulator_POPULATED)
     COMMAND cargo build --release
     WORKING_DIRECTORY ${rust_emulator_SOURCE_DIR}
   )
+
+  add_custom_command(
+    TARGET build_rust_emulator POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+            ${rust_emulator_SOURCE_DIR}/target/release/mips_emulator
+            ${CMAKE_BINARY_DIR}/emulate
+  )
 endif()
 
 
