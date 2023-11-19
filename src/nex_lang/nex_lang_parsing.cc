@@ -7,6 +7,7 @@
 
 #include "compile_error.h"
 #include "parse_earley.h"
+#include "parsing_error.h"
 #include "state.h"
 
 struct Token;
@@ -200,7 +201,8 @@ Grammar make_nex_lang_grammar() {
 }
 
 ASTNode parse(std::span<Token> input) {
-    std::optional<ASTNode> result = parse_earley(input, nex_lang_grammar);
+    Grammar grammar = nex_lang_grammar;
+    std::optional<ASTNode> result = parse_earley(input, grammar);
     if (result) {
         return result.value();
     }

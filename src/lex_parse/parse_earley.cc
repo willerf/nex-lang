@@ -27,7 +27,7 @@ static std::optional<std::vector<ASTNode>> search_sets(
     std::span<Token>& input,
     std::vector<Production>& productions,
     std::vector<std::vector<CompleteEarleyItem>>& complete_sets,
-    const Grammar& grammar,
+    Grammar& grammar,
     MemoMap& memo_map
 ) {
     if (memo_map.contains(MemoKey {lhs, from, length})) {
@@ -65,7 +65,7 @@ static std::optional<std::vector<ASTNode>> search_sets(
             }
         }
     } else if (lhs.size() == 1 && std::holds_alternative<NonTerminal>(lhs.front())) {
-        for (auto prod :
+        for (auto& prod :
              grammar.productions.at(std::get<NonTerminal>(lhs.front()))) {
             auto sub_tree = search_sets(
                 prod.rhs,
@@ -138,8 +138,7 @@ struct EarleyItem {
     bool operator==(const EarleyItem&) const = default;
 };
 
-std::optional<ASTNode>
-parse_earley(std::span<Token> input, const Grammar& grammar) {
+std::optional<ASTNode> parse_earley(std::span<Token> input, Grammar& grammar) {
     std::vector<std::vector<EarleyItem>> earley_sets;
     earley_sets.push_back({});
 

@@ -12,5 +12,4 @@
 struct Grammar;
 struct Token;
 
-std::optional<ASTNode>
-parse_earley(std::span<Token> input, const Grammar& grammar);
+std::optional<ASTNode> parse_earley(std::span<Token> input, Grammar& grammar);
