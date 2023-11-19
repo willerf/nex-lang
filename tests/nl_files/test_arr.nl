@@ -1,7 +1,6 @@
 
 mod main;
 
-import heap;
 import print;
 
 fn main(x: i32, y: i32) -> i32 {
