@@ -75,15 +75,8 @@ std::shared_ptr<Code> visit_stmt(
                 root.children.at(2).line_no
             );
         }
-        result = assign(typed_var->variable, expr.code);  
-    } else if (prod
-        == std::vector<State> {
-            NonTerminal::stmt,
-            Terminal::LET,
-            Terminal::ID,
-            Terminal::ASSIGN,
-            NonTerminal::expr,
-            Terminal::SEMI}) {
+        result = assign(typed_var->variable, expr.code);
+    } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::LET, Terminal::ID, Terminal::ASSIGN, NonTerminal::expr, Terminal::SEMI}) {
         // extract variable declaration and assignment with type inference
 
         ASTNode expr_node = root.children.at(3);
@@ -94,7 +87,7 @@ std::shared_ptr<Code> visit_stmt(
             module_table,
             static_data
         );
-        
+
         ASTNode id = root.children.at(1);
         std::string name = id.lexeme;
 
@@ -103,7 +96,8 @@ std::shared_ptr<Code> visit_stmt(
         } else {
             std::shared_ptr<Variable> variable =
                 std::make_shared<Variable>(name);
-            auto typed_var = std::make_shared<TypedVariable>(variable, expr.nl_type);
+            auto typed_var =
+                std::make_shared<TypedVariable>(variable, expr.nl_type);
             symbol_table[name] = typed_var;
             result = assign(typed_var->variable, expr.code);
         }

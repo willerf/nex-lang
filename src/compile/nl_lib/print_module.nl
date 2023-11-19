@@ -2,7 +2,7 @@ R"(
 mod print;
 
 fn printchar(letter: char) {
-    let print_addr: *char = (0 - 65524) as (*char);
+    let print_addr: *char = (-65524) as *char;
     (*print_addr) = letter;
 }
 
@@ -44,7 +44,7 @@ fn printnum(num: i32) {
 }
 
 fn printarr(arr: *i32) {
-    let size: i32 = arr[0-1];
+    let size: i32 = arr[-1];
     let len: i32 = size / 4;
     let i: i32 = 0;
     while (i < len) {

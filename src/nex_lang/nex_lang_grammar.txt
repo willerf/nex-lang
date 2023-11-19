@@ -57,6 +57,7 @@ exprp8 exprp9
 exprp8 exprp8 AS type
 exprp9 ID
 exprp9 NUM
+exprp9 MINUS NUM
 exprp9 TRUE
 exprp9 FALSE
 exprp9 AMPERSAND ID

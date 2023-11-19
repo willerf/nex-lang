@@ -86,6 +86,11 @@ TypedExpr visit_expr(
         result = TypedExpr {
             int_literal(stoi(num.lexeme)),
             std::make_shared<NLTypeI32>()};
+    } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::MINUS, Terminal::NUM}) {
+        ASTNode num = root.children.at(1);
+        result = TypedExpr {
+            int_literal(-stoi(num.lexeme)),
+            std::make_shared<NLTypeI32>()};
     } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::TRUE}) {
         ASTNode expr = root.children.at(0);
         result = TypedExpr {int_literal(1), std::make_shared<NLTypeBool>()};

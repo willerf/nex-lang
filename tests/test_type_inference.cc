@@ -1,6 +1,5 @@
 
 
-
 #include <algorithm>
 #include <catch2/catch_test_macros.hpp>
 #include <string>
@@ -22,4 +21,3 @@ TEST_CASE("Test type inference.", "[type_inference]") {
 
     REQUIRE(emulate(file_name, 0, 0) == "fhello world\nok0\n");
 }
-
