@@ -106,6 +106,6 @@ target_include_directories(compiler_lib PUBLIC
 add_executable(cnl src/main.cc)
 target_link_libraries(cnl compiler_lib)
 
-add_subdirectory(examples)
+add_subdirectory(cpp_interm_repr)
 add_subdirectory(tests)
 
