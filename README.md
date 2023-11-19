@@ -3,8 +3,8 @@
 ### Table of Contents
 - [About](https://github.com/willerf/nex-lang#about)
 - [Examples](https://github.com/willerf/nex-lang#examples)
-  - [Example Print Implementation](https://github.com/willerf/nex-lang#example-print-implementation)
-  - [Example Power Implementation](https://github.com/willerf/nex-lang#example-power-implementation)
+  - [Example Print Implementation](https://github.com/willerf/nex-lang#example-hello-world)
+  - [Example Power Implementation](https://github.com/willerf/nex-lang#example-print-max)
 - [Getting Started](https://github.com/willerf/nex-lang#getting-started)
   - [Install & Build](https://github.com/willerf/nex-lang#install--build)
   - [User Guide](https://github.com/willerf/nex-lang#user-guide)
@@ -14,47 +14,31 @@ NexLang is a custom systems programming language focused on providing strong con
 
 ### Examples
 
-#### Example Print Implementation
-```rs
-mod print;
-
-fn printchar(letter: char) {
-    let print_addr: *char = (0 - 65524) as (*char);
-    (*print_addr) = letter;
-}
-
-fn print(word: *char) {
-    while ((*word) != (0 as char)) {
-        printchar(*word);
-        word = ((word as i32) + 4) as (*char);
-    }
-}
-
-fn println(word: *char) {
-    print(word);
-    printchar(10 as char);
-}
-
-fn main(x: i32, y: i32) -> i32 {
-    println("Hello World!");
-    return 0;
-}
-```
-#### Example Power Implementation
+#### Example Hello World
 ```rs
 mod main;
 
-fn power(base: i32, exponent: i32) -> i32 {
-    if (exponent == 1) {
-        return base;
-    }
-    else {
-        return base * power(base, exponent - 1);
-    }
-}
+import print;
 
 fn main(x: i32, y: i32) -> i32 {
-    return power(x, y);
+  println("Hello World!");
+  return 0;
+}
+```
+#### Example Print Max
+```rs
+mod main;
+
+import print;
+import math;
+
+fn main(x: i32, y: i32) -> i32 {
+  // type is inferred
+  let z = max(x, y);
+  // type can also be explicitly defined
+  let w: i32 = z;
+  println_num(z);
+  return 0;
 }
 ```
 
@@ -62,6 +46,7 @@ fn main(x: i32, y: i32) -> i32 {
 
 #### Install & Build
 - Ensure you have cmake, rust and C++20 installed
+- Clone the repo and `cd` into the project directory
 - Then run the following commands
   - `mkdir build`
   - `cd build`
