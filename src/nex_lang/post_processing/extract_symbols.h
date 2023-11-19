@@ -6,4 +6,5 @@
 
 struct ASTNode;
 
-void extract_symbols(ASTNode root, ModuleTable& module_table);
+std::vector<std::string>
+extract_symbols(ASTNode root, ModuleTable& module_table);

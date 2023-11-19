@@ -13,7 +13,7 @@ TEST_CASE("Test heap.", "[heap]") {
     const std::string tests_dir(NL_TESTS_PATH);
     std::vector<std::string> input_file_paths = {
         tests_dir + "/test_heap.nl",
-        tests_dir + "/print_module.nl"};
+    };
     auto program = compile(input_file_paths);
     write_file(file_name, program);
 
@@ -27,7 +27,7 @@ TEST_CASE("Test arr.", "[heap]") {
     const std::string tests_dir(NL_TESTS_PATH);
     std::vector<std::string> input_file_paths = {
         tests_dir + "/test_arr.nl",
-        tests_dir + "/print_module.nl"};
+    };
     auto program = compile(input_file_paths);
     write_file(file_name, program);
 

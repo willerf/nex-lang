@@ -28,6 +28,7 @@
 #include "module_table.h"
 #include "nex_lang_parsing.h"
 #include "nex_lang_scanning.h"
+#include "nl_lib.h"
 #include "post_processing.h"
 #include "procedure.h"
 #include "pseudo_assembly.h"
@@ -60,6 +61,7 @@ compile(std::vector<std::string> input_file_paths) {
 
     module_table[heap_module_id] = heap_module;
 
+    std::vector<std::string> import_list;
     // lex, parse and extract symbols from all provided files
     for (std::string input_file_path : input_file_paths) {
         std::ifstream file {input_file_path};
@@ -73,12 +75,22 @@ compile(std::vector<std::string> input_file_paths) {
         try {
             auto tokens = scan(input);
             auto ast_node = parse(tokens);
-            extract_symbols(ast_node, module_table);
+            auto result_list = extract_symbols(ast_node, module_table);
+            import_list.insert(
+                import_list.end(),
+                result_list.begin(),
+                result_list.end()
+            );
             modules.push_back({input_file_path, ast_node});
         } catch (CompileError& compile_error) {
             compile_error.input_file_path = input_file_path;
             throw;
         }
+    }
+
+    for (size_t i = 0; i < import_list.size(); ++i) {
+        std::string import_name = import_list.at(i);
+        nl_lib_import(import_name, import_list, module_table, modules);
     }
 
     // generated intermediete code of all procedures

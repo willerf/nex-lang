@@ -1,4 +1,4 @@
-
+R"(
 mod math;
 
 fn max(x: i32, y: i32) -> i32 {
@@ -18,4 +18,4 @@ fn min(x: i32, y: i32) -> i32 {
         return y;
     }
 }
-
+)"

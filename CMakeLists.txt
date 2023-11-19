@@ -8,6 +8,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_library(compiler_lib STATIC
     src/compile/compile.cc
     src/compile/compile_procedure.cc
+    src/compile/nl_lib.cc
     src/exceptions/compile_error.cc
     src/exceptions/duplicate_symbol_error.cc
     src/exceptions/symbol_not_found_error.cc
@@ -36,6 +37,7 @@ add_library(compiler_lib STATIC
     src/nex_lang/post_processing/visit_type.cc
     src/nex_lang/post_processing/visit_typeinit.cc
     src/nex_lang/post_processing/visit_vardef.cc
+    src/nex_lang/post_processing/extract_imports.cc
     src/nex_lang/post_processing/extract_symbols.cc
     src/nex_lang/post_processing/extract_s.cc
     src/nex_lang/post_processing/extract_fns.cc
@@ -86,6 +88,7 @@ add_library(compiler_lib STATIC
 target_include_directories(compiler_lib PUBLIC
     src
     src/compile
+    src/compile/nl_lib
     src/exceptions
     src/lex_parse
     src/memory_management

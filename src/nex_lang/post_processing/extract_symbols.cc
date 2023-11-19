@@ -4,6 +4,7 @@
 #include "ast_node.h"
 #include "extract_s.h"
 
-void extract_symbols(ASTNode root, ModuleTable& module_table) {
-    extract_s(root, module_table);
+std::vector<std::string>
+extract_symbols(ASTNode root, ModuleTable& module_table) {
+    return extract_s(root, module_table);
 }

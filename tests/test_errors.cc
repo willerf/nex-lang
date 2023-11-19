@@ -80,7 +80,7 @@ TEST_CASE("Test type mismatch error 5.", "[errors]") {
     const std::string tests_dir(NL_TESTS_PATH);
     std::vector<std::string> input_file_paths = {
         tests_dir + "/test_type_mismatch_error.nl",
-        tests_dir + "/print_module.nl"};
+    };
 
     REQUIRE_THROWS_AS(compile(input_file_paths), TypeMismatchError);
 }

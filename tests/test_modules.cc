@@ -15,7 +15,7 @@ TEST_CASE("Test max.", "[modules]") {
     const std::string tests_dir(NL_TESTS_PATH);
     std::vector<std::string> input_file_paths = {
         tests_dir + "/test_max.nl",
-        tests_dir + "/math_module.nl"};
+    };
     auto program = compile(input_file_paths);
     write_file(file_name, program);
 
@@ -31,7 +31,7 @@ TEST_CASE("Test min.", "[modules]") {
     const std::string tests_dir(NL_TESTS_PATH);
     std::vector<std::string> input_file_paths = {
         tests_dir + "/test_min.nl",
-        tests_dir + "/math_module.nl"};
+    };
     auto program = compile(input_file_paths);
     write_file(file_name, program);
 
@@ -47,7 +47,7 @@ TEST_CASE("Test printchar.", "[modules]") {
     const std::string tests_dir(NL_TESTS_PATH);
     std::vector<std::string> input_file_paths = {
         tests_dir + "/test_printchar.nl",
-        tests_dir + "/print_module.nl"};
+    };
     auto program = compile(input_file_paths);
     write_file(file_name, program);
 
@@ -59,7 +59,7 @@ TEST_CASE("Test print.", "[modules]") {
     const std::string tests_dir(NL_TESTS_PATH);
     std::vector<std::string> input_file_paths = {
         tests_dir + "/test_print.nl",
-        tests_dir + "/print_module.nl"};
+    };
     auto program = compile(input_file_paths);
     write_file(file_name, program);
 
@@ -71,7 +71,7 @@ TEST_CASE("Test println.", "[modules]") {
     const std::string tests_dir(NL_TESTS_PATH);
     std::vector<std::string> input_file_paths = {
         tests_dir + "/test_println.nl",
-        tests_dir + "/print_module.nl"};
+    };
     auto program = compile(input_file_paths);
     write_file(file_name, program);
 
@@ -83,7 +83,7 @@ TEST_CASE("Test printnum.", "[modules]") {
     const std::string tests_dir(NL_TESTS_PATH);
     std::vector<std::string> input_file_paths = {
         tests_dir + "/test_printnum.nl",
-        tests_dir + "/print_module.nl"};
+    };
     auto program = compile(input_file_paths);
     write_file(file_name, program);
 
@@ -100,7 +100,6 @@ TEST_CASE("Test fibonacci.", "[modules]") {
     const std::string tests_dir(NL_TESTS_PATH);
     std::vector<std::string> input_file_paths = {
         tests_dir + "/test_fibonacci.nl",
-        tests_dir + "/print_module.nl",
         tests_dir + "/fibonacci_module.nl"};
     auto program = compile(input_file_paths);
     write_file(file_name, program);
