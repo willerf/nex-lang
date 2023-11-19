@@ -7,7 +7,6 @@
 
 #include "compile_error.h"
 #include "parse_earley.h"
-#include "parsing_error.h"
 #include "state.h"
 
 struct Token;

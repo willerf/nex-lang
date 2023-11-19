@@ -1,6 +1,9 @@
 
 #pragma once
 
+#include <string>
+#include <vector>
+
 #include "ast_node.h"
 #include "module_table.h"
 #include "symbol_table.h"

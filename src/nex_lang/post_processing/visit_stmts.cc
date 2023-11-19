@@ -28,12 +28,10 @@
 #include "type_mismatch_error.h"
 #include "typed_expr.h"
 #include "typed_variable.h"
+#include "variable.h"
 #include "visit_expr.h"
-#include "visit_type.h"
 #include "visit_vardef.h"
 #include "while_loop.h"
-
-struct Variable;
 
 std::shared_ptr<Code> visit_stmt(
     ASTNode root,
