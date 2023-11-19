@@ -13,7 +13,7 @@ fn main(x: i32, y: i32) -> i32 {
     let e = min(10, 17);
 
     let f = 'f';
-    printchar(f);
+    print_char(f);
     let g = "hello world";
     println(g);
     let h = a < b;

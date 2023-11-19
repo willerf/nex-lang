@@ -41,9 +41,9 @@ TEST_CASE("Test min.", "[modules]") {
     REQUIRE(stoi(emulate(file_name, -8, -5)) == std::min(-8, -5));
 }
 
-TEST_CASE("Test printchar.", "[modules]") {
+TEST_CASE("Test print_char.", "[modules]") {
     std::vector<std::string> input_file_paths = {
-        examples_dir + "/test_printchar.nl",
+        examples_dir + "/test_print_char.nl",
     };
     auto program = compile(input_file_paths);
     write_file(file_name, program);
@@ -74,9 +74,9 @@ TEST_CASE("Test println.", "[modules]") {
     REQUIRE(result == "Hello World!\nHello World Again!\n0\n");
 }
 
-TEST_CASE("Test printnum.", "[modules]") {
+TEST_CASE("Test print_num.", "[modules]") {
     std::vector<std::string> input_file_paths = {
-        examples_dir + "/test_printnum.nl",
+        examples_dir + "/test_print_num.nl",
     };
     auto program = compile(input_file_paths);
     write_file(file_name, program);
