@@ -3,8 +3,9 @@
 ### Table of Contents
 - [About](https://github.com/willerf/nex-lang#about)
 - [Examples](https://github.com/willerf/nex-lang#examples)
-  - [Example Print Implementation](https://github.com/willerf/nex-lang#example-hello-world)
-  - [Example Power Implementation](https://github.com/willerf/nex-lang#example-print-max)
+  - [Example Hello World](https://github.com/willerf/nex-lang#example-hello-world)
+  - [Example Print Max](https://github.com/willerf/nex-lang#example-print-max)
+  - [More Examples](https://github.com/willerf/nex-lang#more-examples)
 - [Getting Started](https://github.com/willerf/nex-lang#getting-started)
   - [Install & Build](https://github.com/willerf/nex-lang#install--build)
   - [User Guide](https://github.com/willerf/nex-lang#user-guide)
@@ -41,6 +42,8 @@ fn main(x: i32, y: i32) -> i32 {
   return 0;
 }
 ```
+#### More Examples
+Additional examples can be found within the examples directory.
 
 ### Getting Started
 
