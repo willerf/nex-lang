@@ -22,6 +22,7 @@ stmtblock LBRACE stmts RBRACE
 stmts stmt stmts
 stmts
 stmt LET vardef ASSIGN expr SEMI
+stmt LET ID ASSIGN expr SEMI
 stmt expr ASSIGN expr SEMI
 stmt expr SEMI
 stmt IF LPAREN expr RPAREN stmtblock ELSE stmtblock

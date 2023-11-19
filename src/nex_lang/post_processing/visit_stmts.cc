@@ -14,6 +14,7 @@
 #include "ast_node.h"
 #include "block.h"
 #include "call.h"
+#include "duplicate_symbol_error.h"
 #include "if_stmt.h"
 #include "nl_type.h"
 #include "nl_type_bool.h"
@@ -28,6 +29,7 @@
 #include "typed_expr.h"
 #include "typed_variable.h"
 #include "visit_expr.h"
+#include "visit_type.h"
 #include "visit_vardef.h"
 #include "while_loop.h"
 
@@ -73,7 +75,38 @@ std::shared_ptr<Code> visit_stmt(
                 root.children.at(2).line_no
             );
         }
-        result = assign(typed_var->variable, expr.code);
+        result = assign(typed_var->variable, expr.code);  
+    } else if (prod
+        == std::vector<State> {
+            NonTerminal::stmt,
+            Terminal::LET,
+            Terminal::ID,
+            Terminal::ASSIGN,
+            NonTerminal::expr,
+            Terminal::SEMI}) {
+        // extract variable declaration and assignment with type inference
+
+        ASTNode expr_node = root.children.at(3);
+        TypedExpr expr = visit_expr(
+            expr_node,
+            false,
+            symbol_table,
+            module_table,
+            static_data
+        );
+        
+        ASTNode id = root.children.at(1);
+        std::string name = id.lexeme;
+
+        if (symbol_table.count(name)) {
+            throw DuplicateSymbolError(name, id.line_no);
+        } else {
+            std::shared_ptr<Variable> variable =
+                std::make_shared<Variable>(name);
+            auto typed_var = std::make_shared<TypedVariable>(variable, expr.nl_type);
+            symbol_table[name] = typed_var;
+            result = assign(typed_var->variable, expr.code);
+        }
     } else if (prod == std::vector<State> {NonTerminal::stmt, NonTerminal::expr, Terminal::ASSIGN, NonTerminal::expr, Terminal::SEMI}) {
         // extract variable assignment
         ASTNode lhs = root.children.at(0);
