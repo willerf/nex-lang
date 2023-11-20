@@ -19,9 +19,14 @@ static const std::string math_module(
 #include "math_module.nl"
 );
 
+static const std::string list_module(
+#include "list_module.nl"
+);
+
 static std::map<std::string, std::string> nl_lib {
     {"print", print_module},
-    {"math", math_module}};
+    {"math", math_module},
+    {"list", list_module}};
 
 void nl_lib_import(
     std::string import_name,
