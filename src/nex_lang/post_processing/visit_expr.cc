@@ -6,6 +6,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <memory>
 #include <set>
 #include <string>
 #include <variant>
@@ -203,73 +204,65 @@ TypedExpr visit_expr(
             module_table,
             static_data
         );
-    } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::ID, Terminal::LBRACKET, NonTerminal::expr, Terminal::RBRACKET}) {
-        ASTNode id = root.children.at(0);
-        std::string name = id.lexeme;
+    } else if (prod == std::vector<State> {NonTerminal::exprp9, NonTerminal::exprp9, Terminal::LBRACKET, NonTerminal::expr, Terminal::RBRACKET}) {
+        ASTNode lhs_expr_node = root.children.at(0);
+        TypedExpr lhs_expr = visit_expr(
+            lhs_expr_node,
+            read_address,
+            symbol_table,
+            module_table,
+            static_data
+        );
 
-        if (symbol_table.count(name)) {
-            if (auto typed_var =
-                    std::dynamic_pointer_cast<TypedVariable>(symbol_table[name]
-                    )) {
-                ASTNode expr_node = root.children.at(2);
-                TypedExpr expr = visit_expr(
-                    expr_node,
-                    false,
-                    symbol_table,
-                    module_table,
-                    static_data
-                );
-                if ((*expr.nl_type) == NLTypeI32 {}) {
-                    if (auto nl_type_ptr = std::dynamic_pointer_cast<NLTypePtr>(
-                            typed_var->nl_type
-                        )) {
-                        if (read_address) {
-                            result = TypedExpr {
-                                bin_op(
-                                    typed_var->variable->to_expr(),
-                                    op::plus(),
-                                    bin_op(
-                                        expr.code,
-                                        op::times(),
-                                        int_literal(nl_type_ptr->nl_type->bytes(
-                                        ))
-                                    )
-                                ),
-                                nl_type_ptr->nl_type};
-                        } else {
-                            result = TypedExpr {
-                                deref(bin_op(
-                                    typed_var->variable->to_expr(),
-                                    op::plus(),
-                                    bin_op(
-                                        expr.code,
-                                        op::times(),
-                                        int_literal(nl_type_ptr->nl_type->bytes(
-                                        ))
-                                    )
-                                )),
-                                nl_type_ptr->nl_type};
-                        }
-                    } else {
-                        throw TypeMismatchError(
-                            "Only can index variable of type pointer.",
-                            root.children.at(1).line_no
-                        );
-                    }
+        ASTNode rhs_expr_node = root.children.at(2);
+        TypedExpr rhs_expr = visit_expr(
+            rhs_expr_node,
+            false,
+            symbol_table,
+            module_table,
+            static_data
+        );
+
+        if ((*rhs_expr.nl_type) == NLTypeI32 {}) {
+            if (auto nl_type_ptr =
+                    std::dynamic_pointer_cast<NLTypePtr>(lhs_expr.nl_type)) {
+                if (read_address) {
+                    result = TypedExpr {
+                        bin_op(
+                            deref(lhs_expr.code),
+                            op::plus(),
+                            bin_op(
+                                rhs_expr.code,
+                                op::times(),
+                                int_literal(nl_type_ptr->nl_type->bytes())
+                            )
+                        ),
+                        nl_type_ptr->nl_type};
                 } else {
-                    throw TypeMismatchError(
-                        "Expression between square brackets must be of type i32.",
-                        root.children.at(1).line_no
-                    );
+                    result = TypedExpr {
+                        deref(bin_op(
+                            lhs_expr.code,
+                            op::plus(),
+                            bin_op(
+                                rhs_expr.code,
+                                op::times(),
+                                int_literal(nl_type_ptr->nl_type->bytes())
+                            )
+                        )),
+                        nl_type_ptr->nl_type};
                 }
-
             } else {
-                throw SymbolNotFoundError(name, id.line_no);
+                throw TypeMismatchError(
+                    "Only can index variable of type pointer.",
+                    root.children.at(1).line_no
+                );
             }
         } else {
-            throw SymbolNotFoundError(name, id.line_no);
+            throw TypeMismatchError(
+                "Only can index variable with integer type.",
+                root.children.at(1).line_no
+            );
         }
-
     } else if (prod == std::vector<State> {NonTerminal::exprp8, NonTerminal::exprp8, Terminal::AS, NonTerminal::type}) {
         ASTNode expr = root.children.at(0);
         TypedExpr expr_code = visit_expr(

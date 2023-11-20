@@ -176,7 +176,7 @@ static const std::map<NonTerminal, std::vector<Production>> productions = {
            Terminal::RPAREN}},
          {NonTerminal::exprp9, {Terminal::NEW, NonTerminal::typeinit}},
          {NonTerminal::exprp9,
-          {Terminal::ID,
+          {NonTerminal::exprp9,
            Terminal::LBRACKET,
            NonTerminal::expr,
            Terminal::RBRACKET}},
