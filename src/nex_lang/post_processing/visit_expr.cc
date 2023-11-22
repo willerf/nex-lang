@@ -195,6 +195,76 @@ TypedExpr visit_expr(
         } else {
             throw SymbolNotFoundError(name, id.line_no);
         }
+
+    } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::ID, Terminal::DOT, Terminal::ID, Terminal::LPAREN, NonTerminal::optargs, Terminal::RPAREN}) {
+        ASTNode var_id = root.children.at(0);
+        std::string var_name = var_id.lexeme;
+
+        ASTNode func_id = root.children.at(2);
+        std::string func_name = func_id.lexeme;
+
+        if (symbol_table.count(func_name)) {
+            if (symbol_table.count(var_name)) {
+                if (auto typed_procedure =
+                        std::dynamic_pointer_cast<TypedProcedure>(
+                            symbol_table[func_name]
+                        )) {
+                    if (auto typed_var =
+                            std::dynamic_pointer_cast<TypedVariable>(
+                                symbol_table[var_name]
+                            )) {
+                        ASTNode optargs = root.children.at(4);
+                        std::vector<TypedExpr> typed_args = visit_optargs(
+                            optargs,
+                            symbol_table,
+                            module_table,
+                            static_data
+                        );
+                        typed_args.insert(
+                            typed_args.begin(),
+                            TypedExpr {
+                                typed_var->variable->to_expr(),
+                                typed_var->nl_type}
+                        );
+
+                        if (typed_args.size()
+                            != typed_procedure->params.size()) {
+                            throw TypeMismatchError(
+                                "Mismatched number of parameters for function call.",
+                                func_id.line_no
+                            );
+                        }
+
+                        for (size_t i = 0; i < typed_args.size(); ++i) {
+                            if ((*typed_args.at(i).nl_type)
+                                != (*typed_procedure->params.at(i)->nl_type)) {
+                                throw TypeMismatchError(
+                                    "Type mismatch of parameters for function call.",
+                                    func_id.line_no
+                                );
+                            }
+                        }
+
+                        std::vector<std::shared_ptr<Code>> args;
+                        for (auto typed_arg : typed_args) {
+                            args.push_back(typed_arg.code);
+                        }
+                        result = TypedExpr {
+                            make_call(typed_procedure->procedure, args),
+                            typed_procedure->ret_type};
+                    } else {
+                        throw SymbolNotFoundError(var_name, var_id.line_no);
+                    }
+                } else {
+                    throw SymbolNotFoundError(func_name, func_id.line_no);
+                }
+            } else {
+                throw SymbolNotFoundError(var_name, var_id.line_no);
+            }
+        } else {
+            throw SymbolNotFoundError(func_name, func_id.line_no);
+        }
+
     } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::NEW, NonTerminal::typeinit}) {
         ASTNode typeinit = root.children.at(1);
         return visit_typeinit(

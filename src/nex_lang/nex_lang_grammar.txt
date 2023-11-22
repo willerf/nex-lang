@@ -65,6 +65,7 @@ exprp9 STRLITERAL
 exprp9 CHARLITERAL 
 exprp9 LPAREN expr RPAREN
 exprp9 ID LPAREN optargs RPAREN
+exprp9 ID DOT ID LPAREN optargs RPAREN
 exprp9 NEW typeinit
 exprp9 exprp9 LBRACKET expr RBRACKET
 optargs args

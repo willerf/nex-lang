@@ -51,6 +51,7 @@ enum class Terminal {
     PIPE,
     PCT,
     NOT,
+    DOT,
     NUM,
     STRLITERALNF,
     CHARLITERALNF,
