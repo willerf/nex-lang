@@ -12,3 +12,7 @@ bool operator==(const NLType& lhs, const NLType& rhs) {
 bool operator!=(const NLType& lhs, const NLType& rhs) {
     return !lhs.equals(rhs);
 }
+
+bool operator<(const NLType& lhs, const NLType& rhs) {
+    return lhs.less_than(rhs);
+}

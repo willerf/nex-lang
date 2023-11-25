@@ -56,8 +56,8 @@ compile(std::vector<std::string> input_file_paths) {
         make_heap_allocate(heap_start);
     std::shared_ptr<TypedProcedure> heap_free = make_heap_free(heap_start);
     SymbolTable heap_module;
-    heap_module[heap_allocate_id] = heap_allocate;
-    heap_module[heap_free_id] = heap_free;
+    heap_module[{heap_allocate_id, {}}] = heap_allocate;
+    heap_module[{heap_free_id, {}}] = heap_free;
 
     program_context.module_table[heap_module_id] = heap_module;
 

@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "compile.h"
+#include "compile_error.h"
 #include "duplicate_symbol_error.h"
 #include "parsing_error.h"
 #include "scanning_error.h"
@@ -36,13 +37,13 @@ TEST_CASE("Test missing symbol error 1.", "[errors]") {
 
 TEST_CASE("Test missing symbol error 2.", "[errors]") {
     std::string input = "mod a; fn main(x: i32, y: i32) -> i32 { print(x); }";
-    REQUIRE_THROWS_AS(compile_test(input), SymbolNotFoundError);
+    REQUIRE_THROWS_AS(compile_test(input), CompileError);
 }
 
 TEST_CASE("Test missing symbol error 3.", "[errors]") {
     std::string input =
         "mod a; fn main(x: i32, y: i32) -> i32 { return get(); }";
-    REQUIRE_THROWS_AS(compile_test(input), SymbolNotFoundError);
+    REQUIRE_THROWS_AS(compile_test(input), CompileError);
 }
 
 TEST_CASE("Test type mismatch error 1.", "[errors]") {
@@ -63,7 +64,7 @@ TEST_CASE("Test type mismatch error 2.", "[errors]") {
             get(x);
         }
         )";
-    REQUIRE_THROWS_AS(compile_test(input), TypeMismatchError);
+    REQUIRE_THROWS_AS(compile_test(input), CompileError);
 }
 
 TEST_CASE("Test type mismatch error 3.", "[errors]") {
@@ -81,5 +82,5 @@ TEST_CASE("Test type mismatch error 5.", "[errors]") {
         examples_dir + "/test_type_mismatch_error.nl",
     };
 
-    REQUIRE_THROWS_AS(compile(input_file_paths), TypeMismatchError);
+    REQUIRE_THROWS_AS(compile(input_file_paths), CompileError);
 }

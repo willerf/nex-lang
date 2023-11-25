@@ -69,10 +69,10 @@ TypedExpr visit_expr(
         ASTNode id = root.children.at(0);
         std::string name = id.lexeme;
 
-        if (symbol_table.count(name)) {
-            if (auto typed_var =
-                    std::dynamic_pointer_cast<TypedVariable>(symbol_table[name]
-                    )) {
+        if (symbol_table.count({name, {}})) {
+            if (auto typed_var = std::dynamic_pointer_cast<TypedVariable>(
+                    symbol_table[{name, {}}]
+                )) {
                 result = TypedExpr {
                     typed_var->variable->to_expr(read_address),
                     typed_var->nl_type};
@@ -101,10 +101,10 @@ TypedExpr visit_expr(
     } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::AMPERSAND, Terminal::ID}) {
         ASTNode id = root.children.at(1);
         std::string name = id.lexeme;
-        if (symbol_table.count(name)) {
-            if (auto typed_var =
-                    std::dynamic_pointer_cast<TypedVariable>(symbol_table[name]
-                    )) {
+        if (symbol_table.count({name, {}})) {
+            if (auto typed_var = std::dynamic_pointer_cast<TypedVariable>(
+                    symbol_table[{name, {}}]
+                )) {
                 result = TypedExpr {
                     typed_var->variable->to_expr(true),
                     std::make_shared<NLTypePtr>(typed_var->nl_type)};
@@ -153,35 +153,20 @@ TypedExpr visit_expr(
         ASTNode id = root.children.at(0);
         std::string name = id.lexeme;
 
-        if (symbol_table.count(name)) {
+        ASTNode optargs = root.children.at(2);
+        std::vector<TypedExpr> typed_args =
+            visit_optargs(optargs, symbol_table, program_context, static_data);
+
+        std::vector<std::shared_ptr<NLType>> arg_types;
+        for (auto& typed_arg : typed_args) {
+            arg_types.push_back(typed_arg.nl_type);
+        }
+
+        if (symbol_table.count({name, arg_types})) {
             if (auto typed_procedure =
-                    std::dynamic_pointer_cast<TypedProcedure>(symbol_table[name]
+                    std::dynamic_pointer_cast<TypedProcedure>(
+                        symbol_table[{name, arg_types}]
                     )) {
-                ASTNode optargs = root.children.at(2);
-                std::vector<TypedExpr> typed_args = visit_optargs(
-                    optargs,
-                    symbol_table,
-                    program_context,
-                    static_data
-                );
-
-                if (typed_args.size() != typed_procedure->params.size()) {
-                    throw TypeMismatchError(
-                        "Mismatched number of parameters for function call.",
-                        id.line_no
-                    );
-                }
-
-                for (size_t i = 0; i < typed_args.size(); ++i) {
-                    if ((*typed_args.at(i).nl_type)
-                        != (*typed_procedure->params.at(i)->nl_type)) {
-                        throw TypeMismatchError(
-                            "Type mismatch of parameters for function call.",
-                            id.line_no
-                        );
-                    }
-                }
-
                 std::vector<std::shared_ptr<Code>> args;
                 for (auto typed_arg : typed_args) {
                     args.push_back(typed_arg.code);
@@ -190,10 +175,16 @@ TypedExpr visit_expr(
                     make_call(typed_procedure->procedure, args),
                     typed_procedure->ret_type};
             } else {
-                throw SymbolNotFoundError(name, id.line_no);
+                throw CompileError(
+                    "No matching function call found for name: " + name,
+                    id.line_no
+                );
             }
         } else {
-            throw SymbolNotFoundError(name, id.line_no);
+            throw CompileError(
+                "No matching function call found for name: " + name,
+                id.line_no
+            );
         }
     } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::NEW, NonTerminal::typeinit}) {
         ASTNode typeinit = root.children.at(1);

@@ -5,6 +5,10 @@ bool NLTypeI32::equals(const NLType& other) const {
     return type() == other.type();
 }
 
+bool NLTypeI32::less_than(const NLType& other) const {
+    return type() < other.type();
+}
+
 std::type_index NLTypeI32::type() const {
     return typeid(NLTypeI32);
 }

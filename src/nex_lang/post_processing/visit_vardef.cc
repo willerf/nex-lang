@@ -37,7 +37,7 @@ std::shared_ptr<TypedVariable> visit_vardef(
         ASTNode id = root.children.at(0);
         std::string name = id.lexeme;
 
-        if (symbol_table.count(name)) {
+        if (symbol_table.count({name, {}})) {
             throw DuplicateSymbolError(name, id.line_no);
         } else {
             ASTNode var_type = root.children.at(2);
@@ -47,7 +47,7 @@ std::shared_ptr<TypedVariable> visit_vardef(
             std::shared_ptr<Variable> variable =
                 std::make_shared<Variable>(name);
             result = std::make_shared<TypedVariable>(variable, nl_type);
-            symbol_table[name] = result;
+            symbol_table[{name, {}}] = result;
         }
     } else {
         std::cerr << "Invalid production found while processing vardef."

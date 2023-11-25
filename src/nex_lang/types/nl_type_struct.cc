@@ -2,6 +2,8 @@
 
 #include "nl_type_struct.h"
 
+#include <iostream>
+
 NLTypeStruct::NLTypeStruct(
     std::vector<std::pair<std::string, std::shared_ptr<NLType>>> child_types
 ) :
@@ -21,6 +23,11 @@ bool NLTypeStruct::equals(const NLType& other) const {
         }
     }
     return true;
+}
+
+bool NLTypeStruct::less_than(const NLType& other) const {
+    std::cerr << "FIX THIS" << std::endl;
+    return false;
 }
 
 std::type_index NLTypeStruct::type() const {

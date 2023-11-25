@@ -42,7 +42,8 @@ TypedExpr visit_typeinit(
 
         std::shared_ptr<TypedProcedure> typed_proc =
             std::dynamic_pointer_cast<TypedProcedure>(
-                program_context.module_table.at("heap").at("heap_allocate")
+                program_context.module_table.at("heap").at({"heap_allocate", {}}
+                )
             );
         assert(typed_proc);
 
@@ -64,7 +65,8 @@ TypedExpr visit_typeinit(
         );
         std::shared_ptr<TypedProcedure> typed_proc =
             std::dynamic_pointer_cast<TypedProcedure>(
-                program_context.module_table.at("heap").at("heap_allocate")
+                program_context.module_table.at("heap").at({"heap_allocate", {}}
+                )
             );
         assert(typed_proc);
 

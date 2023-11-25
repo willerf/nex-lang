@@ -76,9 +76,6 @@ void extract_fn(
         ASTNode id = root.children.at(1);
         std::string name = id.lexeme;
 
-        // add identifier to symbol table
-        symbol_table[name] = result;
-
         // scope function variables
         SymbolTable symbol_table_params;
 
@@ -88,9 +85,15 @@ void extract_fn(
             visit_optparams(optparams, symbol_table_params, program_context);
 
         std::vector<std::shared_ptr<Variable>> params;
+        std::vector<std::shared_ptr<NLType>> param_types;
         for (auto typed_variable : typed_params) {
             params.push_back(typed_variable->variable);
+            param_types.push_back(typed_variable->nl_type);
         }
+
+        // add identifier to symbol table
+        symbol_table[{name, param_types}] = result;
+
         result->procedure = std::make_shared<Procedure>(name, params);
         result->params = typed_params;
 
@@ -106,9 +109,6 @@ void extract_fn(
         ASTNode id = root.children.at(1);
         std::string name = id.lexeme;
 
-        // add identifier to symbol table
-        symbol_table[name] = result;
-
         // scope function variables
         SymbolTable symbol_table_params;
 
@@ -118,9 +118,15 @@ void extract_fn(
             visit_optparams(optparams, symbol_table_params, program_context);
 
         std::vector<std::shared_ptr<Variable>> params;
+        std::vector<std::shared_ptr<NLType>> param_types;
         for (auto typed_variable : typed_params) {
             params.push_back(typed_variable->variable);
+            param_types.push_back(typed_variable->nl_type);
         }
+
+        // add identifier to symbol table
+        symbol_table[{name, param_types}] = result;
+
         result->procedure = std::make_shared<Procedure>(name, params);
         result->params = typed_params;
 

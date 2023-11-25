@@ -89,14 +89,14 @@ std::shared_ptr<Code> visit_stmt(
         ASTNode id = root.children.at(1);
         std::string name = id.lexeme;
 
-        if (symbol_table.count(name)) {
+        if (symbol_table.count({name, {}})) {
             throw DuplicateSymbolError(name, id.line_no);
         } else {
             std::shared_ptr<Variable> variable =
                 std::make_shared<Variable>(name);
             auto typed_var =
                 std::make_shared<TypedVariable>(variable, expr.nl_type);
-            symbol_table[name] = typed_var;
+            symbol_table[{name, {}}] = typed_var;
             result = assign(typed_var->variable, expr.code);
         }
     } else if (prod == std::vector<State> {NonTerminal::stmt, NonTerminal::expr, Terminal::ASSIGN, NonTerminal::expr, Terminal::SEMI}) {
@@ -257,7 +257,7 @@ std::shared_ptr<Code> visit_stmt(
 
         std::shared_ptr<TypedProcedure> typed_proc =
             std::dynamic_pointer_cast<TypedProcedure>(
-                program_context.module_table.at("heap").at("heap_free")
+                program_context.module_table.at("heap").at({"heap_free", {}})
             );
         assert(typed_proc);
 
