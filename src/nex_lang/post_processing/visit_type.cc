@@ -14,9 +14,11 @@
 #include "nl_type_i32.h"
 #include "nl_type_none.h"
 #include "nl_type_ptr.h"
+#include "program_context.h"
 #include "state.h"
 
-std::shared_ptr<NLType> visit_type(ASTNode root) {
+std::shared_ptr<NLType>
+visit_type(ASTNode root, ProgramContext& program_context) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::type);
     std::shared_ptr<NLType> result = nullptr;
 
@@ -29,13 +31,23 @@ std::shared_ptr<NLType> visit_type(ASTNode root) {
         result = std::make_shared<NLTypeChar>();
     } else if (prod == std::vector<State> {NonTerminal::type, Terminal::NONE}) {
         result = std::make_shared<NLTypeNone>();
+    } else if (prod == std::vector<State> {NonTerminal::type, Terminal::ID}) {
+        ASTNode id = root.children.at(0);
+        std::string name = id.lexeme;
+
+        if (program_context.type_table.contains(name)) {
+            result = program_context.type_table.at(name);
+        } else {
+            throw "TODO";
+        }
     } else if (prod == std::vector<State> {NonTerminal::type, Terminal::STAR, NonTerminal::type}) {
         ASTNode sub_type = root.children.at(1);
-        std::shared_ptr<NLType> sub_nl_type = visit_type(sub_type);
+        std::shared_ptr<NLType> sub_nl_type =
+            visit_type(sub_type, program_context);
         result = std::make_shared<NLTypePtr>(sub_nl_type);
     } else if (prod == std::vector<State> {NonTerminal::type, Terminal::LPAREN, NonTerminal::type, Terminal::RPAREN}) {
         ASTNode type_node = root.children.at(1);
-        result = visit_type(type_node);
+        result = visit_type(type_node, program_context);
     } else {
         std::cerr << "Invalid production found while processing type."
                   << std::endl;

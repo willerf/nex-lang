@@ -37,7 +37,8 @@ TypedExpr visit_typeinit(
     std::vector<State> prod = root.get_production();
     if (prod == std::vector<State> {NonTerminal::typeinit, NonTerminal::type}) {
         ASTNode type_node = root.children.at(0);
-        std::shared_ptr<NLType> nl_type = visit_type(type_node);
+        std::shared_ptr<NLType> nl_type =
+            visit_type(type_node, program_context);
 
         std::shared_ptr<TypedProcedure> typed_proc =
             std::dynamic_pointer_cast<TypedProcedure>(
@@ -50,7 +51,8 @@ TypedExpr visit_typeinit(
             std::make_shared<NLTypePtr>(nl_type)};
     } else if (prod == std::vector<State> {NonTerminal::typeinit, NonTerminal::type, Terminal::LBRACKET, NonTerminal::expr, Terminal::RBRACKET}) {
         ASTNode type_node = root.children.at(0);
-        std::shared_ptr<NLType> nl_type = visit_type(type_node);
+        std::shared_ptr<NLType> nl_type =
+            visit_type(type_node, program_context);
 
         ASTNode expr_node = root.children.at(2);
         TypedExpr expr = visit_expr(

@@ -172,6 +172,7 @@ static const std::map<std::string, Terminal> keywords = {
     {"else", Terminal::ELSE},
     {"return", Terminal::RET},
     {"as", Terminal::AS},
+    {"type", Terminal::TYPE},
     {"i32", Terminal::I32},
     {"bool", Terminal::BOOL},
     {"char", Terminal::CHAR},

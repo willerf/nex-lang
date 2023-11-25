@@ -8,11 +8,15 @@
 #include <variant>
 
 #include "ast_node.h"
+#include "program_context.h"
 #include "state.h"
 #include "visit_vardef.h"
 
-std::vector<std::shared_ptr<TypedVariable>>
-visit_params(ASTNode root, SymbolTable& symbol_table) {
+std::vector<std::shared_ptr<TypedVariable>> visit_params(
+    ASTNode root,
+    SymbolTable& symbol_table,
+    ProgramContext& program_context
+) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::params);
     std::vector<std::shared_ptr<TypedVariable>> result;
 
@@ -20,16 +24,16 @@ visit_params(ASTNode root, SymbolTable& symbol_table) {
     if (prod == std::vector<State> {NonTerminal::params, NonTerminal::vardef}) {
         // extract singular parameter
         ASTNode vardef = root.children.at(0);
-        result.push_back(visit_vardef(vardef, symbol_table));
+        result.push_back(visit_vardef(vardef, symbol_table, program_context));
     } else if (prod == std::vector<State> {NonTerminal::params, NonTerminal::vardef, Terminal::COMMA, NonTerminal::params}) {
         // extract code parameter
         ASTNode vardef = root.children.at(0);
-        result.push_back(visit_vardef(vardef, symbol_table));
+        result.push_back(visit_vardef(vardef, symbol_table, program_context));
 
         // extract rest of parameters
         ASTNode params = root.children.at(2);
         std::vector<std::shared_ptr<TypedVariable>> child_result =
-            visit_params(params, symbol_table);
+            visit_params(params, symbol_table, program_context);
         result.insert(result.end(), child_result.begin(), child_result.end());
     } else {
         std::cerr << "Invalid production found while processing params."
@@ -40,8 +44,11 @@ visit_params(ASTNode root, SymbolTable& symbol_table) {
     return result;
 }
 
-std::vector<std::shared_ptr<TypedVariable>>
-visit_optparams(ASTNode root, SymbolTable& symbol_table) {
+std::vector<std::shared_ptr<TypedVariable>> visit_optparams(
+    ASTNode root,
+    SymbolTable& symbol_table,
+    ProgramContext& program_context
+) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::optparams);
     std::vector<std::shared_ptr<TypedVariable>> result;
 
@@ -51,7 +58,7 @@ visit_optparams(ASTNode root, SymbolTable& symbol_table) {
     } else if (prod == std::vector<State> {NonTerminal::optparams, NonTerminal::params}) {
         // extract parameters
         ASTNode params = root.children.at(0);
-        result = visit_params(params, symbol_table);
+        result = visit_params(params, symbol_table, program_context);
     } else {
         std::cerr << "Invalid production found while processing optparams."
                   << std::endl;

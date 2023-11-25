@@ -11,14 +11,18 @@
 
 #include "ast_node.h"
 #include "duplicate_symbol_error.h"
+#include "program_context.h"
 #include "state.h"
 #include "variable.h"
 #include "visit_type.h"
 
 struct NLType;
 
-std::shared_ptr<TypedVariable>
-visit_vardef(ASTNode root, SymbolTable& symbol_table) {
+std::shared_ptr<TypedVariable> visit_vardef(
+    ASTNode root,
+    SymbolTable& symbol_table,
+    ProgramContext& program_context
+) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::vardef);
     std::shared_ptr<TypedVariable> result = nullptr;
 
@@ -37,7 +41,8 @@ visit_vardef(ASTNode root, SymbolTable& symbol_table) {
             throw DuplicateSymbolError(name, id.line_no);
         } else {
             ASTNode var_type = root.children.at(2);
-            std::shared_ptr<NLType> nl_type = visit_type(var_type);
+            std::shared_ptr<NLType> nl_type =
+                visit_type(var_type, program_context);
 
             std::shared_ptr<Variable> variable =
                 std::make_shared<Variable>(name);

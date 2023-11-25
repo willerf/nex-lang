@@ -54,7 +54,7 @@ std::shared_ptr<Code> visit_stmt(
             Terminal::SEMI}) {
         // extract variable declaration and assignment
         ASTNode vardef = root.children.at(1);
-        auto typed_var = visit_vardef(vardef, symbol_table);
+        auto typed_var = visit_vardef(vardef, symbol_table, program_context);
 
         ASTNode expr_node = root.children.at(3);
         TypedExpr expr = visit_expr(

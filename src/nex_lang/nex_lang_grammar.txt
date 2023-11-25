@@ -1,8 +1,11 @@
-s BOFS module imports fns EOFS
+s BOFS module imports typedecls fns EOFS
 module MODULE ID SEMI
 imports import imports
 imports
 import IMPORT ID SEMI
+typedecls typedecl typedecls
+typedecls
+typedecl TYPE ID ASSIGN type SEMI
 fns fn fns
 fns fn
 fn FN ID LPAREN optparams RPAREN ARROW type stmtblock

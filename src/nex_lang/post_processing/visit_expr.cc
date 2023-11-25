@@ -274,7 +274,8 @@ TypedExpr visit_expr(
         );
 
         ASTNode type_node = root.children.at(2);
-        std::shared_ptr<NLType> nl_type = visit_type(type_node);
+        std::shared_ptr<NLType> nl_type =
+            visit_type(type_node, program_context);
 
         return TypedExpr {expr_code.code, nl_type};
     }

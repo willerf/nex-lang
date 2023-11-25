@@ -32,6 +32,7 @@ std::vector<std::shared_ptr<TypedProcedure>> visit_s(
             Terminal::BOFS,
             NonTerminal::module,
             NonTerminal::imports,
+            NonTerminal::typedecls,
             NonTerminal::fns,
             Terminal::EOFS}) {
         // extract functions of program
@@ -50,7 +51,7 @@ std::vector<std::shared_ptr<TypedProcedure>> visit_s(
         ASTNode imports = root.children.at(2);
         visit_imports(imports, symbol_table, program_context);
 
-        ASTNode fns = root.children.at(3);
+        ASTNode fns = root.children.at(4);
         result = visit_fns(fns, symbol_table, program_context, static_data);
     } else {
         std::cerr << "Invalid production found while processing s."
