@@ -14,7 +14,7 @@ fn main(x: i32, y: i32) -> i32 {
         arr[i] = arr[i-1] + arr[i-2];
         i = i + 1;
     }
-    print_arr(arr);
+    print(arr);
     println("");
 
     return 0;

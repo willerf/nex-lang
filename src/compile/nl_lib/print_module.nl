@@ -3,33 +3,33 @@ mod print;
 
 fn print(word: *char) {
     while ((*word) != (0 as char)) {
-        print_char(*word);
+        print(*word);
         word = ((word as i32) + 4) as (*char);
     }
 }
 
 fn println(word: *char) {
     print(word);
-    print_char(10 as char);
+    print(10 as char);
 }
 
-fn print_char(letter: char) {
+fn print(letter: char) {
     let print_addr: *char = (-65524) as *char;
     (*print_addr) = letter;
 }
 
-fn println_char(letter: char) {
-    print_char(letter);
-    print_char(10 as char);
+fn println(letter: char) {
+    print(letter);
+    print(10 as char);
 }
 
-fn print_num(num: i32) {
+fn print(num: i32) {
     if (num == 0) {
-        print_char('0');
+        print('0');
     }
     else {
         if (num < 0) {
-            print_char('-');
+            print('-');
             num = 0 - num;
         }
         let tens: i32 = 1;
@@ -42,30 +42,30 @@ fn print_num(num: i32) {
 
         while (tens > 0) {
             let dig: i32 = (num / tens) % 10;
-            print_char((dig + ('0' as i32)) as char);
+            print((dig + ('0' as i32)) as char);
             tens = tens / 10;
         }
     }
 }
 
-fn println_num(num: i32) {
-    print_num(num); 
-    print_char(10 as char);
+fn println(num: i32) {
+    print(num); 
+    print(10 as char);
 }
 
-fn print_arr(arr: *i32) {
+fn print(arr: *i32) {
     let size: i32 = arr[-1];
     let len: i32 = size / 4;
     let i: i32 = 0;
     while (i < len) {
-        print_num(arr[i]);
-        print_char(' ');
+        print(arr[i]);
+        print(' ');
         i = i + 1;
     }
 }
 
-fn println_arr(arr: *i32) {
-    print_arr(arr); 
-    print_char(10 as char);
+fn println(arr: *i32) {
+    print(arr); 
+    print(10 as char);
 }
 )"
