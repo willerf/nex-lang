@@ -6,6 +6,10 @@ import IMPORT ID SEMI
 typedecls typedecl typedecls
 typedecls
 typedecl TYPE ID ASSIGN type SEMI
+typedecl STRUCT ID LBRACE typestmts RBRACE 
+typestmts typestmt typestmts
+typestmts typestmt
+typestmt ID COLON type SEMI
 fns fn fns
 fns fn
 fn FN ID LPAREN optparams RPAREN ARROW type stmtblock

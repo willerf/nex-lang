@@ -41,10 +41,12 @@ add_library(compiler_lib STATIC
     src/nex_lang/post_processing/extract_symbols.cc
     src/nex_lang/post_processing/extract_s.cc
     src/nex_lang/post_processing/extract_typedecls.cc
+    src/nex_lang/post_processing/extract_typestmts.cc
     src/nex_lang/post_processing/extract_fns.cc
     src/nex_lang/symbols/typed_procedure.cc
     src/nex_lang/symbols/typed_variable.cc
     src/nex_lang/types/nl_type.cc
+    src/nex_lang/types/nl_type_struct.cc
     src/nex_lang/types/nl_type_none.cc
     src/nex_lang/types/nl_type_bool.cc
     src/nex_lang/types/nl_type_i32.cc
