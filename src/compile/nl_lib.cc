@@ -7,9 +7,9 @@
 #include "ast_node.h"
 #include "compile_error.h"
 #include "extract_symbols.h"
-#include "module_table.h"
 #include "nex_lang_parsing.h"
 #include "nex_lang_scanning.h"
+#include "program_context.h"
 
 static const std::string print_module(
 #include "print_module.nl"
@@ -26,16 +26,17 @@ static std::map<std::string, std::string> nl_lib {
 void nl_lib_import(
     std::string import_name,
     std::vector<std::string>& import_list,
-    ModuleTable& module_table,
+    ProgramContext& program_context,
     std::vector<std::pair<std::string, ASTNode>>& modules
 ) {
-    if (nl_lib.contains(import_name) && !module_table.contains(import_name)) {
+    if (nl_lib.contains(import_name)
+        && !program_context.module_table.contains(import_name)) {
         std::string input = nl_lib.at(import_name);
         std::string input_file_path = "nl_lib/" + import_name;
         try {
             auto tokens = scan(input);
             auto ast_node = parse(tokens);
-            auto result_list = extract_symbols(ast_node, module_table);
+            auto result_list = extract_symbols(ast_node, program_context);
             import_list.insert(
                 import_list.end(),
                 result_list.begin(),

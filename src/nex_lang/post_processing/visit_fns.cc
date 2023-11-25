@@ -9,6 +9,7 @@
 #include <variant>
 
 #include "ast_node.h"
+#include "program_context.h"
 #include "state.h"
 #include "visit_stmts.h"
 
@@ -17,7 +18,7 @@ struct Code;
 std::vector<std::shared_ptr<TypedProcedure>> visit_fns(
     ASTNode root,
     SymbolTable& symbol_table,
-    ModuleTable& module_table,
+    ProgramContext& program_context,
     std::vector<std::shared_ptr<Code>>& static_data
 ) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::fns);
@@ -27,16 +28,20 @@ std::vector<std::shared_ptr<TypedProcedure>> visit_fns(
     if (prod == std::vector<State> {NonTerminal::fns, NonTerminal::fn}) {
         // extract singular function
         ASTNode fn = root.children.at(0);
-        result.push_back(visit_fn(fn, symbol_table, module_table, static_data));
+        result.push_back(
+            visit_fn(fn, symbol_table, program_context, static_data)
+        );
     } else if (prod == std::vector<State> {NonTerminal::fns, NonTerminal::fn, NonTerminal::fns}) {
         // extract code function
         ASTNode fn = root.children.at(0);
-        result.push_back(visit_fn(fn, symbol_table, module_table, static_data));
+        result.push_back(
+            visit_fn(fn, symbol_table, program_context, static_data)
+        );
 
         // extract rest of functions
         ASTNode fns = root.children.at(1);
         std::vector<std::shared_ptr<TypedProcedure>> child_result =
-            visit_fns(fns, symbol_table, module_table, static_data);
+            visit_fns(fns, symbol_table, program_context, static_data);
         result.insert(result.end(), child_result.begin(), child_result.end());
     } else {
         std::cerr << "Invalid production found while processing fns."
@@ -50,7 +55,7 @@ std::vector<std::shared_ptr<TypedProcedure>> visit_fns(
 std::shared_ptr<TypedProcedure> visit_fn(
     ASTNode root,
     SymbolTable& symbol_table,
-    ModuleTable& module_table,
+    ProgramContext& program_context,
     std::vector<std::shared_ptr<Code>>& static_data
 ) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::fn);
@@ -93,7 +98,7 @@ std::shared_ptr<TypedProcedure> visit_fn(
             stmtblock,
             result,
             symbol_table_params,
-            module_table,
+            program_context,
             static_data
         );
 
@@ -125,7 +130,7 @@ std::shared_ptr<TypedProcedure> visit_fn(
             stmtblock,
             result,
             symbol_table_params,
-            module_table,
+            program_context,
             static_data
         );
 

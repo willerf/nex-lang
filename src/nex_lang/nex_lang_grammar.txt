@@ -16,6 +16,7 @@ type I32
 type BOOL
 type CHAR
 type NONE
+type ID
 type STAR type
 type LPAREN type RPAREN
 stmtblock LBRACE stmts RBRACE

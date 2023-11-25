@@ -16,7 +16,8 @@
 #include "state.h"
 #include "symbol_table.h"
 
-std::vector<std::string> extract_s(ASTNode root, ModuleTable& module_table) {
+std::vector<std::string>
+extract_s(ASTNode root, ProgramContext& program_context) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::s);
     std::vector<std::string> result;
 
@@ -35,13 +36,13 @@ std::vector<std::string> extract_s(ASTNode root, ModuleTable& module_table) {
         std::string name = module.children.at(1).lexeme;
 
         ASTNode imports = root.children.at(2);
-        result = extract_imports(imports, module_table);
+        result = extract_imports(imports, program_context);
 
         SymbolTable symbol_table;
         ASTNode fns = root.children.at(3);
         extract_fns(fns, symbol_table);
 
-        module_table[name] = symbol_table;
+        program_context.module_table[name] = symbol_table;
     } else {
         std::cerr << "Invalid production found while extracting s."
                   << std::endl;

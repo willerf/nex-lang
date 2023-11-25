@@ -8,6 +8,7 @@
 #include <variant>
 
 #include "ast_node.h"
+#include "program_context.h"
 #include "state.h"
 #include "visit_expr.h"
 
@@ -16,7 +17,7 @@ struct Code;
 std::vector<TypedExpr> visit_args(
     ASTNode root,
     SymbolTable& symbol_table,
-    ModuleTable& module_table,
+    ProgramContext& program_context,
     std::vector<std::shared_ptr<Code>>& static_data
 ) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::args);
@@ -27,19 +28,19 @@ std::vector<TypedExpr> visit_args(
         // extract singular argument
         ASTNode expr = root.children.at(0);
         result.push_back(
-            visit_expr(expr, false, symbol_table, module_table, static_data)
+            visit_expr(expr, false, symbol_table, program_context, static_data)
         );
     } else if (prod == std::vector<State> {NonTerminal::args, NonTerminal::expr, Terminal::COMMA, NonTerminal::args}) {
         // extract code argument
         ASTNode expr = root.children.at(0);
         result.push_back(
-            visit_expr(expr, false, symbol_table, module_table, static_data)
+            visit_expr(expr, false, symbol_table, program_context, static_data)
         );
 
         // extract rest of arguments
         ASTNode args = root.children.at(2);
         auto child_result =
-            visit_args(args, symbol_table, module_table, static_data);
+            visit_args(args, symbol_table, program_context, static_data);
         result.insert(result.end(), child_result.begin(), child_result.end());
     } else {
         std::cerr << "Invalid production found while processing args."
@@ -53,7 +54,7 @@ std::vector<TypedExpr> visit_args(
 std::vector<TypedExpr> visit_optargs(
     ASTNode root,
     SymbolTable& symbol_table,
-    ModuleTable& module_table,
+    ProgramContext& program_context,
     std::vector<std::shared_ptr<Code>>& static_data
 ) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::optargs);
@@ -65,7 +66,7 @@ std::vector<TypedExpr> visit_optargs(
     } else if (prod == std::vector<State> {NonTerminal::optargs, NonTerminal::args}) {
         // extract arguments
         ASTNode args = root.children.at(0);
-        result = visit_args(args, symbol_table, module_table, static_data);
+        result = visit_args(args, symbol_table, program_context, static_data);
     } else {
         std::cerr << "Invalid production found while processing optargs."
                   << std::endl;

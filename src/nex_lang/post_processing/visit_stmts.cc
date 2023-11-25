@@ -37,7 +37,7 @@ std::shared_ptr<Code> visit_stmt(
     ASTNode root,
     std::shared_ptr<TypedProcedure> curr_proc,
     SymbolTable& symbol_table,
-    ModuleTable& module_table,
+    ProgramContext& program_context,
     std::vector<std::shared_ptr<Code>>& static_data
 ) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::stmt);
@@ -61,7 +61,7 @@ std::shared_ptr<Code> visit_stmt(
             expr_node,
             false,
             symbol_table,
-            module_table,
+            program_context,
             static_data
         );
 
@@ -82,7 +82,7 @@ std::shared_ptr<Code> visit_stmt(
             expr_node,
             false,
             symbol_table,
-            module_table,
+            program_context,
             static_data
         );
 
@@ -103,11 +103,11 @@ std::shared_ptr<Code> visit_stmt(
         // extract variable assignment
         ASTNode lhs = root.children.at(0);
         TypedExpr mem_address =
-            visit_expr(lhs, true, symbol_table, module_table, static_data);
+            visit_expr(lhs, true, symbol_table, program_context, static_data);
 
         ASTNode expr = root.children.at(2);
         TypedExpr code =
-            visit_expr(expr, false, symbol_table, module_table, static_data);
+            visit_expr(expr, false, symbol_table, program_context, static_data);
 
         if ((*mem_address.nl_type) != (*code.nl_type)) {
             throw TypeMismatchError(
@@ -122,20 +122,20 @@ std::shared_ptr<Code> visit_stmt(
         // extract run expression
         ASTNode expr = root.children.at(0);
         TypedExpr code =
-            visit_expr(expr, false, symbol_table, module_table, static_data);
+            visit_expr(expr, false, symbol_table, program_context, static_data);
         result = code.code;
     } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::IF, Terminal::LPAREN, NonTerminal::expr, Terminal::RPAREN, NonTerminal::stmtblock, Terminal::ELSE, NonTerminal::stmtblock}) {
         // extract if else statements
         ASTNode expr = root.children.at(2);
         TypedExpr comp =
-            visit_expr(expr, false, symbol_table, module_table, static_data);
+            visit_expr(expr, false, symbol_table, program_context, static_data);
 
         ASTNode stmtblock_thens = root.children.at(4);
         auto thens = visit_stmtblock(
             stmtblock_thens,
             curr_proc,
             symbol_table,
-            module_table,
+            program_context,
             static_data
         );
 
@@ -144,7 +144,7 @@ std::shared_ptr<Code> visit_stmt(
             stmtblock_elses,
             curr_proc,
             symbol_table,
-            module_table,
+            program_context,
             static_data
         );
 
@@ -165,14 +165,14 @@ std::shared_ptr<Code> visit_stmt(
         // extract if statements
         ASTNode expr = root.children.at(2);
         TypedExpr comp =
-            visit_expr(expr, false, symbol_table, module_table, static_data);
+            visit_expr(expr, false, symbol_table, program_context, static_data);
 
         ASTNode stmtblock_thens = root.children.at(4);
         auto thens = visit_stmtblock(
             stmtblock_thens,
             curr_proc,
             symbol_table,
-            module_table,
+            program_context,
             static_data
         );
 
@@ -192,14 +192,14 @@ std::shared_ptr<Code> visit_stmt(
         // extract while loops
         ASTNode expr = root.children.at(2);
         TypedExpr comp =
-            visit_expr(expr, false, symbol_table, module_table, static_data);
+            visit_expr(expr, false, symbol_table, program_context, static_data);
 
         ASTNode stmtblock = root.children.at(4);
         auto stmts = visit_stmtblock(
             stmtblock,
             curr_proc,
             symbol_table,
-            module_table,
+            program_context,
             static_data
         );
 
@@ -222,7 +222,7 @@ std::shared_ptr<Code> visit_stmt(
             expr_node,
             false,
             symbol_table,
-            module_table,
+            program_context,
             static_data
         );
 
@@ -242,7 +242,7 @@ std::shared_ptr<Code> visit_stmt(
             expr_node,
             false,
             symbol_table,
-            module_table,
+            program_context,
             static_data
         );
 
@@ -257,7 +257,7 @@ std::shared_ptr<Code> visit_stmt(
 
         std::shared_ptr<TypedProcedure> typed_proc =
             std::dynamic_pointer_cast<TypedProcedure>(
-                module_table.at("heap").at("heap_free")
+                program_context.module_table.at("heap").at("heap_free")
             );
         assert(typed_proc);
 
@@ -276,7 +276,7 @@ std::shared_ptr<Code> visit_stmts(
     ASTNode root,
     std::shared_ptr<TypedProcedure> curr_proc,
     SymbolTable& symbol_table,
-    ModuleTable& module_table,
+    ProgramContext& program_context,
     std::vector<std::shared_ptr<Code>>& static_data
 ) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::stmts);
@@ -290,7 +290,7 @@ std::shared_ptr<Code> visit_stmts(
             stmt,
             curr_proc,
             symbol_table,
-            module_table,
+            program_context,
             static_data
         );
     } else if (prod == std::vector<State> {NonTerminal::stmts, NonTerminal::stmt, NonTerminal::stmts}) {
@@ -300,7 +300,7 @@ std::shared_ptr<Code> visit_stmts(
             stmt,
             curr_proc,
             symbol_table,
-            module_table,
+            program_context,
             static_data
         );
 
@@ -310,7 +310,7 @@ std::shared_ptr<Code> visit_stmts(
             stmts,
             curr_proc,
             symbol_table,
-            module_table,
+            program_context,
             static_data
         );
         result = make_block({code, rest_of_code});
@@ -328,7 +328,7 @@ std::shared_ptr<Code> visit_stmtblock(
     ASTNode root,
     std::shared_ptr<TypedProcedure> curr_proc,
     SymbolTable& symbol_table,
-    ModuleTable& module_table,
+    ProgramContext& program_context,
     std::vector<std::shared_ptr<Code>>& static_data
 ) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::stmtblock);
@@ -350,7 +350,7 @@ std::shared_ptr<Code> visit_stmtblock(
             stmts_node,
             curr_proc,
             symbol_table_scoped,
-            module_table,
+            program_context,
             static_data
         );
 

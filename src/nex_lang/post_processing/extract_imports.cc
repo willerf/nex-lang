@@ -10,10 +10,11 @@
 #include <vector>
 
 #include "ast_node.h"
+#include "program_context.h"
 #include "state.h"
 
 std::vector<std::string>
-extract_imports(ASTNode root, ModuleTable& module_table) {
+extract_imports(ASTNode root, ProgramContext& program_context) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::imports);
     std::vector<std::string> result;
 
@@ -22,11 +23,11 @@ extract_imports(ASTNode root, ModuleTable& module_table) {
         // No more imports
     } else if (prod == std::vector<State> {NonTerminal::imports, NonTerminal::import, NonTerminal::imports}) {
         ASTNode import = root.children.at(0);
-        result = extract_import(import, module_table);
+        result = extract_import(import, program_context);
 
         ASTNode imports = root.children.at(1);
         std::vector<std::string> child_result =
-            extract_imports(imports, module_table);
+            extract_imports(imports, program_context);
         result.insert(result.end(), child_result.begin(), child_result.end());
     } else {
         std::cerr << "Invalid production found while extracting imports."
@@ -38,7 +39,7 @@ extract_imports(ASTNode root, ModuleTable& module_table) {
 }
 
 std::vector<std::string>
-extract_import(ASTNode root, ModuleTable& module_table) {
+extract_import(ASTNode root, ProgramContext& program_context) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::import);
     std::vector<std::string> result;
 

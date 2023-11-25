@@ -27,6 +27,7 @@
 #include "nex_lang_scanning.h"
 #include "post_processing.h"
 #include "procedure.h"
+#include "program_context.h"
 #include "pseudo_assembly.h"
 #include "reg.h"
 #include "word.h"
@@ -68,11 +69,11 @@ std::vector<std::shared_ptr<Code>> compile_test(std::string input) {
     auto tokens = scan(input);
     auto ast_node = parse(tokens);
 
-    ModuleTable module_table;
-    extract_symbols(ast_node, module_table);
+    ProgramContext program_context;
+    extract_symbols(ast_node, program_context);
 
     std::vector<std::shared_ptr<Code>> static_data;
-    auto typed_ids = generate(ast_node, static_data, module_table);
+    auto typed_ids = generate(ast_node, static_data, program_context);
     std::vector<std::shared_ptr<Procedure>> procedures;
     for (auto typed_id : typed_ids) {
         if (auto typed_proc =

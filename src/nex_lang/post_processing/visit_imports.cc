@@ -11,13 +11,14 @@
 #include <vector>
 
 #include "ast_node.h"
+#include "program_context.h"
 #include "state.h"
 #include "symbol_not_found_error.h"
 
 void visit_imports(
     ASTNode root,
     SymbolTable& symbol_table,
-    ModuleTable& module_table
+    ProgramContext& program_context
 ) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::imports);
 
@@ -26,10 +27,10 @@ void visit_imports(
         // No more imports
     } else if (prod == std::vector<State> {NonTerminal::imports, NonTerminal::import, NonTerminal::imports}) {
         ASTNode import = root.children.at(0);
-        visit_import(import, symbol_table, module_table);
+        visit_import(import, symbol_table, program_context);
 
         ASTNode imports = root.children.at(1);
-        visit_imports(imports, symbol_table, module_table);
+        visit_imports(imports, symbol_table, program_context);
     } else {
         std::cerr << "Invalid production found while processing imports."
                   << std::endl;
@@ -40,7 +41,7 @@ void visit_imports(
 void visit_import(
     ASTNode root,
     SymbolTable& symbol_table,
-    ModuleTable& module_table
+    ProgramContext& program_context
 ) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::import);
 
@@ -54,11 +55,12 @@ void visit_import(
         ASTNode id = root.children.at(1);
         std::string name = id.lexeme;
 
-        if (!module_table.contains(name)) {
+        if (!program_context.module_table.contains(name)) {
             throw SymbolNotFoundError(name, root.children.at(0).line_no);
         }
 
-        SymbolTable& module_symbol_table = module_table.at(name);
+        SymbolTable& module_symbol_table =
+            program_context.module_table.at(name);
         symbol_table.insert(
             module_symbol_table.begin(),
             module_symbol_table.end()

@@ -55,7 +55,7 @@ TypedExpr visit_expr(
     ASTNode root,
     bool read_address,
     SymbolTable& symbol_table,
-    ModuleTable& module_table,
+    ProgramContext& program_context,
     std::vector<std::shared_ptr<Code>>& static_data
 ) {
     assert(
@@ -146,7 +146,7 @@ TypedExpr visit_expr(
             expr,
             read_address,
             symbol_table,
-            module_table,
+            program_context,
             static_data
         );
     } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::ID, Terminal::LPAREN, NonTerminal::optargs, Terminal::RPAREN}) {
@@ -161,7 +161,7 @@ TypedExpr visit_expr(
                 std::vector<TypedExpr> typed_args = visit_optargs(
                     optargs,
                     symbol_table,
-                    module_table,
+                    program_context,
                     static_data
                 );
 
@@ -201,7 +201,7 @@ TypedExpr visit_expr(
             typeinit,
             read_address,
             symbol_table,
-            module_table,
+            program_context,
             static_data
         );
     } else if (prod == std::vector<State> {NonTerminal::exprp9, NonTerminal::exprp9, Terminal::LBRACKET, NonTerminal::expr, Terminal::RBRACKET}) {
@@ -210,7 +210,7 @@ TypedExpr visit_expr(
             lhs_expr_node,
             read_address,
             symbol_table,
-            module_table,
+            program_context,
             static_data
         );
 
@@ -219,7 +219,7 @@ TypedExpr visit_expr(
             rhs_expr_node,
             false,
             symbol_table,
-            module_table,
+            program_context,
             static_data
         );
 
@@ -269,7 +269,7 @@ TypedExpr visit_expr(
             expr,
             read_address,
             symbol_table,
-            module_table,
+            program_context,
             static_data
         );
 
@@ -285,7 +285,7 @@ TypedExpr visit_expr(
             expr,
             read_address,
             symbol_table,
-            module_table,
+            program_context,
             static_data
         );
     }
@@ -299,7 +299,7 @@ TypedExpr visit_expr(
             expr,
             read_address,
             symbol_table,
-            module_table,
+            program_context,
             static_data
         );
         switch (unary_op) {
@@ -344,7 +344,7 @@ TypedExpr visit_expr(
             lhs,
             read_address,
             symbol_table,
-            module_table,
+            program_context,
             static_data
         );
         Terminal mid_op = std::get<Terminal>(mid.state);
@@ -352,7 +352,7 @@ TypedExpr visit_expr(
             rhs,
             read_address,
             symbol_table,
-            module_table,
+            program_context,
             static_data
         );
 

@@ -5,13 +5,13 @@
 #include <vector>
 
 #include "ast_node.h"
-#include "module_table.h"
+#include "program_context.h"
 #include "symbol_table.h"
 
 struct ASTNode;
 
 std::vector<std::string>
-extract_imports(ASTNode root, ModuleTable& module_table);
+extract_imports(ASTNode root, ProgramContext& program_context);
 
 std::vector<std::string>
-extract_import(ASTNode root, ModuleTable& module_table);
+extract_import(ASTNode root, ProgramContext& program_context);

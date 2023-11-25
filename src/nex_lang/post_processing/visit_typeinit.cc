@@ -28,7 +28,7 @@ TypedExpr visit_typeinit(
     ASTNode root,
     bool read_address,
     SymbolTable& symbol_table,
-    ModuleTable& module_table,
+    ProgramContext& program_context,
     std::vector<std::shared_ptr<Code>>& static_data
 ) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::typeinit);
@@ -41,7 +41,7 @@ TypedExpr visit_typeinit(
 
         std::shared_ptr<TypedProcedure> typed_proc =
             std::dynamic_pointer_cast<TypedProcedure>(
-                module_table.at("heap").at("heap_allocate")
+                program_context.module_table.at("heap").at("heap_allocate")
             );
         assert(typed_proc);
 
@@ -57,12 +57,12 @@ TypedExpr visit_typeinit(
             expr_node,
             read_address,
             symbol_table,
-            module_table,
+            program_context,
             static_data
         );
         std::shared_ptr<TypedProcedure> typed_proc =
             std::dynamic_pointer_cast<TypedProcedure>(
-                module_table.at("heap").at("heap_allocate")
+                program_context.module_table.at("heap").at("heap_allocate")
             );
         assert(typed_proc);
 

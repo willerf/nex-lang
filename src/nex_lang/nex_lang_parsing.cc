@@ -61,6 +61,7 @@ static const std::map<NonTerminal, std::vector<Production>> productions = {
       {NonTerminal::type, {Terminal::BOOL}},
       {NonTerminal::type, {Terminal::CHAR}},
       {NonTerminal::type, {Terminal::NONE}},
+      {NonTerminal::type, {Terminal::ID}},
       {NonTerminal::type, {Terminal::STAR, NonTerminal::type}},
       {NonTerminal::type,
        {Terminal::LPAREN, NonTerminal::type, Terminal::RPAREN}}}},
