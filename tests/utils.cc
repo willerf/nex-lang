@@ -79,9 +79,6 @@ std::vector<std::shared_ptr<Code>> compile_test(std::string input) {
         if (auto typed_proc =
                 std::dynamic_pointer_cast<TypedProcedure>(typed_id)) {
             procedures.push_back(typed_proc->procedure);
-        } else {
-            std::cerr << "TODO!" << std::endl;
-            exit(1);
         }
     }
 

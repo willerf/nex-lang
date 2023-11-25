@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "ast_node.h"
+#include "compile_error.h"
 #include "nl_type_bool.h"
 #include "nl_type_char.h"
 #include "nl_type_i32.h"
@@ -38,7 +39,7 @@ visit_type(ASTNode root, ProgramContext& program_context) {
         if (program_context.type_table.contains(name)) {
             result = program_context.type_table.at(name);
         } else {
-            throw "TODO";
+            throw CompileError("Unknown type: " + name, id.line_no);
         }
     } else if (prod == std::vector<State> {NonTerminal::type, Terminal::STAR, NonTerminal::type}) {
         ASTNode sub_type = root.children.at(1);
