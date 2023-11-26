@@ -64,6 +64,7 @@ exprp7 STAR exprp8
 exprp8 exprp9
 exprp8 exprp8 AS type
 exprp9 ID
+exprp9 ID DOT ID
 exprp9 NUM
 exprp9 MINUS NUM
 exprp9 TRUE
@@ -73,6 +74,7 @@ exprp9 STRLITERAL
 exprp9 CHARLITERAL 
 exprp9 LPAREN expr RPAREN
 exprp9 ID LPAREN optargs RPAREN
+exprp9 ID DOT ID LPAREN optargs RPAREN
 exprp9 NEW typeinit
 exprp9 exprp9 LBRACKET expr RBRACKET
 optargs args

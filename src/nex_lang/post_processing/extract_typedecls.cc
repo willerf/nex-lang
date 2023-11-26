@@ -57,7 +57,7 @@ void extract_typedecl(ASTNode root, ProgramContext& program_context) {
         auto child_result = extract_typestmts(typestmts, program_context);
 
         std::shared_ptr<NLType> nl_type =
-            std::make_shared<NLTypeStruct>(child_result);
+            std::make_shared<NLTypeStruct>(name, child_result);
         program_context.type_table[name] = nl_type;
     } else {
         std::cerr << "Invalid production found while extracting typedecl."

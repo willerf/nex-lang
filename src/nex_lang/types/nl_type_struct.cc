@@ -2,11 +2,14 @@
 
 #include "nl_type_struct.h"
 
+#include <algorithm>
 #include <iostream>
 
 NLTypeStruct::NLTypeStruct(
+    std::string name,
     std::vector<std::pair<std::string, std::shared_ptr<NLType>>> child_types
 ) :
+    name {name},
     child_types {child_types} {}
 
 bool NLTypeStruct::equals(const NLType& other) const {
@@ -14,20 +17,17 @@ bool NLTypeStruct::equals(const NLType& other) const {
         return false;
     }
     auto& other_ptr = static_cast<const NLTypeStruct&>(other);
-    for (size_t i = 0;
-         i < std::min(child_types.size(), other_ptr.child_types.size());
-         ++i) {
-        if (child_types.at(i).second->type()
-            != other_ptr.child_types.at(i).second->type()) {
-            return false;
-        }
-    }
-    return true;
+
+    return name == other_ptr.name;
 }
 
 bool NLTypeStruct::less_than(const NLType& other) const {
-    std::cerr << "FIX THIS" << std::endl;
-    return false;
+    if (type() != other.type()) {
+        return type() < other.type();
+    }
+    auto& other_ptr = static_cast<const NLTypeStruct&>(other);
+
+    return name < other_ptr.name;
 }
 
 std::type_index NLTypeStruct::type() const {
@@ -35,7 +35,7 @@ std::type_index NLTypeStruct::type() const {
 }
 
 std::string NLTypeStruct::to_string() {
-    return "struct";
+    return name;
 }
 
 uint32_t NLTypeStruct::bytes() {

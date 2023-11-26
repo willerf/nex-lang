@@ -26,7 +26,7 @@ static const std::map<char, Terminal> one_char_symbols = {
     {',', Terminal::COMMA},     {';', Terminal::SEMI},
     {':', Terminal::COLON},     {'|', Terminal::PIPE},
     {'&', Terminal::AMPERSAND}, {'[', Terminal::LBRACKET},
-    {']', Terminal::RBRACKET},
+    {']', Terminal::RBRACKET},  {'.', Terminal::DOT},
 };
 
 static const std::map<std::string, Terminal> two_char_symbols = {
@@ -128,7 +128,7 @@ static std::optional<Terminal> transition_func(Terminal curr_state, char c) {
 
 DFA make_nex_lang_dfa() {
     std::string alphabet_str =
-        "<>=+-_*/%(){}[],;:!&| \t\n\r\'\"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        "<>=+-_*/%(){}[],.;:!&| \t\n\r\'\"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     std::set<char> alphabet(alphabet_str.begin(), alphabet_str.end());
     Terminal init_state = Terminal::START;
 

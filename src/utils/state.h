@@ -18,6 +18,7 @@ enum class Terminal {
     LBRACKET,
     RBRACKET,
     COMMA,
+    DOT,
     COLON,
     AS,
     NEW,

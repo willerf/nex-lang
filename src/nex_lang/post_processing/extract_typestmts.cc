@@ -17,7 +17,7 @@ extract_typestmts(ASTNode root, ProgramContext& program_context) {
         == std::vector<State> {NonTerminal::typestmts, NonTerminal::typestmt}) {
         ASTNode typestmt = root.children.at(0);
         result.push_back(extract_typestmt(typestmt, program_context));
-    } else if (prod == std::vector<State> {NonTerminal::typestmts, NonTerminal::typestmt, NonTerminal::stmts}) {
+    } else if (prod == std::vector<State> {NonTerminal::typestmts, NonTerminal::typestmt, NonTerminal::typestmts}) {
         ASTNode typestmt = root.children.at(0);
         result.push_back(extract_typestmt(typestmt, program_context));
 

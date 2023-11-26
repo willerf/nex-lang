@@ -8,9 +8,11 @@
 #include "nl_type.h"
 
 struct NLTypeStruct: NLType {
+    std::string name;
     std::vector<std::pair<std::string, std::shared_ptr<NLType>>> child_types;
 
     explicit NLTypeStruct(
+        std::string name,
         std::vector<std::pair<std::string, std::shared_ptr<NLType>>> child_types
     );
     bool equals(const NLType& other) const override;
