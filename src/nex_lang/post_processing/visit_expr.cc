@@ -16,6 +16,7 @@
 #include "bin_op.h"
 #include "block.h"
 #include "call.h"
+#include "compile_error.h"
 #include "define_label.h"
 #include "label.h"
 #include "nl_type.h"
@@ -431,6 +432,14 @@ TypedExpr visit_expr(
                 if (auto expr_type =
                         std::dynamic_pointer_cast<NLTypePtr>(expr_code.nl_type
                         )) {
+                    if (std::dynamic_pointer_cast<NLTypeStruct>(
+                            expr_type->nl_type
+                        )) {
+                        throw CompileError(
+                            "Cannot dereference struct type.",
+                            lhs_op.line_no
+                        );
+                    }
                     result =
                         TypedExpr {deref(expr_code.code), expr_type->nl_type};
                 } else {
