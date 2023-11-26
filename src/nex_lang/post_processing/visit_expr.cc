@@ -107,6 +107,7 @@ TypedExpr visit_expr(
                                 offset += child_type.second->bytes();
                             } else {
                                 child_nl_type = child_type.second;
+                                break;
                             }
                         }
                         std::shared_ptr<Code> code = make_block(
