@@ -22,7 +22,7 @@ enum class Terminal {
     COLON,
     AS,
     NEW,
-    DELETE,
+    FREE,
     TYPE,
     STRUCT,
     I32,

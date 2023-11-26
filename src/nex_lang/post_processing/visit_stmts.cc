@@ -235,7 +235,7 @@ std::shared_ptr<Code> visit_stmt(
             );
         }
         result = std::make_shared<RetStmt>(expr.code);
-    } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::DELETE, NonTerminal::expr, Terminal::SEMI}) {
+    } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::FREE, NonTerminal::expr, Terminal::SEMI}) {
         // extract return statements
         ASTNode expr_node = root.children.at(1);
         TypedExpr expr = visit_expr(
@@ -250,7 +250,7 @@ std::shared_ptr<Code> visit_stmt(
             std::dynamic_pointer_cast<NLTypePtr>(expr.nl_type);
         if (!nl_type_ptr) {
             throw TypeMismatchError(
-                "Cannot delete non-pointer type.",
+                "Cannot free non-pointer type.",
                 root.children.at(0).line_no
             );
         }

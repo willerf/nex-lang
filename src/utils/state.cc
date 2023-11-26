@@ -39,8 +39,8 @@ std::string state::to_string(Terminal terminal) {
             return "AS";
         case Terminal::NEW:
             return "NEW";
-        case Terminal::DELETE:
-            return "DELETE";
+        case Terminal::FREE:
+            return "FREE";
         case Terminal::I32:
             return "I32";
         case Terminal::BOOL:

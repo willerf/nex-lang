@@ -302,10 +302,10 @@ TypedExpr visit_expr(
                     );
                 }
             } else {
-                throw "TODO";
+                throw SymbolNotFoundError(var_name, var_id.line_no);
             }
         } else {
-            throw "TODO";
+            throw SymbolNotFoundError(var_name, var_id.line_no);
         }
     } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::NEW, NonTerminal::typeinit}) {
         ASTNode typeinit = root.children.at(1);

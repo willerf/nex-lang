@@ -8,9 +8,13 @@ fn print(word: *char) {
     }
 }
 
+fn println() {
+    print(10 as char);
+}
+
 fn println(word: *char) {
     print(word);
-    print(10 as char);
+    println();
 }
 
 fn print(letter: char) {
@@ -20,7 +24,7 @@ fn print(letter: char) {
 
 fn println(letter: char) {
     print(letter);
-    print(10 as char);
+    println();
 }
 
 fn print(num: i32) {
@@ -50,7 +54,7 @@ fn print(num: i32) {
 
 fn println(num: i32) {
     print(num); 
-    print(10 as char);
+    println();
 }
 
 fn print(arr: *i32) {
@@ -66,6 +70,6 @@ fn print(arr: *i32) {
 
 fn println(arr: *i32) {
     print(arr); 
-    print(10 as char);
+    println();
 }
 )"
