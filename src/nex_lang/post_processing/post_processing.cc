@@ -2,11 +2,10 @@
 #include "post_processing.h"
 
 #include "ast_node.h"
-#include "module_table.h"
-#include "program_context.h"
 #include "visit_s.h"
 
 struct Code;
+struct ProgramContext;
 
 std::vector<std::shared_ptr<TypedProcedure>> generate(
     ASTNode root,

@@ -12,6 +12,7 @@
 #include "typed_procedure.h"
 
 struct ASTNode;
+struct ProgramContext;
 
 std::shared_ptr<Code> visit_stmt(
     ASTNode root,

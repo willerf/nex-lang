@@ -10,8 +10,9 @@
 #include <vector>
 
 #include "ast_node.h"
-#include "program_context.h"
 #include "state.h"
+
+struct ProgramContext;
 
 std::vector<std::string>
 extract_imports(ASTNode root, ProgramContext& program_context) {

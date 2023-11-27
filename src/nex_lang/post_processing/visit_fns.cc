@@ -6,15 +6,18 @@
 #include <cassert>
 #include <iostream>
 #include <string>
+#include <utility>
 #include <variant>
 
 #include "ast_node.h"
-#include "program_context.h"
 #include "state.h"
 #include "visit_params.h"
 #include "visit_stmts.h"
 
 struct Code;
+struct NLType;
+struct ProgramContext;
+struct TypedVariable;
 
 std::vector<std::shared_ptr<TypedProcedure>> visit_fns(
     ASTNode root,

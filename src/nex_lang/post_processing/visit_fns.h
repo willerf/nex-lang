@@ -12,6 +12,7 @@
 
 struct ASTNode;
 struct Code;
+struct ProgramContext;
 
 std::shared_ptr<TypedProcedure> visit_fn(
     ASTNode root,

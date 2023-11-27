@@ -1,14 +1,23 @@
 
 #include "extract_typedecls.h"
 
+#include <stdlib.h>
+
 #include <cassert>
 #include <iostream>
+#include <memory>
+#include <string>
+#include <variant>
 #include <vector>
 
+#include "ast_node.h"
 #include "extract_typestmts.h"
 #include "nl_type_struct.h"
+#include "program_context.h"
 #include "state.h"
 #include "visit_type.h"
+
+struct NLType;
 
 void extract_typedecls(ASTNode root, ProgramContext& program_context) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::typedecls);

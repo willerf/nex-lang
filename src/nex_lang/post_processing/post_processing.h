@@ -12,6 +12,7 @@
 
 struct ASTNode;
 struct Code;
+struct ProgramContext;
 
 std::vector<std::shared_ptr<TypedProcedure>> generate(
     ASTNode root,

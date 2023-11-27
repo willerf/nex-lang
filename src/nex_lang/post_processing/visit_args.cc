@@ -8,11 +8,11 @@
 #include <variant>
 
 #include "ast_node.h"
-#include "program_context.h"
 #include "state.h"
 #include "visit_expr.h"
 
 struct Code;
+struct ProgramContext;
 
 std::vector<TypedExpr> visit_args(
     ASTNode root,

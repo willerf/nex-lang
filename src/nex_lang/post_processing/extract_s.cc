@@ -14,6 +14,7 @@
 #include "extract_fns.h"
 #include "extract_imports.h"
 #include "extract_typedecls.h"
+#include "program_context.h"
 #include "state.h"
 #include "symbol_table.h"
 

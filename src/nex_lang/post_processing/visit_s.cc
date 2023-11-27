@@ -10,6 +10,7 @@
 
 #include "ast_node.h"
 #include "heap.h"
+#include "program_context.h"
 #include "state.h"
 #include "symbol_table.h"
 #include "visit_fns.h"

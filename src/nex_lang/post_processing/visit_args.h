@@ -12,6 +12,7 @@
 
 struct ASTNode;
 struct Code;
+struct ProgramContext;
 
 std::vector<TypedExpr> visit_args(
     ASTNode root,

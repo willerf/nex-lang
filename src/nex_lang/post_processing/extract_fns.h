@@ -6,6 +6,7 @@
 #include "symbol_table.h"
 
 struct ASTNode;
+struct ProgramContext;
 
 void extract_fns(
     ASTNode root,

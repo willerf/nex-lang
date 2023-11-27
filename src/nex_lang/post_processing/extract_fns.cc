@@ -7,13 +7,13 @@
 #include <iostream>
 #include <memory>
 #include <string>
+#include <utility>
 #include <variant>
 #include <vector>
 
 #include "ast_node.h"
 #include "nl_type_none.h"
 #include "procedure.h"
-#include "program_context.h"
 #include "state.h"
 #include "typed_procedure.h"
 #include "visit_params.h"
@@ -21,6 +21,8 @@
 
 struct Variable;
 struct TypedVariable;
+struct NLType;
+struct ProgramContext;
 
 void extract_fns(
     ASTNode root,

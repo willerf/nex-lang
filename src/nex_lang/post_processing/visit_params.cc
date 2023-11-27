@@ -8,9 +8,10 @@
 #include <variant>
 
 #include "ast_node.h"
-#include "program_context.h"
 #include "state.h"
 #include "visit_vardef.h"
+
+struct ProgramContext;
 
 std::vector<std::shared_ptr<TypedVariable>> visit_params(
     ASTNode root,

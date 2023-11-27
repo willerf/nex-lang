@@ -11,6 +11,7 @@
 
 struct ASTNode;
 struct Code;
+struct ProgramContext;
 
 TypedExpr visit_typeinit(
     ASTNode root,

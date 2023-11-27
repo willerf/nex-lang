@@ -7,6 +7,7 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <utility>
 #include <variant>
 
 #include "ast_node.h"
@@ -17,6 +18,7 @@
 #include "nl_type_i32.h"
 #include "nl_type_ptr.h"
 #include "operators.h"
+#include "program_context.h"
 #include "pseudo_assembly.h"
 #include "state.h"
 #include "type_mismatch_error.h"

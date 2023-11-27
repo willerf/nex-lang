@@ -8,6 +8,7 @@
 #include "program_context.h"
 
 struct ASTNode;
+struct ProgramContext;
 
 std::shared_ptr<NLType>
 visit_type(ASTNode root, ProgramContext& program_context);

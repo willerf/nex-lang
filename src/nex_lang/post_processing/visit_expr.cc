@@ -9,6 +9,7 @@
 #include <memory>
 #include <set>
 #include <string>
+#include <utility>
 #include <variant>
 
 #include "assembly.h"
@@ -35,12 +36,14 @@
 #include "typed_procedure.h"
 #include "typed_variable.h"
 #include "use_label.h"
+#include "variable.h"
 #include "visit_args.h"
 #include "visit_type.h"
 #include "visit_typeinit.h"
 #include "word.h"
 
 struct Code;
+struct ProgramContext;
 
 static std::set<NonTerminal> expr_non_terminals = {
     NonTerminal::expr,

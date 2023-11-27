@@ -1,11 +1,17 @@
 
 #include "extract_typestmts.h"
 
+#include <stdlib.h>
+
 #include <cassert>
 #include <iostream>
+#include <variant>
 
-#include "program_context.h"
+#include "ast_node.h"
+#include "state.h"
 #include "visit_type.h"
+
+struct ProgramContext;
 
 std::vector<std::pair<std::string, std::shared_ptr<NLType>>>
 extract_typestmts(ASTNode root, ProgramContext& program_context) {

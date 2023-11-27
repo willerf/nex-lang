@@ -1,6 +1,9 @@
 
 #include "symbol_table.h"
 
+#include <algorithm>
+#include <compare>
+
 bool CmpSymbolTableKey::operator()(
     const SymbolTableKey& lhs,
     const SymbolTableKey& rhs

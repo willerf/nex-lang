@@ -6,17 +6,18 @@
 #include <cassert>
 #include <iostream>
 #include <string>
+#include <utility>
 #include <variant>
 #include <vector>
 
 #include "ast_node.h"
 #include "duplicate_symbol_error.h"
-#include "program_context.h"
 #include "state.h"
 #include "variable.h"
 #include "visit_type.h"
 
 struct NLType;
+struct ProgramContext;
 
 std::shared_ptr<TypedVariable> visit_vardef(
     ASTNode root,

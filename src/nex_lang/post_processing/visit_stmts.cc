@@ -8,6 +8,7 @@
 #include <map>
 #include <memory>
 #include <string>
+#include <utility>
 #include <variant>
 
 #include "assembly.h"
@@ -20,6 +21,7 @@
 #include "nl_type_bool.h"
 #include "nl_type_ptr.h"
 #include "operators.h"
+#include "program_context.h"
 #include "pseudo_assembly.h"
 #include "reg.h"
 #include "ret_stmt.h"

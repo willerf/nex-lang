@@ -10,6 +10,7 @@
 #include "program_context.h"
 
 struct ASTNode;
+struct ProgramContext;
 
 void nl_lib_import(
     std::string import_name,

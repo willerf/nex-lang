@@ -5,6 +5,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <string>
 #include <variant>
 #include <vector>
 

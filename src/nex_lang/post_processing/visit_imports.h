@@ -7,6 +7,7 @@
 #include "symbol_table.h"
 
 struct ASTNode;
+struct ProgramContext;
 
 void visit_imports(
     ASTNode root,

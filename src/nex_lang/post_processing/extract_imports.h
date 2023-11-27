@@ -9,6 +9,7 @@
 #include "symbol_table.h"
 
 struct ASTNode;
+struct ProgramContext;
 
 std::vector<std::string>
 extract_imports(ASTNode root, ProgramContext& program_context);
