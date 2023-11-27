@@ -4,7 +4,15 @@
 #include <catch2/reporters/catch_reporter_registrars.hpp>
 #include <iostream>
 #include <map>
-#include <set>
+#include <string>
+#include <vector>
+
+#include "catch2/catch_totals.hpp"
+#include "catch2/interfaces/catch_interfaces_reporter.hpp"
+
+namespace Catch {
+class IConfig;
+}  // namespace Catch
 
 class CustomListener: public Catch::EventListenerBase {
     std::map<std::string, int> passed_tests_by_tag;

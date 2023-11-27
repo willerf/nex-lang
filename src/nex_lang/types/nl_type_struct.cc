@@ -2,8 +2,7 @@
 
 #include "nl_type_struct.h"
 
-#include <algorithm>
-#include <iostream>
+#include <compare>
 
 NLTypeStruct::NLTypeStruct(
     std::string name,

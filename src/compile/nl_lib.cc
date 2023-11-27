@@ -11,21 +11,13 @@
 #include "nex_lang_scanning.h"
 #include "program_context.h"
 
-static const std::string print_module(
-#include "print_module.nl"
-);
+static const std::string print_module();
 
-static const std::string math_module(
-#include "math_module.nl"
-);
+static const std::string math_module();
 
-static const std::string list_module(
-#include "list_module.nl"
-);
+static const std::string list_module();
 
-static const std::string string_module(
-#include "string_module.nl"
-);
+static const std::string string_module();
 
 static std::map<std::string, std::string> nl_lib {
     {"print", print_module},

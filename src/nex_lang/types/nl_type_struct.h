@@ -2,8 +2,13 @@
 
 #pragma once
 
+#include <stdint.h>
+
+#include <memory>
 #include <string>
 #include <typeindex>
+#include <utility>
+#include <vector>
 
 #include "nl_type.h"
 

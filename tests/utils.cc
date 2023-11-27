@@ -22,7 +22,6 @@
 #include "entry_exit.h"
 #include "extract_symbols.h"
 #include "flatten.h"
-#include "module_table.h"
 #include "nex_lang_parsing.h"
 #include "nex_lang_scanning.h"
 #include "post_processing.h"
