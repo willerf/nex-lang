@@ -172,7 +172,7 @@ static const std::map<std::string, Terminal> keywords = {
     {"bool", Terminal::BOOL},     {"char", Terminal::CHAR},
     {"none", Terminal::CHAR},     {"true", Terminal::TRUE},
     {"false", Terminal::FALSE},   {"new", Terminal::NEW},
-    {"free", Terminal::FREE},
+    {"delete", Terminal::DELETE},
 };
 
 std::vector<Token> scan(std::string_view input) {

@@ -27,9 +27,9 @@ fn String(word: *char) -> *String {
     return str;
 }
 
-fn delete(self: *String) {
-    free self.data;
-    free self;
+fn destruct(self: *String) {
+    delete self.data;
+    delete self;
 }
 
 fn push_back(self: *String, elem: char) {
@@ -41,7 +41,7 @@ fn push_back(self: *String, elem: char) {
             data[i] = self.data[i];
             i = i + 1;
         }
-        free self.data;
+        delete self.data;
         self.data = data;
     }
     self.data[self.size] = elem;

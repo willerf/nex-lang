@@ -7,7 +7,7 @@
 
 static std::string file_name = "test_compile.bin";
 
-TEST_CASE("Test compile simple program", "[compile]") {
+TEST_CASE("compile simple program", "[programs]") {
     std::string input =
         "mod main;"
         "fn power(base: i32, exponent: i32) -> i32 {"

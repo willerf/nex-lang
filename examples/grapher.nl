@@ -87,8 +87,8 @@ fn graph_it(a: i32, b: i32) {
 
     i = 0;
     while (i < x_width) {
-        free arr[i];
+        delete arr[i];
         i = i + 1;
     }
-    free arr;
+    delete arr;
 }

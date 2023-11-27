@@ -11,7 +11,7 @@
 #include "state.h"
 #include "token.h"
 
-TEST_CASE("Test scanning keywords", "[lang]") {
+TEST_CASE("scanning keywords", "[lexparse]") {
     std::vector<Token> tokens;
 
     tokens = scan("fn");
@@ -65,7 +65,7 @@ TEST_CASE("Test scanning keywords", "[lang]") {
     );
 }
 
-TEST_CASE("Test scanning simple program", "[lang]") {
+TEST_CASE("scanning simple program", "[lexparse]") {
     std::vector<Token> tokens;
 
     std::string program = "fn add(x: i32, y: i32) -> i32 {x + y}";
@@ -87,7 +87,7 @@ TEST_CASE("Test scanning simple program", "[lang]") {
     );
 }
 
-TEST_CASE("Test scanning bigger program", "[scanning]") {
+TEST_CASE("scanning bigger program", "[lexparse]") {
     std::vector<Token> tokens;
 
     std::string program =

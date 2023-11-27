@@ -10,7 +10,7 @@
 
 static std::string file_name = "test_type_inference.bin";
 
-TEST_CASE("Test type inference.", "[type_inference]") {
+TEST_CASE("type inference", "[type_inference]") {
     std::vector<std::string> input_file_paths = {
         examples_dir + "/test_type_inference.nl",
     };

@@ -18,7 +18,7 @@
 #include "var_access.h"
 #include "variable.h"
 
-TEST_CASE("Simple test read write variable", "[vars]") {
+TEST_CASE("read write variable", "[vars]") {
     auto var1 = std::make_shared<Variable>("var1");
     auto var2 = std::make_shared<Variable>("var2");
 

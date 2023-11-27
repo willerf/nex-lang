@@ -9,7 +9,7 @@
 
 static std::string file_name = "test_heap.bin";
 
-TEST_CASE("Test heap.", "[heap]") {
+TEST_CASE("simple heap", "[heap]") {
     std::vector<std::string> input_file_paths = {
         examples_dir + "/test_heap.nl",
     };
@@ -22,7 +22,7 @@ TEST_CASE("Test heap.", "[heap]") {
     REQUIRE(emulate(file_name, 5, 10) == "1\n1\n0\n0\n");
 }
 
-TEST_CASE("Test arr.", "[heap]") {
+TEST_CASE("array", "[heap]") {
     std::vector<std::string> input_file_paths = {
         examples_dir + "/test_arr.nl",
     };

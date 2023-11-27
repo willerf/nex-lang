@@ -6,9 +6,9 @@
 #include "utils.h"
 #include "write_file.h"
 
-static std::string file_name("test_max.bin");
+static std::string file_name("test_post_processing.bin");
 
-TEST_CASE("Test code gen", "[post_processing]") {
+TEST_CASE("code gen", "[post_processing]") {
     std::string input =
         "mod main;"
         "fn main(x: i32, y: i32) -> i32 {"
@@ -22,7 +22,7 @@ TEST_CASE("Test code gen", "[post_processing]") {
     REQUIRE(stoi(emulate(file_name, 5, 7)) == 12);
 }
 
-TEST_CASE("Test two functions", "[post_processing]") {
+TEST_CASE("two functions", "[post_processing]") {
     std::string input =
         "mod main;"
         "fn add(x: i32, y: i32) -> i32 {"
@@ -38,7 +38,7 @@ TEST_CASE("Test two functions", "[post_processing]") {
     REQUIRE(stoi(emulate(file_name, 5, 7)) == 12);
 }
 
-TEST_CASE("Test max func", "[post_processing]") {
+TEST_CASE("max func", "[post_processing]") {
     std::string input =
         "mod main;"
         "fn max(x: i32, y: i32) -> i32 {"

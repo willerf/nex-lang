@@ -235,7 +235,7 @@ std::shared_ptr<Code> visit_stmt(
             );
         }
         result = std::make_shared<RetStmt>(expr.code);
-    } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::FREE, NonTerminal::expr, Terminal::SEMI}) {
+    } else if (prod == std::vector<State> {NonTerminal::stmt, Terminal::DELETE, NonTerminal::expr, Terminal::SEMI}) {
         // extract return statements
         ASTNode expr_node = root.children.at(1);
         TypedExpr expr = visit_expr(

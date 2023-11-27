@@ -16,7 +16,7 @@ fn main(x: i32, y: i32) -> i32 {
     print(cond as i32);
     println("");
 
-    free a;
+    delete a;
     let d: *i32 = new i32[y];
     
     cond = d == a;

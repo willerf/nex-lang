@@ -52,7 +52,7 @@ uint32_t sample_main(uint32_t input1, uint32_t input2) {
     return sample_factorial(input1);
 }
 
-TEST_CASE("Test factorial program", "[programs]") {
+TEST_CASE("factorial program", "[programs]") {
     auto n = std::make_shared<Variable>("n");
     auto input1 = std::make_shared<Variable>("input1");
     auto input2 = std::make_shared<Variable>("input2");

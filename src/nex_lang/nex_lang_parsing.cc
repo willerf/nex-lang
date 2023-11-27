@@ -138,7 +138,7 @@ static const std::map<NonTerminal, std::vector<Production>> productions = {
         NonTerminal::stmtblock}},
       {NonTerminal::stmt, {Terminal::RET, NonTerminal::expr, Terminal::SEMI}},
       {NonTerminal::stmt,
-       {Terminal::FREE, NonTerminal::expr, Terminal::SEMI}}}},
+       {Terminal::DELETE, NonTerminal::expr, Terminal::SEMI}}}},
     {NonTerminal::expr, {{NonTerminal::expr, {NonTerminal::exprp1}}}},
     {NonTerminal::exprp1,
      {{NonTerminal::exprp1, {NonTerminal::exprp2}},

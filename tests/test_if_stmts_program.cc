@@ -29,9 +29,9 @@
 struct Code;
 
 static uint32_t TERMINATION_PC = 0b11111110111000011101111010101101;
-static std::string file_name("test_if_stmts.bin");
+static std::string file_name("test_if_stmts_program.bin");
 
-TEST_CASE("Test if statements program", "[programs]") {
+TEST_CASE("if statements program", "[programs]") {
     std::shared_ptr<Variable> var1 =
         std::make_shared<Variable>("test variable1");
     std::shared_ptr<Variable> var2 =
