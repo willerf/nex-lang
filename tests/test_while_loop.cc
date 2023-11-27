@@ -7,7 +7,7 @@
 
 static std::string file_name = "test_while_loop.bin";
 
-TEST_CASE("Test plus.", "[loops]") {
+TEST_CASE("while loop", "[loops]") {
     std::string input =
         "mod main;"
         "fn main(x: i32, y: i32) -> i32 {"

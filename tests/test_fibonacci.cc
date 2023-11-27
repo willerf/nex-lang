@@ -61,7 +61,7 @@ int32_t sample_fibonacci(int32_t n) {
     return result;
 }
 
-TEST_CASE("Test fibonacci program", "[programs]") {
+TEST_CASE("fibonacci program", "[programs]") {
     auto v1 = std::make_shared<Variable>("v1");
     auto v2 = std::make_shared<Variable>("v2");
     auto v3 = std::make_shared<Variable>("v3");

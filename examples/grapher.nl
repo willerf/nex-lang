@@ -72,12 +72,12 @@ fn graph_it(a: i32, b: i32) {
     while (i < x_width) {
         let j = 0;
         while (j < y_width) {
-            print_char(arr[i][j]);
+            print(arr[i][j]);
             if (i + x_start == 0) {
-                print_char('-');
+                print('-');
             }
             else {
-                print_char(' ');
+                print(' ');
             }
             j = j + 1;
         }

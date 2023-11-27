@@ -28,7 +28,7 @@ TypedExpr visit_typeinit(
     ASTNode root,
     bool read_address,
     SymbolTable& symbol_table,
-    ModuleTable& module_table,
+    ProgramContext& program_context,
     std::vector<std::shared_ptr<Code>>& static_data
 ) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::typeinit);
@@ -37,11 +37,13 @@ TypedExpr visit_typeinit(
     std::vector<State> prod = root.get_production();
     if (prod == std::vector<State> {NonTerminal::typeinit, NonTerminal::type}) {
         ASTNode type_node = root.children.at(0);
-        std::shared_ptr<NLType> nl_type = visit_type(type_node);
+        std::shared_ptr<NLType> nl_type =
+            visit_type(type_node, program_context);
 
         std::shared_ptr<TypedProcedure> typed_proc =
             std::dynamic_pointer_cast<TypedProcedure>(
-                module_table.at("heap").at("heap_allocate")
+                program_context.module_table.at("heap").at({"heap_allocate", {}}
+                )
             );
         assert(typed_proc);
 
@@ -50,19 +52,21 @@ TypedExpr visit_typeinit(
             std::make_shared<NLTypePtr>(nl_type)};
     } else if (prod == std::vector<State> {NonTerminal::typeinit, NonTerminal::type, Terminal::LBRACKET, NonTerminal::expr, Terminal::RBRACKET}) {
         ASTNode type_node = root.children.at(0);
-        std::shared_ptr<NLType> nl_type = visit_type(type_node);
+        std::shared_ptr<NLType> nl_type =
+            visit_type(type_node, program_context);
 
         ASTNode expr_node = root.children.at(2);
         TypedExpr expr = visit_expr(
             expr_node,
             read_address,
             symbol_table,
-            module_table,
+            program_context,
             static_data
         );
         std::shared_ptr<TypedProcedure> typed_proc =
             std::dynamic_pointer_cast<TypedProcedure>(
-                module_table.at("heap").at("heap_allocate")
+                program_context.module_table.at("heap").at({"heap_allocate", {}}
+                )
             );
         assert(typed_proc);
 

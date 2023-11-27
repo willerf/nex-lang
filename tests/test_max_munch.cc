@@ -13,7 +13,7 @@
 #include "state.h"
 #include "token.h"
 
-TEST_CASE("Test scanning various symbols", "[scanning]") {
+TEST_CASE("scan various symbols", "[lexparse]") {
     DFA dfa = make_nex_lang_dfa();
     std::vector<Token> tokens;
 

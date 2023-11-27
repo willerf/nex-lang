@@ -7,7 +7,7 @@
 #include "nex_lang_parsing.h"
 #include "nex_lang_scanning.h"
 
-TEST_CASE("Test parsing lang", "[parser]") {
+TEST_CASE("parsing lang", "[lexparse]") {
     std::string input =
         "mod main;"
         "fn max(x: i32, y: i32) -> i32 {"

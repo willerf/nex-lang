@@ -26,7 +26,7 @@ static const std::map<char, Terminal> one_char_symbols = {
     {',', Terminal::COMMA},     {';', Terminal::SEMI},
     {':', Terminal::COLON},     {'|', Terminal::PIPE},
     {'&', Terminal::AMPERSAND}, {'[', Terminal::LBRACKET},
-    {']', Terminal::RBRACKET},
+    {']', Terminal::RBRACKET},  {'.', Terminal::DOT},
 };
 
 static const std::map<std::string, Terminal> two_char_symbols = {
@@ -128,7 +128,7 @@ static std::optional<Terminal> transition_func(Terminal curr_state, char c) {
 
 DFA make_nex_lang_dfa() {
     std::string alphabet_str =
-        "<>=+-_*/%(){}[],;:!&| \t\n\r\'\"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+        "<>=+-_*/%(){}[],.;:!&| \t\n\r\'\"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     std::set<char> alphabet(alphabet_str.begin(), alphabet_str.end());
     Terminal init_state = Terminal::START;
 
@@ -163,22 +163,15 @@ DFA make_nex_lang_dfa() {
 }
 
 static const std::map<std::string, Terminal> keywords = {
-    {"mod", Terminal::MODULE},
-    {"import", Terminal::IMPORT},
-    {"fn", Terminal::FN},
-    {"let", Terminal::LET},
-    {"if", Terminal::IF},
-    {"while", Terminal::WHILE},
-    {"else", Terminal::ELSE},
-    {"return", Terminal::RET},
-    {"as", Terminal::AS},
-    {"i32", Terminal::I32},
-    {"bool", Terminal::BOOL},
-    {"char", Terminal::CHAR},
-    {"none", Terminal::CHAR},
-    {"true", Terminal::TRUE},
-    {"false", Terminal::FALSE},
-    {"new", Terminal::NEW},
+    {"mod", Terminal::MODULE},    {"import", Terminal::IMPORT},
+    {"fn", Terminal::FN},         {"let", Terminal::LET},
+    {"if", Terminal::IF},         {"while", Terminal::WHILE},
+    {"else", Terminal::ELSE},     {"return", Terminal::RET},
+    {"as", Terminal::AS},         {"type", Terminal::TYPE},
+    {"struct", Terminal::STRUCT}, {"i32", Terminal::I32},
+    {"bool", Terminal::BOOL},     {"char", Terminal::CHAR},
+    {"none", Terminal::CHAR},     {"true", Terminal::TRUE},
+    {"false", Terminal::FALSE},   {"new", Terminal::NEW},
     {"delete", Terminal::DELETE},
 };
 
@@ -200,6 +193,7 @@ std::vector<Token> scan(std::string_view input) {
         Terminal::IF,
         Terminal::WHILE,
         Terminal::ELSE,
+        Terminal::STRUCT,
         Terminal::I32,
         Terminal::BOOL,
         Terminal::CHAR,

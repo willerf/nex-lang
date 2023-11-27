@@ -19,7 +19,7 @@ struct Code;
 
 std::vector<std::shared_ptr<TypedProcedure>> visit_s(
     ASTNode root,
-    ModuleTable& module_table,
+    ProgramContext& program_context,
     std::vector<std::shared_ptr<Code>>& static_data
 ) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::s);
@@ -32,6 +32,7 @@ std::vector<std::shared_ptr<TypedProcedure>> visit_s(
             Terminal::BOFS,
             NonTerminal::module,
             NonTerminal::imports,
+            NonTerminal::typedecls,
             NonTerminal::fns,
             Terminal::EOFS}) {
         // extract functions of program
@@ -39,18 +40,19 @@ std::vector<std::shared_ptr<TypedProcedure>> visit_s(
         ASTNode module = root.children.at(1);
         std::string name = module.children.at(1).lexeme;
 
-        SymbolTable symbol_table = module_table.at(name);
+        SymbolTable symbol_table = program_context.module_table.at(name);
 
-        if (module_table.contains(heap_module_id)) {
-            SymbolTable heap_module = module_table.at(heap_module_id);
+        if (program_context.module_table.contains(heap_module_id)) {
+            SymbolTable heap_module =
+                program_context.module_table.at(heap_module_id);
             symbol_table.insert(heap_module.begin(), heap_module.end());
         }
 
         ASTNode imports = root.children.at(2);
-        visit_imports(imports, symbol_table, module_table);
+        visit_imports(imports, symbol_table, program_context);
 
-        ASTNode fns = root.children.at(3);
-        result = visit_fns(fns, symbol_table, module_table, static_data);
+        ASTNode fns = root.children.at(4);
+        result = visit_fns(fns, symbol_table, program_context, static_data);
     } else {
         std::cerr << "Invalid production found while processing s."
                   << std::endl;

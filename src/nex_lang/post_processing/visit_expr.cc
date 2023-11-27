@@ -16,6 +16,7 @@
 #include "bin_op.h"
 #include "block.h"
 #include "call.h"
+#include "compile_error.h"
 #include "define_label.h"
 #include "label.h"
 #include "nl_type.h"
@@ -23,9 +24,11 @@
 #include "nl_type_char.h"
 #include "nl_type_i32.h"
 #include "nl_type_ptr.h"
+#include "nl_type_struct.h"
 #include "operators.h"
 #include "pseudo_assembly.h"
 #include "reg.h"
+#include "scope.h"
 #include "state.h"
 #include "symbol_not_found_error.h"
 #include "type_mismatch_error.h"
@@ -55,7 +58,7 @@ TypedExpr visit_expr(
     ASTNode root,
     bool read_address,
     SymbolTable& symbol_table,
-    ModuleTable& module_table,
+    ProgramContext& program_context,
     std::vector<std::shared_ptr<Code>>& static_data
 ) {
     assert(
@@ -69,13 +72,70 @@ TypedExpr visit_expr(
         ASTNode id = root.children.at(0);
         std::string name = id.lexeme;
 
-        if (symbol_table.count(name)) {
-            if (auto typed_var =
-                    std::dynamic_pointer_cast<TypedVariable>(symbol_table[name]
-                    )) {
+        if (symbol_table.count({name, {}})) {
+            if (auto typed_var = std::dynamic_pointer_cast<TypedVariable>(
+                    symbol_table[{name, {}}]
+                )) {
                 result = TypedExpr {
                     typed_var->variable->to_expr(read_address),
                     typed_var->nl_type};
+            } else {
+                throw SymbolNotFoundError(name, id.line_no);
+            }
+        } else {
+            throw SymbolNotFoundError(name, id.line_no);
+        }
+    } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::ID, Terminal::DOT, Terminal::ID}) {
+        ASTNode id = root.children.at(0);
+        std::string name = id.lexeme;
+
+        ASTNode var_id = root.children.at(2);
+        std::string var_name = var_id.lexeme;
+
+        if (symbol_table.count({name, {}})) {
+            if (auto typed_var = std::dynamic_pointer_cast<TypedVariable>(
+                    symbol_table[{name, {}}]
+                )) {
+                if (auto nl_type_ptr =
+                        dynamic_pointer_cast<NLTypePtr>(typed_var->nl_type)) {
+                    if (auto nl_type_struct =
+                            std::dynamic_pointer_cast<NLTypeStruct>(
+                                nl_type_ptr->nl_type
+                            )) {
+                        uint32_t offset = 0;
+                        std::shared_ptr<NLType> child_nl_type = nullptr;
+                        for (auto& child_type : nl_type_struct->child_types) {
+                            if (child_type.first != var_name) {
+                                offset += child_type.second->bytes();
+                            } else {
+                                child_nl_type = child_type.second;
+                                break;
+                            }
+                        }
+                        std::shared_ptr<Code> code = make_block(
+                            {read_address ? bin_op(
+                                 typed_var->variable->to_expr(),
+                                 op::plus(),
+                                 int_literal(offset)
+                             )
+                                          : deref(
+                                              typed_var->variable->to_expr(),
+                                              offset
+                                          )}
+                        );
+                        result = TypedExpr {code, child_nl_type};
+                    } else {
+                        throw TypeMismatchError(
+                            "Can only use dot access on type pointer to struct.",
+                            id.line_no
+                        );
+                    }
+                } else {
+                    throw TypeMismatchError(
+                        "Can only use dot access on type pointer to struct.",
+                        id.line_no
+                    );
+                }
             } else {
                 throw SymbolNotFoundError(name, id.line_no);
             }
@@ -101,10 +161,10 @@ TypedExpr visit_expr(
     } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::AMPERSAND, Terminal::ID}) {
         ASTNode id = root.children.at(1);
         std::string name = id.lexeme;
-        if (symbol_table.count(name)) {
-            if (auto typed_var =
-                    std::dynamic_pointer_cast<TypedVariable>(symbol_table[name]
-                    )) {
+        if (symbol_table.count({name, {}})) {
+            if (auto typed_var = std::dynamic_pointer_cast<TypedVariable>(
+                    symbol_table[{name, {}}]
+                )) {
                 result = TypedExpr {
                     typed_var->variable->to_expr(true),
                     std::make_shared<NLTypePtr>(typed_var->nl_type)};
@@ -146,54 +206,136 @@ TypedExpr visit_expr(
             expr,
             read_address,
             symbol_table,
-            module_table,
+            program_context,
             static_data
         );
     } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::ID, Terminal::LPAREN, NonTerminal::optargs, Terminal::RPAREN}) {
         ASTNode id = root.children.at(0);
         std::string name = id.lexeme;
 
-        if (symbol_table.count(name)) {
+        ASTNode optargs = root.children.at(2);
+        std::vector<TypedExpr> typed_args =
+            visit_optargs(optargs, symbol_table, program_context, static_data);
+
+        std::vector<std::shared_ptr<NLType>> arg_types;
+        for (auto& typed_arg : typed_args) {
+            arg_types.push_back(typed_arg.nl_type);
+        }
+
+        if (symbol_table.count({name, arg_types})) {
             if (auto typed_procedure =
-                    std::dynamic_pointer_cast<TypedProcedure>(symbol_table[name]
+                    std::dynamic_pointer_cast<TypedProcedure>(
+                        symbol_table[{name, arg_types}]
                     )) {
-                ASTNode optargs = root.children.at(2);
-                std::vector<TypedExpr> typed_args = visit_optargs(
-                    optargs,
-                    symbol_table,
-                    module_table,
-                    static_data
-                );
-
-                if (typed_args.size() != typed_procedure->params.size()) {
-                    throw TypeMismatchError(
-                        "Mismatched number of parameters for function call.",
-                        id.line_no
-                    );
-                }
-
-                for (size_t i = 0; i < typed_args.size(); ++i) {
-                    if ((*typed_args.at(i).nl_type)
-                        != (*typed_procedure->params.at(i)->nl_type)) {
-                        throw TypeMismatchError(
-                            "Type mismatch of parameters for function call.",
-                            id.line_no
-                        );
-                    }
-                }
-
                 std::vector<std::shared_ptr<Code>> args;
                 for (auto typed_arg : typed_args) {
                     args.push_back(typed_arg.code);
                 }
-                result = TypedExpr {
-                    make_call(typed_procedure->procedure, args),
-                    typed_procedure->ret_type};
+                std::shared_ptr<Code> code;
+                if (read_address) {
+                    std::shared_ptr<Variable> ret_var =
+                        std::make_shared<Variable>("return var");
+                    code = make_scope(
+                        {ret_var},
+                        {assign(
+                             ret_var,
+                             make_call(typed_procedure->procedure, args)
+                         ),
+                         ret_var->to_expr(true)}
+                    );
+                } else {
+                    code = make_call(typed_procedure->procedure, args);
+                }
+                result = TypedExpr {code, typed_procedure->ret_type};
+
             } else {
-                throw SymbolNotFoundError(name, id.line_no);
+                throw CompileError(
+                    "No matching function call found for name: " + name,
+                    id.line_no
+                );
             }
         } else {
-            throw SymbolNotFoundError(name, id.line_no);
+            throw CompileError(
+                "No matching function call found for name: " + name,
+                id.line_no
+            );
+        }
+    } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::ID, Terminal::DOT, Terminal::ID, Terminal::LPAREN, NonTerminal::optargs, Terminal::RPAREN}) {
+        ASTNode var_id = root.children.at(0);
+        std::string var_name = var_id.lexeme;
+
+        ASTNode func_id = root.children.at(2);
+        std::string func_name = func_id.lexeme;
+
+        if (symbol_table.count({var_name, {}})) {
+            if (auto typed_var = std::dynamic_pointer_cast<TypedVariable>(
+                    symbol_table[{var_name, {}}]
+                )) {
+                ASTNode optargs = root.children.at(4);
+                std::vector<TypedExpr> typed_args = visit_optargs(
+                    optargs,
+                    symbol_table,
+                    program_context,
+                    static_data
+                );
+
+                typed_args.insert(
+                    typed_args.begin(),
+                    TypedExpr {
+                        typed_var->variable->to_expr(),
+                        typed_var->nl_type}
+                );
+
+                std::vector<std::shared_ptr<NLType>> arg_types;
+                for (auto& typed_arg : typed_args) {
+                    arg_types.push_back(typed_arg.nl_type);
+                }
+
+                if (symbol_table.count({func_name, arg_types})) {
+                    if (auto typed_procedure =
+                            std::dynamic_pointer_cast<TypedProcedure>(
+                                symbol_table[{func_name, arg_types}]
+                            )) {
+                        std::vector<std::shared_ptr<Code>> args;
+                        for (auto typed_arg : typed_args) {
+                            args.push_back(typed_arg.code);
+                        }
+
+                        std::shared_ptr<Code> code;
+                        if (read_address) {
+                            std::shared_ptr<Variable> ret_var =
+                                std::make_shared<Variable>("return var");
+                            code = make_scope(
+                                {ret_var},
+                                {assign(
+                                     ret_var,
+                                     make_call(typed_procedure->procedure, args)
+                                 ),
+                                 ret_var->to_expr(true)}
+                            );
+                        } else {
+                            code = make_call(typed_procedure->procedure, args);
+                        }
+                        result = TypedExpr {code, typed_procedure->ret_type};
+                    } else {
+                        throw CompileError(
+                            "No matching function call found for name: "
+                                + func_name,
+                            func_id.line_no
+                        );
+                    }
+                } else {
+                    throw CompileError(
+                        "No matching function call found for name: "
+                            + func_name,
+                        func_id.line_no
+                    );
+                }
+            } else {
+                throw SymbolNotFoundError(var_name, var_id.line_no);
+            }
+        } else {
+            throw SymbolNotFoundError(var_name, var_id.line_no);
         }
     } else if (prod == std::vector<State> {NonTerminal::exprp9, Terminal::NEW, NonTerminal::typeinit}) {
         ASTNode typeinit = root.children.at(1);
@@ -201,7 +343,7 @@ TypedExpr visit_expr(
             typeinit,
             read_address,
             symbol_table,
-            module_table,
+            program_context,
             static_data
         );
     } else if (prod == std::vector<State> {NonTerminal::exprp9, NonTerminal::exprp9, Terminal::LBRACKET, NonTerminal::expr, Terminal::RBRACKET}) {
@@ -210,7 +352,7 @@ TypedExpr visit_expr(
             lhs_expr_node,
             read_address,
             symbol_table,
-            module_table,
+            program_context,
             static_data
         );
 
@@ -219,7 +361,7 @@ TypedExpr visit_expr(
             rhs_expr_node,
             false,
             symbol_table,
-            module_table,
+            program_context,
             static_data
         );
 
@@ -269,12 +411,13 @@ TypedExpr visit_expr(
             expr,
             read_address,
             symbol_table,
-            module_table,
+            program_context,
             static_data
         );
 
         ASTNode type_node = root.children.at(2);
-        std::shared_ptr<NLType> nl_type = visit_type(type_node);
+        std::shared_ptr<NLType> nl_type =
+            visit_type(type_node, program_context);
 
         return TypedExpr {expr_code.code, nl_type};
     }
@@ -285,7 +428,7 @@ TypedExpr visit_expr(
             expr,
             read_address,
             symbol_table,
-            module_table,
+            program_context,
             static_data
         );
     }
@@ -299,7 +442,7 @@ TypedExpr visit_expr(
             expr,
             read_address,
             symbol_table,
-            module_table,
+            program_context,
             static_data
         );
         switch (unary_op) {
@@ -318,6 +461,14 @@ TypedExpr visit_expr(
                 if (auto expr_type =
                         std::dynamic_pointer_cast<NLTypePtr>(expr_code.nl_type
                         )) {
+                    if (std::dynamic_pointer_cast<NLTypeStruct>(
+                            expr_type->nl_type
+                        )) {
+                        throw CompileError(
+                            "Cannot dereference struct type.",
+                            lhs_op.line_no
+                        );
+                    }
                     result =
                         TypedExpr {deref(expr_code.code), expr_type->nl_type};
                 } else {
@@ -344,7 +495,7 @@ TypedExpr visit_expr(
             lhs,
             read_address,
             symbol_table,
-            module_table,
+            program_context,
             static_data
         );
         Terminal mid_op = std::get<Terminal>(mid.state);
@@ -352,7 +503,7 @@ TypedExpr visit_expr(
             rhs,
             read_address,
             symbol_table,
-            module_table,
+            program_context,
             static_data
         );
 

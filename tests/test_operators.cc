@@ -5,9 +5,9 @@
 #include "utils.h"
 #include "write_file.h"
 
-static std::string file_name = "test_compile.bin";
+static std::string file_name = "test_operators.bin";
 
-TEST_CASE("Test plus.", "[operators]") {
+TEST_CASE("plus", "[operators]") {
     std::string input =
         "mod main;"
         "fn main(x: i32, y: i32) -> i32 {"
@@ -24,7 +24,7 @@ TEST_CASE("Test plus.", "[operators]") {
     REQUIRE(stoi(emulate(file_name, -21, -6)) == -21 + -6);
 }
 
-TEST_CASE("Test minus.", "[operators]") {
+TEST_CASE("minus", "[operators]") {
     std::string input =
         "mod main;"
         "fn main(x: i32, y: i32) -> i32 {"
@@ -41,7 +41,7 @@ TEST_CASE("Test minus.", "[operators]") {
     REQUIRE(stoi(emulate(file_name, -21, -6)) == -21 - -6);
 }
 
-TEST_CASE("Test times.", "[operators]") {
+TEST_CASE("times", "[operators]") {
     std::string input =
         "mod main;"
         "fn main(x: i32, y: i32) -> i32 {"
@@ -58,7 +58,7 @@ TEST_CASE("Test times.", "[operators]") {
     REQUIRE(stoi(emulate(file_name, -21, -6)) == -21 * -6);
 }
 
-TEST_CASE("Test divide.", "[operators]") {
+TEST_CASE("divide", "[operators]") {
     std::string input =
         "mod main;"
         "fn main(x: i32, y: i32) -> i32 {"
@@ -75,7 +75,7 @@ TEST_CASE("Test divide.", "[operators]") {
     REQUIRE(stoi(emulate(file_name, -21, -6)) == -21 / -6);
 }
 
-TEST_CASE("Test mod.", "[operators]") {
+TEST_CASE("mod", "[operators]") {
     std::string input =
         "mod main;"
         "fn main(x: i32, y: i32) -> i32 {"
@@ -92,7 +92,7 @@ TEST_CASE("Test mod.", "[operators]") {
     REQUIRE(stoi(emulate(file_name, -21, -6)) == -21 % -6);
 }
 
-TEST_CASE("Test equal.", "[operators]") {
+TEST_CASE("equal", "[operators]") {
     std::string input =
         "mod main;"
         "fn main(x: i32, y: i32) -> bool {"
@@ -110,7 +110,7 @@ TEST_CASE("Test equal.", "[operators]") {
     REQUIRE(stoi(emulate(file_name, -12, 3)) == (-12 == 3));
 }
 
-TEST_CASE("Test not equal.", "[operators]") {
+TEST_CASE("not equal", "[operators]") {
     std::string input =
         "mod main;"
         "fn main(x: i32, y: i32) -> bool {"
@@ -128,7 +128,7 @@ TEST_CASE("Test not equal.", "[operators]") {
     REQUIRE(stoi(emulate(file_name, -12, 3)) == (-12 != 3));
 }
 
-TEST_CASE("Test greater than.", "[operators]") {
+TEST_CASE("greater than", "[operators]") {
     std::string input =
         "mod main;"
         "fn main(x: i32, y: i32) -> bool {"
@@ -146,7 +146,7 @@ TEST_CASE("Test greater than.", "[operators]") {
     REQUIRE(stoi(emulate(file_name, -12, 3)) == (-12 > 3));
 }
 
-TEST_CASE("Test greater than or equal to.", "[operators]") {
+TEST_CASE("greater than or equal to", "[operators]") {
     std::string input =
         "mod main;"
         "fn main(x: i32, y: i32) -> bool {"
@@ -164,7 +164,7 @@ TEST_CASE("Test greater than or equal to.", "[operators]") {
     REQUIRE(stoi(emulate(file_name, -12, 3)) == (-12 >= 3));
 }
 
-TEST_CASE("Test less than.", "[operators]") {
+TEST_CASE("less than", "[operators]") {
     std::string input =
         "mod main;"
         "fn main(x: i32, y: i32) -> bool {"
@@ -182,7 +182,7 @@ TEST_CASE("Test less than.", "[operators]") {
     REQUIRE(stoi(emulate(file_name, -12, 3)) == (-12 < 3));
 }
 
-TEST_CASE("Test less than or equal to.", "[operators]") {
+TEST_CASE("less than or equal to", "[operators]") {
     std::string input =
         "mod main;"
         "fn main(x: i32, y: i32) -> bool {"
@@ -200,7 +200,7 @@ TEST_CASE("Test less than or equal to.", "[operators]") {
     REQUIRE(stoi(emulate(file_name, -12, 3)) == (-12 <= 3));
 }
 
-TEST_CASE("Test and.", "[operators]") {
+TEST_CASE("and", "[operators]") {
     std::string input =
         "mod main;"
         "fn main(x: bool, y: bool) -> bool {"
@@ -219,7 +219,7 @@ TEST_CASE("Test and.", "[operators]") {
     REQUIRE(stoi(emulate(file_name, -29, 12)) == (-29 && 12));
 }
 
-TEST_CASE("Test or.", "[operators]") {
+TEST_CASE("or", "[operators]") {
     std::string input =
         "mod main;"
         "fn main(x: bool, y: bool) -> bool {"
@@ -238,7 +238,7 @@ TEST_CASE("Test or.", "[operators]") {
     REQUIRE(stoi(emulate(file_name, -29, 12)) == (-29 || 12));
 }
 
-TEST_CASE("Test not.", "[operators]") {
+TEST_CASE("not", "[operators]") {
     std::string input =
         "mod main;"
         "fn main(x: bool, y: bool) -> bool {"
@@ -254,7 +254,7 @@ TEST_CASE("Test not.", "[operators]") {
     REQUIRE(stoi(emulate(file_name, 25, 0)) == (!25));
 }
 
-TEST_CASE("Test ampersand and star.", "[operators]") {
+TEST_CASE("ampersand and star", "[operators]") {
     std::string input =
         "mod main;"
         "fn test_func(x: *i32, y: i32) -> i32 {"

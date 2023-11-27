@@ -12,7 +12,7 @@
 
 struct Code;
 
-TEST_CASE("Flatten simple nested structure", "[flatten]") {
+TEST_CASE("flatten nested structure", "[flatten]") {
     std::shared_ptr<Word> word1 = std::make_shared<Word>(1);
     std::shared_ptr<Word> word2 = std::make_shared<Word>(2);
     std::shared_ptr<Word> word3 = std::make_shared<Word>(3);

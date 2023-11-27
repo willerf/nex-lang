@@ -21,7 +21,7 @@
 
 struct Code;
 
-TEST_CASE("Simple test use label", "[labels]") {
+TEST_CASE("single use label", "[labels]") {
     auto label = std::make_shared<Label>("label1");
 
     std::vector<std::shared_ptr<Code>> program1 = {
@@ -43,7 +43,7 @@ TEST_CASE("Simple test use label", "[labels]") {
     );
 }
 
-TEST_CASE("Multiple use label", "[labels]") {
+TEST_CASE("multiple use label", "[labels]") {
     auto label1 = std::make_shared<Label>("label1");
     auto label2 = std::make_shared<Label>("label2");
     auto label3 = std::make_shared<Label>("label3");
@@ -76,7 +76,7 @@ TEST_CASE("Multiple use label", "[labels]") {
     );
 }
 
-TEST_CASE("Simple test positive beq label", "[labels]") {
+TEST_CASE("positive beq label", "[labels]") {
     auto label = std::make_shared<Label>("label1");
 
     Reg r1 = Reg::Scratch;
@@ -108,7 +108,7 @@ TEST_CASE("Simple test positive beq label", "[labels]") {
     );
 }
 
-TEST_CASE("Simple test positive bne label", "[labels]") {
+TEST_CASE("positive bne label", "[labels]") {
     auto label = std::make_shared<Label>("label1");
 
     Reg r1 = Reg::Input1;
@@ -140,7 +140,7 @@ TEST_CASE("Simple test positive bne label", "[labels]") {
     );
 }
 
-TEST_CASE("Simple test negative beq label", "[labels]") {
+TEST_CASE("negative beq label", "[labels]") {
     auto label = std::make_shared<Label>("label1");
 
     Reg r1 = Reg::Scratch;
@@ -172,7 +172,7 @@ TEST_CASE("Simple test negative beq label", "[labels]") {
     );
 }
 
-TEST_CASE("Simple test negative bne label", "[labels]") {
+TEST_CASE("negative bne label", "[labels]") {
     auto label = std::make_shared<Label>("label1");
 
     Reg r1 = Reg::Input1;
@@ -204,7 +204,7 @@ TEST_CASE("Simple test negative bne label", "[labels]") {
     );
 }
 
-TEST_CASE("Simple test bne/beq adjacent", "[labels]") {
+TEST_CASE("bne & beq adjacent", "[labels]") {
     auto label1 = std::make_shared<Label>("label1");
     auto label2 = std::make_shared<Label>("label2");
 

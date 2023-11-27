@@ -5,6 +5,6 @@
 #include "extract_s.h"
 
 std::vector<std::string>
-extract_symbols(ASTNode root, ModuleTable& module_table) {
-    return extract_s(root, module_table);
+extract_symbols(ASTNode root, ProgramContext& program_context) {
+    return extract_s(root, program_context);
 }

@@ -11,14 +11,18 @@
 
 #include "ast_node.h"
 #include "duplicate_symbol_error.h"
+#include "program_context.h"
 #include "state.h"
 #include "variable.h"
 #include "visit_type.h"
 
 struct NLType;
 
-std::shared_ptr<TypedVariable>
-visit_vardef(ASTNode root, SymbolTable& symbol_table) {
+std::shared_ptr<TypedVariable> visit_vardef(
+    ASTNode root,
+    SymbolTable& symbol_table,
+    ProgramContext& program_context
+) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::vardef);
     std::shared_ptr<TypedVariable> result = nullptr;
 
@@ -33,16 +37,17 @@ visit_vardef(ASTNode root, SymbolTable& symbol_table) {
         ASTNode id = root.children.at(0);
         std::string name = id.lexeme;
 
-        if (symbol_table.count(name)) {
+        if (symbol_table.count({name, {}})) {
             throw DuplicateSymbolError(name, id.line_no);
         } else {
             ASTNode var_type = root.children.at(2);
-            std::shared_ptr<NLType> nl_type = visit_type(var_type);
+            std::shared_ptr<NLType> nl_type =
+                visit_type(var_type, program_context);
 
             std::shared_ptr<Variable> variable =
                 std::make_shared<Variable>(name);
             result = std::make_shared<TypedVariable>(variable, nl_type);
-            symbol_table[name] = result;
+            symbol_table[{name, {}}] = result;
         }
     } else {
         std::cerr << "Invalid production found while processing vardef."

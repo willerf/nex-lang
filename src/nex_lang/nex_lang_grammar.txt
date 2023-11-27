@@ -1,8 +1,15 @@
-s BOFS module imports fns EOFS
+s BOFS module imports typedecls fns EOFS
 module MODULE ID SEMI
 imports import imports
 imports
 import IMPORT ID SEMI
+typedecls typedecl typedecls
+typedecls
+typedecl TYPE ID ASSIGN type SEMI
+typedecl STRUCT ID LBRACE typestmts RBRACE 
+typestmts typestmt typestmts
+typestmts typestmt
+typestmt ID COLON type SEMI
 fns fn fns
 fns fn
 fn FN ID LPAREN optparams RPAREN ARROW type stmtblock
@@ -16,6 +23,7 @@ type I32
 type BOOL
 type CHAR
 type NONE
+type ID
 type STAR type
 type LPAREN type RPAREN
 stmtblock LBRACE stmts RBRACE
@@ -56,6 +64,7 @@ exprp7 STAR exprp8
 exprp8 exprp9
 exprp8 exprp8 AS type
 exprp9 ID
+exprp9 ID DOT ID
 exprp9 NUM
 exprp9 MINUS NUM
 exprp9 TRUE
@@ -65,6 +74,7 @@ exprp9 STRLITERAL
 exprp9 CHARLITERAL 
 exprp9 LPAREN expr RPAREN
 exprp9 ID LPAREN optargs RPAREN
+exprp9 ID DOT ID LPAREN optargs RPAREN
 exprp9 NEW typeinit
 exprp9 exprp9 LBRACKET expr RBRACKET
 optargs args

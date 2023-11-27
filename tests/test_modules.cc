@@ -11,7 +11,7 @@
 
 static std::string file_name = "test_modules.bin";
 
-TEST_CASE("Test max.", "[modules]") {
+TEST_CASE("max", "[math]") {
     std::vector<std::string> input_file_paths = {
         examples_dir + "/test_max.nl",
     };
@@ -26,7 +26,7 @@ TEST_CASE("Test max.", "[modules]") {
     REQUIRE(stoi(emulate(file_name, -8, -5)) == std::max(-8, -5));
 }
 
-TEST_CASE("Test min.", "[modules]") {
+TEST_CASE("min", "[math]") {
     std::vector<std::string> input_file_paths = {
         examples_dir + "/test_min.nl",
     };
@@ -41,7 +41,7 @@ TEST_CASE("Test min.", "[modules]") {
     REQUIRE(stoi(emulate(file_name, -8, -5)) == std::min(-8, -5));
 }
 
-TEST_CASE("Test print_char.", "[modules]") {
+TEST_CASE("print char", "[modules]") {
     std::vector<std::string> input_file_paths = {
         examples_dir + "/test_print_char.nl",
     };
@@ -52,7 +52,7 @@ TEST_CASE("Test print_char.", "[modules]") {
     REQUIRE(result == "Hello\n0\n");
 }
 
-TEST_CASE("Test print.", "[modules]") {
+TEST_CASE("print", "[modules]") {
     std::vector<std::string> input_file_paths = {
         examples_dir + "/test_print.nl",
     };
@@ -63,7 +63,7 @@ TEST_CASE("Test print.", "[modules]") {
     REQUIRE(result == "Hello World!\nHello World Again!\n0\n");
 }
 
-TEST_CASE("Test println.", "[modules]") {
+TEST_CASE("println", "[modules]") {
     std::vector<std::string> input_file_paths = {
         examples_dir + "/test_println.nl",
     };
@@ -74,7 +74,7 @@ TEST_CASE("Test println.", "[modules]") {
     REQUIRE(result == "Hello World!\nHello World Again!\n0\n");
 }
 
-TEST_CASE("Test print_num.", "[modules]") {
+TEST_CASE("print i32", "[modules]") {
     std::vector<std::string> input_file_paths = {
         examples_dir + "/test_print_num.nl",
     };
@@ -90,7 +90,7 @@ TEST_CASE("Test print_num.", "[modules]") {
     REQUIRE(emulate(file_name, -1000, 0) == "-1000\n0\n");
 }
 
-TEST_CASE("Test fibonacci.", "[modules]") {
+TEST_CASE("fibonacci module", "[modules]") {
     std::vector<std::string> input_file_paths = {
         examples_dir + "/test_fibonacci.nl",
         examples_dir + "/fibonacci_module.nl"};

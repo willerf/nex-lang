@@ -11,6 +11,7 @@ struct NLTypePtr: NLType {
 
     explicit NLTypePtr(std::shared_ptr<NLType> nl_type);
     bool equals(const NLType& other) const override;
+    bool less_than(const NLType& other) const override;
     std::type_index type() const override;
     std::string to_string() override;
 };

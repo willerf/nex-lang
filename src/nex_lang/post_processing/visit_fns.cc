@@ -9,7 +9,9 @@
 #include <variant>
 
 #include "ast_node.h"
+#include "program_context.h"
 #include "state.h"
+#include "visit_params.h"
 #include "visit_stmts.h"
 
 struct Code;
@@ -17,7 +19,7 @@ struct Code;
 std::vector<std::shared_ptr<TypedProcedure>> visit_fns(
     ASTNode root,
     SymbolTable& symbol_table,
-    ModuleTable& module_table,
+    ProgramContext& program_context,
     std::vector<std::shared_ptr<Code>>& static_data
 ) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::fns);
@@ -27,16 +29,20 @@ std::vector<std::shared_ptr<TypedProcedure>> visit_fns(
     if (prod == std::vector<State> {NonTerminal::fns, NonTerminal::fn}) {
         // extract singular function
         ASTNode fn = root.children.at(0);
-        result.push_back(visit_fn(fn, symbol_table, module_table, static_data));
+        result.push_back(
+            visit_fn(fn, symbol_table, program_context, static_data)
+        );
     } else if (prod == std::vector<State> {NonTerminal::fns, NonTerminal::fn, NonTerminal::fns}) {
         // extract code function
         ASTNode fn = root.children.at(0);
-        result.push_back(visit_fn(fn, symbol_table, module_table, static_data));
+        result.push_back(
+            visit_fn(fn, symbol_table, program_context, static_data)
+        );
 
         // extract rest of functions
         ASTNode fns = root.children.at(1);
         std::vector<std::shared_ptr<TypedProcedure>> child_result =
-            visit_fns(fns, symbol_table, module_table, static_data);
+            visit_fns(fns, symbol_table, program_context, static_data);
         result.insert(result.end(), child_result.begin(), child_result.end());
     } else {
         std::cerr << "Invalid production found while processing fns."
@@ -50,7 +56,7 @@ std::vector<std::shared_ptr<TypedProcedure>> visit_fns(
 std::shared_ptr<TypedProcedure> visit_fn(
     ASTNode root,
     SymbolTable& symbol_table,
-    ModuleTable& module_table,
+    ProgramContext& program_context,
     std::vector<std::shared_ptr<Code>>& static_data
 ) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::fn);
@@ -73,9 +79,20 @@ std::shared_ptr<TypedProcedure> visit_fn(
         ASTNode id = root.children.at(1);
         std::string name = id.lexeme;
 
-        if (auto typed_proc =
-                std::dynamic_pointer_cast<TypedProcedure>(symbol_table.at(name)
-                )) {
+        // extract function parameters
+        ASTNode optparams = root.children.at(3);
+        SymbolTable tmp;
+        std::vector<std::shared_ptr<TypedVariable>> typed_params =
+            visit_optparams(optparams, tmp, program_context);
+
+        std::vector<std::shared_ptr<NLType>> param_types;
+        for (auto typed_variable : typed_params) {
+            param_types.push_back(typed_variable->nl_type);
+        }
+
+        if (auto typed_proc = std::dynamic_pointer_cast<TypedProcedure>(
+                symbol_table.at({name, param_types})
+            )) {
             result = typed_proc;
         } else {
             std::cerr << "Missing name from symbol extraction." << std::endl;
@@ -85,7 +102,7 @@ std::shared_ptr<TypedProcedure> visit_fn(
         // make clone of symbol table to scope params
         SymbolTable symbol_table_params = symbol_table;
         for (auto typed_var : result->params) {
-            symbol_table_params[typed_var->variable->name] = typed_var;
+            symbol_table_params[{typed_var->variable->name, {}}] = typed_var;
         }
 
         ASTNode stmtblock = root.children.at(7);
@@ -93,7 +110,7 @@ std::shared_ptr<TypedProcedure> visit_fn(
             stmtblock,
             result,
             symbol_table_params,
-            module_table,
+            program_context,
             static_data
         );
 
@@ -105,9 +122,20 @@ std::shared_ptr<TypedProcedure> visit_fn(
         ASTNode id = root.children.at(1);
         std::string name = id.lexeme;
 
-        if (auto typed_proc =
-                std::dynamic_pointer_cast<TypedProcedure>(symbol_table.at(name)
-                )) {
+        // extract function parameters
+        ASTNode optparams = root.children.at(3);
+        SymbolTable tmp;
+        std::vector<std::shared_ptr<TypedVariable>> typed_params =
+            visit_optparams(optparams, tmp, program_context);
+
+        std::vector<std::shared_ptr<NLType>> param_types;
+        for (auto typed_variable : typed_params) {
+            param_types.push_back(typed_variable->nl_type);
+        }
+
+        if (auto typed_proc = std::dynamic_pointer_cast<TypedProcedure>(
+                symbol_table.at({name, param_types})
+            )) {
             result = typed_proc;
         } else {
             std::cerr << "Missing name from symbol extraction." << std::endl;
@@ -117,7 +145,7 @@ std::shared_ptr<TypedProcedure> visit_fn(
         // make clone of symbol table to scope params
         SymbolTable symbol_table_params = symbol_table;
         for (auto typed_var : result->params) {
-            symbol_table_params[typed_var->variable->name] = typed_var;
+            symbol_table_params[{typed_var->variable->name, {}}] = typed_var;
         }
 
         ASTNode stmtblock = root.children.at(5);
@@ -125,7 +153,7 @@ std::shared_ptr<TypedProcedure> visit_fn(
             stmtblock,
             result,
             symbol_table_params,
-            module_table,
+            program_context,
             static_data
         );
 
