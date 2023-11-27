@@ -23,11 +23,16 @@ fn destruct(self: *ListI32) {
     delete self;
 }
 
-fn realloc(self: *ListI32, new_capacity: i32) {
+fn realloc(self: *ListI32, new_capacity: i32, default: i32) {
     let new_data = new i32[new_capacity];
     let i = 0;
-    while (i < min(self.size, new_capacity)) {
-        new_data[i] = self.data[i];
+    while (i < new_capacity) {
+        if (i < self.size) {
+            new_data[i] = self.data[i];
+        }
+        else {
+            new_data[i] = default;
+        }
         i = i + 1;
     }
     delete self.data;
@@ -35,23 +40,23 @@ fn realloc(self: *ListI32, new_capacity: i32) {
     self.capacity = new_capacity;
 }
 
-fn resize(self: *ListI32, size: i32) {
-    self.size = size;
+fn resize(self: *ListI32, size: i32, default: i32) {
     if (self.capacity != size) {
-        self.realloc(size);
+        self.realloc(size, default);
     }
+    self.size = size;
 }
 
 fn shrink_to_fit(self: *ListI32) {
     if (self.capacity != self.size) {
-        self.realloc(self.size);
+        self.realloc(self.size, 0);
     }
 }
 
 fn push_back(self: *ListI32, elem: i32) {
     if (self.size == self.capacity) {
         let new_capacity = self.capacity * 2;
-        self.realloc(new_capacity);
+        self.realloc(new_capacity, 0);
     }
     self.data[self.size] = elem;
     self.size = self.size + 1;

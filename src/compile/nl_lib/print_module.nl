@@ -27,6 +27,20 @@ fn println(letter: char) {
     println();
 }
 
+fn print(cond: bool) {
+    if (cond) {
+        print("true");
+    }
+    else {
+        print("false");
+    }
+}
+
+fn println(cond: bool) {
+    print(cond);
+    println();
+}
+
 fn print(num: i32) {
     if (num == 0) {
         print('0');

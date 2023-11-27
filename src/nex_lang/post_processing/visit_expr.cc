@@ -28,6 +28,7 @@
 #include "operators.h"
 #include "pseudo_assembly.h"
 #include "reg.h"
+#include "scope.h"
 #include "state.h"
 #include "symbol_not_found_error.h"
 #include "type_mismatch_error.h"
@@ -230,9 +231,23 @@ TypedExpr visit_expr(
                 for (auto typed_arg : typed_args) {
                     args.push_back(typed_arg.code);
                 }
-                result = TypedExpr {
-                    make_call(typed_procedure->procedure, args),
-                    typed_procedure->ret_type};
+                std::shared_ptr<Code> code;
+                if (read_address) {
+                    std::shared_ptr<Variable> ret_var =
+                        std::make_shared<Variable>("return var");
+                    code = make_scope(
+                        {ret_var},
+                        {assign(
+                             ret_var,
+                             make_call(typed_procedure->procedure, args)
+                         ),
+                         ret_var->to_expr(true)}
+                    );
+                } else {
+                    code = make_call(typed_procedure->procedure, args);
+                }
+                result = TypedExpr {code, typed_procedure->ret_type};
+
             } else {
                 throw CompileError(
                     "No matching function call found for name: " + name,
@@ -285,9 +300,23 @@ TypedExpr visit_expr(
                         for (auto typed_arg : typed_args) {
                             args.push_back(typed_arg.code);
                         }
-                        result = TypedExpr {
-                            make_call(typed_procedure->procedure, args),
-                            typed_procedure->ret_type};
+
+                        std::shared_ptr<Code> code;
+                        if (read_address) {
+                            std::shared_ptr<Variable> ret_var =
+                                std::make_shared<Variable>("return var");
+                            code = make_scope(
+                                {ret_var},
+                                {assign(
+                                     ret_var,
+                                     make_call(typed_procedure->procedure, args)
+                                 ),
+                                 ret_var->to_expr(true)}
+                            );
+                        } else {
+                            code = make_call(typed_procedure->procedure, args);
+                        }
+                        result = TypedExpr {code, typed_procedure->ret_type};
                     } else {
                         throw CompileError(
                             "No matching function call found for name: "

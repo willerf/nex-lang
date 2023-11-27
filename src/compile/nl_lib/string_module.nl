@@ -2,6 +2,7 @@ R"(
 mod string;
 
 import print;
+import math;
 
 struct String {
     data: *char;
@@ -10,11 +11,11 @@ struct String {
 }
 
 fn String() -> *String {
-    let str = new String;
-    str.data = new char[1];
-    str.size = 0;
-    str.capacity = 1;
-    return str;
+    let list = new String;
+    list.data = new char[1];
+    list.size = 0;
+    list.capacity = 1;
+    return list;
 }
 
 fn String(word: *char) -> *String {
@@ -32,17 +33,40 @@ fn destruct(self: *String) {
     delete self;
 }
 
+fn realloc(self: *String, new_capacity: i32, default: char) {
+    let new_data = new char[new_capacity];
+    let i = 0;
+    while (i < new_capacity) {
+        if (i < self.size) {
+            new_data[i] = self.data[i];
+        }
+        else {
+            new_data[i] = default;
+        }
+        i = i + 1;
+    }
+    delete self.data;
+    self.data = new_data;
+    self.capacity = new_capacity;
+}
+
+fn resize(self: *String, size: i32, default: char) {
+    if (self.capacity != size) {
+        self.realloc(size, default);
+    }
+    self.size = size;
+}
+
+fn shrink_to_fit(self: *String) {
+    if (self.capacity != self.size) {
+        self.realloc(self.size, ' ');
+    }
+}
+
 fn push_back(self: *String, elem: char) {
     if (self.size == self.capacity) {
-        self.capacity = self.capacity * 2;
-        let data = new char[self.capacity];
-        let i = 0;
-        while (i < self.size) {
-            data[i] = self.data[i];
-            i = i + 1;
-        }
-        delete self.data;
-        self.data = data;
+        let new_capacity = self.capacity * 2;
+        self.realloc(new_capacity, ' ');
     }
     self.data[self.size] = elem;
     self.size = self.size + 1;
@@ -62,8 +86,24 @@ fn back(self: *String) -> char {
     return self.data[self.size - 1];
 }
 
-fn at(self: *String, index: i32) -> char {
+fn at(self: *String, index: i32) -> *char {
+    return (self.data as i32 + 4 * index) as *char;
+}
+
+fn get(self: *String, index: i32) -> char {
     return self.data[index];
+}
+
+fn set(self: *String, index: i32, value: char) {
+    self.data[index] = value;
+}
+
+fn size(self: *String) -> i32 {
+    return self.size;
+}
+
+fn empty(self: *String) -> bool {
+    return self.size == 0;
 }
 
 fn print(self: *String) {
