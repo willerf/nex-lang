@@ -1,7 +1,10 @@
 # NexLang Library
 
 ## Table of Contents
-
+- [Math Module](#math-module)
+- [Print Module](#print-module)
+- [String Module](#string-module)
+- [List Module](#list-module)
 
 ## Math Module
 Returns the maximum of two integers
