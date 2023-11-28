@@ -1,4 +1,4 @@
-# Reference
+# NexLang Reference
 
 ## Table of Contents
 - [Data Types](#data-types)
