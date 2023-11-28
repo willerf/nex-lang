@@ -10,7 +10,9 @@
   - [Install & Build](https://github.com/willerf/nex-lang#install--build)
   - [User Guide](https://github.com/willerf/nex-lang#user-guide)
 
-Also view the [NexLang Reference](https://github.com/willerf/nex-lang/blob/main/docs/nex-lang-reference.md).
+Additional Documentation:
+- [NexLang Reference](https://github.com/willerf/nex-lang/blob/main/docs/nex-lang-reference.md)
+- [NexLang Library](https://github.com/willerf/nex-lang/blob/main/docs/nex-lang-library.md)
 
 ### About
 NexLang is a custom systems programming language focused on providing strong control over the low level fundamentals of your program while bringing a modern syntax and robust type checking. Currently, this compiler targets the MIPS assembly language instruction set and uses an emulator to run programs and unit tests. Additional architectures should be relatively straight forward to port over to and RISC-V support is currently in the works.
