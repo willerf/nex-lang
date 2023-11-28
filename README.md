@@ -48,14 +48,11 @@ Additional examples can be found within the examples directory.
 ### Getting Started
 
 #### Install & Build
-- Ensure you have cmake, rust and C++20 installed
+- Ensure you have [cmake](https://cmake.org/download), [rust](https://www.rust-lang.org/tools/install) and C++20 installed
+  - To verify rust was installed correctly, run `rustc --version`
+  - To verify cmake was installed correctly, run `cmake --version`
 - Clone the repo and `cd` into the project directory
-- Then run the following commands
-  - `mkdir build`
-  - `cd build`
-  - `cmake ..`
-  - `make -j8`
-- Or just copy and paste the following command
+- Then run the following command(s)
 ```bash
 mkdir build && cd build && cmake .. && make -j8
 ```
