@@ -43,13 +43,13 @@ TEST_CASE("read write variable", "[vars]") {
     auto instr1 = std::bitset<32>(
         "100011" + std::bitset<5>((uint32_t)Reg::FramePtr).to_string()
         + std::bitset<5>((uint32_t)r1).to_string()
-        + std::bitset<16>(8).to_string()
+        + std::bitset<16>(4).to_string()
     );
 
     auto instr2 = std::bitset<32>(
         "101011" + std::bitset<5>((uint32_t)Reg::FramePtr).to_string()
         + std::bitset<5>((uint32_t)r2).to_string()
-        + std::bitset<16>(12).to_string()
+        + std::bitset<16>(8).to_string()
     );
 
     REQUIRE_THAT(

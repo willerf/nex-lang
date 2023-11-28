@@ -14,11 +14,11 @@ struct Variable;
 
 Chunk::Chunk(std::vector<std::shared_ptr<Variable>> variables) :
     variables {variables},
-    words {static_cast<uint32_t>(variables.size() + 2)},
-    bytes {static_cast<uint32_t>(4 * (variables.size() + 2))} {}
+    words {static_cast<uint32_t>(variables.size() + 1)},
+    bytes {static_cast<uint32_t>(4 * (variables.size() + 1))} {}
 
 uint32_t Chunk::get_offset(std::shared_ptr<Variable>& variable) {
-    uint32_t offset = 8;
+    uint32_t offset = 4;
     for (auto& v : variables) {
         if (variable == v) {
             return offset;
