@@ -42,7 +42,7 @@ fn main(x: i32, y: i32) -> i32 {
   let z = max(x, y);
   // type can also be explicitly defined
   let w: i32 = z;
-  println_num(z);
+  println(z);
   return 0;
 }
 ```
