@@ -16,6 +16,9 @@
 #include "word.h"
 
 template<>
+void Visitor<void>::visit(std::shared_ptr<Code> code) {}
+
+template<>
 void Visitor<void>::visit(std::shared_ptr<Block> code) {
     for (auto c : code->code) {
         c->accept(*this);
@@ -76,6 +79,12 @@ void Visitor<void>::visit(std::shared_ptr<Call> code) {
     for (auto arg : code->arguments) {
         arg->accept(*this);
     }
+}
+
+template<>
+std::shared_ptr<Code>
+Visitor<std::shared_ptr<Code>>::visit(std::shared_ptr<Code> code) {
+    return code;
 }
 
 template<>

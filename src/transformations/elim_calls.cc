@@ -23,18 +23,6 @@ ElimCalls::ElimCalls(
     current_procedure {current_procedure},
     param_chunks {param_chunks} {}
 
-std::shared_ptr<Code> ElimCalls::visit(std::shared_ptr<Code> code) {
-    return code;
-}
-
-std::shared_ptr<Code> ElimCalls::visit(std::shared_ptr<Block> block) {
-    std::vector<std::shared_ptr<Code>> result;
-    for (auto c : block->code) {
-        result.push_back(c->accept(*this));
-    }
-    return make_block(result);
-}
-
 std::shared_ptr<Code> ElimCalls::visit(std::shared_ptr<Call> call) {
     std::shared_ptr<Procedure> caller = current_procedure;
     std::shared_ptr<Procedure> callee = call->procedure;

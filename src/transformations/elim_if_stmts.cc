@@ -10,10 +10,6 @@
 #include "label.h"
 #include "reg.h"
 
-std::shared_ptr<Code> ElimIfStmts::visit(std::shared_ptr<Code> code) {
-    return code;
-}
-
 std::shared_ptr<Code> ElimIfStmts::visit(std::shared_ptr<IfStmt> if_stmt) {
     std::shared_ptr<Label> else_label =
         std::make_shared<Label>("if stmt else label");

@@ -19,7 +19,7 @@ struct Call;
 template<typename T>
 class Visitor {
   public:
-    virtual T visit(std::shared_ptr<Code>) = 0;
+    virtual T visit(std::shared_ptr<Code>);
     virtual T visit(std::shared_ptr<Block>);
     virtual T visit(std::shared_ptr<Word>);
     virtual T visit(std::shared_ptr<BeqLabel>);

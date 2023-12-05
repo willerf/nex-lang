@@ -12,18 +12,6 @@
 
 ElimVars::ElimVars(std::shared_ptr<Chunk> frame) : frame {frame} {}
 
-std::shared_ptr<Code> ElimVars::visit(std::shared_ptr<Code> code) {
-    return code;
-}
-
-std::shared_ptr<Code> ElimVars::visit(std::shared_ptr<Block> block) {
-    std::vector<std::shared_ptr<Code>> result;
-    for (auto c : block->code) {
-        result.push_back(c->accept(*this));
-    }
-    return make_block(result);
-}
-
 std::shared_ptr<Code> ElimVars::visit(std::shared_ptr<VarAccess> var_access) {
     if (var_access->var_access_type == VarAccessType::Read) {
         return frame
