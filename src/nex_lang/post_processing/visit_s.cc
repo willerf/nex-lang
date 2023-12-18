@@ -19,9 +19,7 @@
 struct Code;
 
 std::vector<std::shared_ptr<TypedProcedure>> visit_s(
-    ASTNode root,
-    ProgramContext& program_context,
-    std::vector<std::shared_ptr<Code>>& static_data
+    ASTNode root
 ) {
     assert(std::get<NonTerminal>(root.state) == NonTerminal::s);
     std::vector<std::shared_ptr<TypedProcedure>> result;

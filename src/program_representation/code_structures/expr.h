@@ -10,6 +10,6 @@
 
 struct Expr: CodeVisit<Expr> {
     std::shared_ptr<ASTNode> code;
-    std::optional<std::shared_ptr<NLType>> nl_type;
+    std::shared_ptr<NLType> nl_type = nullptr;
     Expr(std::shared_ptr<ASTNode> code);
 };
